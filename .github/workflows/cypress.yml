@@ -1,33 +1,280 @@
-name: Cypress Tests
-on: [push]
+name: Cypress Automation
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  actions: read
+
 jobs:
   cypress-run:
+    name: Cypress Parallel - ${{ matrix.container }}
     runs-on: ubuntu-latest
-    # Runs tests in parallel with matrix strategy https://on.cypress.io/parallelization
-    # https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/run-job-variations
-    # Also see warning here https://github.com/cypress-io/github-action#parallel
     strategy:
-      fail-fast: false # https://github.com/cypress-io/github-action/issues/48
+      fail-fast: false
       matrix:
-        containers: [1, 2] # Uses 2 parallel instances
+        container: [1, 2]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Cypress run
-        # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Capture start time
+        id: start_time
+        run: echo "value=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
+
+      - name: Run Cypress in parallel
+        id: cypress
         uses: cypress-io/github-action@v7
         with:
-          # Starts web server for E2E tests - replace with your own server invocation
-          # https://docs.cypress.io/app/continuous-integration/overview#Boot-your-server
-          start: npm start
-          wait-on: 'http://localhost:3000' # Waits for above
-          # Records to Cypress Cloud
-          # https://docs.cypress.io/cloud/get-started/setup
+          install: false
+          start: npm run dev
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 180
           record: true
-          parallel: true # Runs test in parallel using settings above
+          parallel: true
+          browser: chrome
         env:
-          # For recording and parallelization you must set your CYPRESS_RECORD_KEY
-          # in GitHub repo → Settings → Secrets → Actions
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # Create a token https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Capture end time
+        if: always()
+        id: end_time
+        run: echo "value=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
+
+      - name: Parse Cypress summary
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p ci-meta
+
+          python3 - <<'PY'
+          import json, os, re
+          from pathlib import Path
+
+          summary_file = os.environ.get("GITHUB_STEP_SUMMARY", "")
+          text = Path(summary_file).read_text(encoding="utf-8", errors="ignore") if summary_file and Path(summary_file).exists() else ""
+
+          def get_count(label):
+              patterns = [
+                  rf"\|\s*{label}\s*\|\s*(\d+)\s*\|",
+                  rf"{label}\s*[:|-]\s*(\d+)"
+              ]
+              for p in patterns:
+                  m = re.search(p, text, re.IGNORECASE)
+                  if m:
+                      return int(m.group(1))
+              return 0
+
+          passed = get_count("Passed")
+          failed = get_count("Failed")
+          skipped = get_count("Skipped")
+          pending = get_count("Pending")
+          total = passed + failed + skipped + pending
+
+          data = {
+              "container": os.environ["CONTAINER"],
+              "started_at": os.environ["STARTED_AT"],
+              "ended_at": os.environ["ENDED_AT"],
+              "results_url": os.environ.get("RESULTS_URL", ""),
+              "passed": passed,
+              "failed": failed,
+              "skipped": skipped,
+              "pending": pending,
+              "total": total
+          }
+
+          Path("ci-meta/summary.json").write_text(json.dumps(data, indent=2), encoding="utf-8")
+          PY
+        env:
+          CONTAINER: ${{ matrix.container }}
+          STARTED_AT: ${{ steps.start_time.outputs.value }}
+          ENDED_AT: ${{ steps.end_time.outputs.value }}
+          RESULTS_URL: ${{ steps.cypress.outputs.resultsUrl }}
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ matrix.container }}
+          path: cypress/screenshots
+          if-no-files-found: ignore
+
+      - name: Upload videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: videos-${{ matrix.container }}
+          path: cypress/videos
+          if-no-files-found: ignore
+
+      - name: Upload Mochawesome JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mochawesome-json-${{ matrix.container }}
+          path: cypress/reports/mocha/*.json
+          if-no-files-found: ignore
+
+      - name: Upload run summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: run-summary-${{ matrix.container }}
+          path: ci-meta/summary.json
+          if-no-files-found: error
+
+  merge-report:
+    name: Merge report, publish, and email
+    runs-on: ubuntu-latest
+    needs: cypress-run
+    if: always()
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install report tools
+        run: npm ci
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Merge Mochawesome JSON and generate HTML
+        shell: bash
+        run: |
+          mkdir -p merged-json
+          find artifacts -type f -name "*.json" -path "*mochawesome-json*" -exec cp {} merged-json/ \;
+
+          if ls merged-json/*.json >/dev/null 2>&1; then
+            npx mochawesome-merge merged-json/*.json > merged-report.json
+            npx marge merged-report.json -f index -o mochawesome-report
+          else
+            mkdir -p mochawesome-report
+            cat > mochawesome-report/index.html <<'EOF'
+            <html>
+              <body>
+                <h2>No Mochawesome JSON files found</h2>
+                <p>Check reporter configuration and artifact upload paths.</p>
+              </body>
+            </html>
+            EOF
+          fi
+
+      - name: Aggregate totals
+        id: aggregate
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+
+          files = list(Path("artifacts").glob("run-summary-*/*.json"))
+          rows = [json.loads(p.read_text(encoding="utf-8")) for p in files]
+
+          total = sum(r.get("total", 0) for r in rows)
+          passed = sum(r.get("passed", 0) for r in rows)
+          failed = sum(r.get("failed", 0) for r in rows)
+          skipped = sum(r.get("skipped", 0) for r in rows)
+          pending = sum(r.get("pending", 0) for r in rows)
+
+          started_at = min((r.get("started_at", "") for r in rows if r.get("started_at")), default="")
+          ended_at = max((r.get("ended_at", "") for r in rows if r.get("ended_at")), default="")
+          results_url = next((r.get("results_url", "") for r in rows if r.get("results_url")), "")
+
+          out = Path(os.environ["GITHUB_OUTPUT"])
+          with out.open("a", encoding="utf-8") as f:
+              f.write(f"total={total}\n")
+              f.write(f"passed={passed}\n")
+              f.write(f"failed={failed}\n")
+              f.write(f"skipped={skipped}\n")
+              f.write(f"pending={pending}\n")
+              f.write(f"started_at={started_at}\n")
+              f.write(f"ended_at={ended_at}\n")
+              f.write(f"results_url={results_url}\n")
+          PY
+
+      - name: Upload merged report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mochawesome-html-report
+          path: mochawesome-report
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: mochawesome-report
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
+
+      - name: Zip report for email attachment
+        shell: bash
+        run: |
+          cd mochawesome-report
+          zip -r ../mochawesome-report.zip .
+
+      - name: Send email
+        uses: dawidd6/action-send-mail@v6
+        with:
+          server_address: ${{ secrets.MAIL_SERVER }}
+          server_port: ${{ secrets.MAIL_PORT }}
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "${{ steps.aggregate.outputs.failed == '0' && '✅ Cypress Passed' || '❌ Cypress Failed' }} - ${{ github.repository }}"
+          to: ${{ secrets.MAIL_TO }}
+          from: ${{ secrets.MAIL_FROM }}
+          content_type: text/html
+          attachments: mochawesome-report.zip
+          html_body: |
+            <h2>${{ steps.aggregate.outputs.failed == '0' && '✅ Cypress Test Run Passed' || '❌ Cypress Test Run Failed' }}</h2>
+
+            <p>📦 Repository: <strong>${{ github.repository }}</strong></p>
+            <p>🌿 Branch: <strong>${{ github.ref_name }}</strong></p>
+
+            <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+              <tr><th align="left">Metric</th><th align="left">Value</th></tr>
+              <tr><td>🧪 Total</td><td>${{ steps.aggregate.outputs.total }}</td></tr>
+              <tr><td>✅ Passed</td><td>${{ steps.aggregate.outputs.passed }}</td></tr>
+              <tr><td>❌ Failed</td><td>${{ steps.aggregate.outputs.failed }}</td></tr>
+              <tr><td>⏭️ Skipped</td><td>${{ steps.aggregate.outputs.skipped }}</td></tr>
+              <tr><td>🕒 Started (UTC)</td><td>${{ steps.aggregate.outputs.started_at }}</td></tr>
+              <tr><td>🕓 Ended (UTC)</td><td>${{ steps.aggregate.outputs.ended_at }}</td></tr>
+              <tr><td>🌐 Hosted Mochawesome Report</td><td><a href="${{ steps.deploy.outputs.page_url }}">Open HTML Report</a></td></tr>
+              <tr><td>📊 Cypress Cloud Run</td><td><a href="${{ steps.aggregate.outputs.results_url }}">Open Run Details</a></td></tr>
+              <tr><td>📎 Workflow Run</td><td><a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Open Workflow</a></td></tr>
+            </table>
+
+            <p>📬 Attached: <strong>mochawesome-report.zip</strong></p>
+            <p>📦 Screenshots and videos are available in workflow artifacts.</p>
