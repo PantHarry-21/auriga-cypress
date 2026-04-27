@@ -1,0 +1,148 @@
+{
+  "role": "admin",
+  "selectors_extracted_at": "2026-04-22",
+  "note": "Extracted via automated DOM inspection using Admin credentials. The application uses consistent generic Tailwind classes for tables across modules, and relies on text content for primary action buttons (Create/New). No data-cy attributes were found.",
+  "table_base_class": "min-w-full divide-y divide-gray-200 dark:divide-gray-700",
+  "modules_mapped": [
+    {
+      "module": "Product Master",
+      "url": "/dashboard/products/master-v2",
+      "primaryButtons": [
+        "New Product Master",
+        "Columns",
+        "Search",
+        "Filters"
+      ]
+    },
+    {
+      "module": "STP Master",
+      "url": "/dashboard/testing/stp-master-v2",
+      "primaryButtons": [
+        "New STP Master",
+        "Columns",
+        "Search",
+        "Filters"
+      ]
+    },
+    {
+      "module": "Standard Operating Procedure",
+      "url": "/dashboard/qdms/sop",
+      "primaryButtons": [
+        "New Standard Operating Procedure",
+        "Columns",
+        "Search",
+        "Filters"
+      ]
+    },
+    {
+      "module": "COC Department",
+      "url": "/dashboard/distribution/department",
+      "primaryButtons": [
+        "Columns",
+        "Search",
+        "Filters"
+      ]
+    },
+    {
+      "module": "Sample Booking",
+      "url": "/dashboard/samples/booking",
+      "primaryButtons": [
+        "Columns",
+        "Search",
+        "Filters",
+        "Next",
+        "Last"
+      ]
+    },
+    {
+      "module": "Equipment Registration",
+      "url": "/dashboard/equipment/equipment",
+      "primaryButtons": [
+        "Equipment Registration",
+        "Equipment Assign",
+        "Columns",
+        "Search",
+        "Filters"
+      ]
+    },
+    {
+      "module": "Client Profile",
+      "url": "/dashboard/profile/client",
+      "primaryButtons": [
+        "+ New Client",
+        "Columns",
+        "Search",
+        "Filters"
+      ]
+    },
+    {
+      "module": "Credit Approval",
+      "url": "/dashboard/profile/credit-approval",
+      "primaryButtons": [
+        "Columns",
+        "Search",
+        "Filters"
+      ]
+    },
+    {
+      "module": "Mailer",
+      "url": "/dashboard/support/mailer",
+      "primaryButtons": [
+        "Send Mail",
+        "Columns",
+        "Search",
+        "Filters"
+      ]
+    },
+    {
+      "module": "Generate PO",
+      "url": "/dashboard/purchase/generate-po",
+      "primaryButtons": [
+        "Generate PO",
+        "Columns",
+        "Search",
+        "Filters"
+      ]
+    }
+  ],
+  "sidebar_links": {
+    "Home": "/dashboard",
+    "Module Management": {
+      "All Modules": "/dashboard/all-modules"
+    },
+    "Sample Management": {
+      "Bar Code Generation": "/dashboard/samples/receipt",
+      "TRF Links": "/dashboard/samples/trf-links",
+      "Allot Sample": "/dashboard/allot-sample",
+      "Reception Received Sample": "/dashboard/reception/received-sample",
+      "Sample Booking": "/dashboard/samples/booking",
+      "Archive Samples": "/dashboard/samples/archive"
+    },
+    "Customer Relation Management": {
+      "Client Profile": "/dashboard/profile/client",
+      "Credit approval": "/dashboard/profile/credit-approval",
+      "Client Activation": "/dashboard/samples/client-activation"
+    },
+    "Support": {
+      "Mailer": "/dashboard/support/mailer",
+      "Ticket": "/dashboard/support/ticket"
+    },
+    "Purchase & Indent": {
+      "Indent Manage": "/dashboard/purchase/indent-manage",
+      "Generate PO": "/dashboard/purchase/generate-po"
+    },
+    "Master Library": {
+      "Product Master": "/dashboard/products/master-v2",
+      "STP Master": "/dashboard/testing/stp-master-v2"
+    },
+    "Quality Document Management System": {
+      "Standard Operating Procedure": "/dashboard/qdms/sop"
+    },
+    "Reports & COC": {
+      "COC Department": "/dashboard/distribution/department"
+    },
+    "Equipment Management": {
+      "Equipment Registration": "/dashboard/equipment/equipment"
+    }
+  }
+}

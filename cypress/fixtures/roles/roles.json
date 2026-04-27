@@ -1,0 +1,52 @@
+{
+  "AccountantAdmin": {
+    "login": {
+      "username": "harry2",
+      "password": "Harry@123"
+    },
+    "modules": {
+      "Credit Approval": {
+        "read": true,
+        "create": false,
+        "update": true,
+        "delete": false,
+        "approve": true
+      },
+      "Client Profile": {
+        "read": true,
+        "create": false,
+        "update": false,
+        "delete": false,
+        "approve": false
+      },
+      "Mailer": {
+        "read": true,
+        "create": true,
+        "update": true,
+        "delete": false,
+        "approve": false
+      },
+      "Ticket": {
+        "read": true,
+        "create": true,
+        "update": true,
+        "delete": false,
+        "approve": false
+      },
+      "Indent Manage": {
+        "read": true,
+        "create": true,
+        "update": true,
+        "delete": false,
+        "approve": false
+      },
+      "Generate PO": {
+        "read": true,
+        "create": false,
+        "update": false,
+        "delete": false,
+        "approve": false
+      }
+    }
+  }
+}

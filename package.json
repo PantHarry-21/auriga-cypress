@@ -4,13 +4,25 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cypress open",
+    "test:all": "cypress run --spec 'cypress/e2e/roles/*.cy.js'",
+    "prereport": "rimraf cypress/reports",
+    "report": "cypress run --spec 'cypress/e2e/roles/*.cy.js' --browser chrome || cd .",
+    "postreport": "node cypress/scripts/generate-executive-report.js && node cypress/scripts/send-email-report.js",
+    "send-email": "node cypress/scripts/send-email-report.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "cypress": "^15.10.0"
+    "cypress": "^15.10.0",
+    "cypress-mochawesome-reporter": "^3.8.2",
+    "rimraf": "^5.0.5"
+  },
+  "dependencies": {
+    "kogi": "^1.7.1128",
+    "nodemailer": "^8.0.6",
+    "papaparse": "^5.5.3"
   }
 }

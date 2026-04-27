@@ -1,41 +1,46 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-Cypress.Commands.add("getByCy", (value) => cy.get(`[data-cy="${value}"]`));
+// cypress/support/commands.js
 
-Cypress.Commands.add("login", (username, password) => {
-    cy.visit("http://13.219.156.132:5173/login");
-    cy.get('[name="username"]').type("admin");
-    cy.get('[name="password"]').type("Password@123");
+const ROLE_CREDENTIALS = {
+  reception:           { username: Cypress.env('RECEPTION_USERNAME'),          password: Cypress.env('RECEPTION_PASSWORD') },
+  booking_personel:    { username: Cypress.env('BOOKING_PERSONEL_USERNAME'),   password: Cypress.env('BOOKING_PERSONEL_PASSWORD') },
+  master_personel:     { username: Cypress.env('MASTER_PERSONEL_USERNAME'),    password: Cypress.env('MASTER_PERSONEL_PASSWORD') },
+  master_controler:    { username: Cypress.env('MASTER_CONTROLER_USERNAME'),   password: Cypress.env('MASTER_CONTROLER_PASSWORD') },
+  analyst:             { username: Cypress.env('ANALYST_USERNAME'),            password: Cypress.env('ANALYST_PASSWORD') },
+  department_reviewer: { username: Cypress.env('DEPARTMENT_REVIEWER_USERNAME'),password: Cypress.env('DEPARTMENT_REVIEWER_PASSWORD') },
+  department_head:     { username: Cypress.env('DEPARTMENT_HEAD_USERNAME'),    password: Cypress.env('DEPARTMENT_HEAD_PASSWORD') },
+  compilation:         { username: Cypress.env('COMPILATION_USERNAME'),        password: Cypress.env('COMPILATION_PASSWORD') },
+  reviewer:            { username: Cypress.env('REVIEWER_USERNAME'),           password: Cypress.env('REVIEWER_PASSWORD') },
+  person_incharge:     { username: Cypress.env('PERSON_INCHARGE_USERNAME'),    password: Cypress.env('PERSON_INCHARGE_PASSWORD') },
+  customer_coordinator:{ username: Cypress.env('CUSTOMER_COORDINATOR_USERNAME'),password: Cypress.env('CUSTOMER_COORDINATOR_PASSWORD') },
+  sales_personel_am:   { username: Cypress.env('SALES_PERSONEL_AM_USERNAME'),  password: Cypress.env('SALES_PERSONEL_AM_PASSWORD') },
+  accountant_admin:    { username: Cypress.env('ACCOUNTANT_ADMIN_USERNAME'),   password: Cypress.env('ACCOUNTANT_ADMIN_PASSWORD') },
+  accountant_crm:      { username: Cypress.env('ACCOUNTANT_CRM_USERNAME'),     password: Cypress.env('ACCOUNTANT_CRM_PASSWORD') },
+  quality_personel:    { username: Cypress.env('QUALITY_PERSONEL_USERNAME'),   password: Cypress.env('QUALITY_PERSONEL_PASSWORD') },
+  quality_manger:      { username: Cypress.env('QUALITY_MANGER_USERNAME'),     password: Cypress.env('QUALITY_MANGER_PASSWORD') },
+};
 
-    cy.get('.inline-flex').click();
+Cypress.Commands.add('loginAs', (roleKey) => {
+  const creds = ROLE_CREDENTIALS[roleKey];
+  if (!creds) throw new Error(`No credentials configured for role_key=${roleKey}`);
 
-    cy.get(':nth-child(1) > .relative > .w-full').click();
-    cy.get(':nth-child(4) > .block').click();
+  cy.session(roleKey, () => {
+    // Block Stimulsoft inside session too (session has its own intercept scope)
+    cy.intercept('**/stimulsoft*.js', { body: '/* stubbed */' });
 
-    cy.get('.inline-flex').click();
+    cy.visit('/login', { timeout: 120000 });
 
-    cy.get('.min-w-0 > .hidden').contains("Dashboard").should("be.visible");
+    // Wait for the login form to actually render (React hydration)
+    cy.get('[name="username"]', { timeout: 30000 }).should('be.visible').clear().type(creds.username);
+    cy.get('[name="password"]').should('be.visible').clear().type(creds.password);
+    cy.get('.inline-flex').click(); // Login button
+
+    // Wait for redirect away from login — allow extra time for post-login load
+    cy.url({ timeout: 60000 }).should('not.include', '/login');
   });
+});
+
+Cypress.Commands.add('getRolePermissions', (roleKey) => {
+  return cy.fixture('roles-permissions.json').then(fx => {
+    return fx.roles.find(r => r.role_key === roleKey);
+  });
+});

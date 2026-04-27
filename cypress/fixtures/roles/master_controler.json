@@ -1,0 +1,87 @@
+{
+  "Master Controller": {
+    "login": {
+      "username": "MASTER_CONTROLER_USERNAME",
+      "password": "MASTER_CONTROLER_PASSWORD"
+    },
+    "modules": {
+      "Analyte Master": {
+        "read": true,
+        "create": true,
+        "update": true,
+        "delete": false,
+        "approve": true
+      },
+      "STP Master": {
+        "read": true,
+        "create": true,
+        "update": true,
+        "delete": false,
+        "approve": true
+      },
+      "Generic Master": {
+        "read": true,
+        "create": true,
+        "update": true,
+        "delete": false,
+        "approve": true
+      },
+      "Product Master": {
+        "read": true,
+        "create": true,
+        "update": true,
+        "delete": false,
+        "approve": false
+      },
+      "Method Upload": {
+        "read": true,
+        "create": true,
+        "update": true,
+        "delete": false,
+        "approve": false
+      },
+      "NABL": {
+        "read": true,
+        "create": false,
+        "update": false,
+        "delete": false,
+        "approve": false
+      },
+      "Price List": {
+        "read": true,
+        "create": false,
+        "update": false,
+        "delete": false,
+        "approve": false
+      },
+      "TRF Master Table": {
+        "read": true,
+        "create": true,
+        "update": false,
+        "delete": false,
+        "approve": false
+      },
+      "Mailer": {
+        "read": true,
+        "create": true,
+        "update": true,
+        "delete": false,
+        "approve": false
+      },
+      "Ticket": {
+        "read": true,
+        "create": true,
+        "update": true,
+        "delete": false,
+        "approve": false
+      },
+      "Indent": {
+        "read": true,
+        "create": true,
+        "update": true,
+        "delete": false,
+        "approve": false
+      }
+    }
+  }
+}

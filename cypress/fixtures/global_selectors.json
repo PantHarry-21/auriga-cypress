@@ -1,0 +1,37 @@
+{
+  "common": {
+    "loading": [
+      ":contains(\"Loading...\")",
+      ":contains(\"fetching your data\")",
+      ".spinner",
+      "[class*=\"loading-overlay\"]"
+    ],
+    "table": {
+      "list": "table",
+      "row": "tbody tr",
+      "rowCheckbox": ".divide-y > :nth-child(1) > .sticky > .h-4",
+      "actionsButton": "button:contains('Actions')"
+    },
+    "slideOver": {
+      "container": "div.animate-slide-in-right",
+      "loadedIndicator": "[id^=\"headlessui-dialog-title-\"], .animate-slide-in-right h2, [role=\"dialog\"] h2, .modal-title, .flex.mb-6",
+      "closeButton": "button:contains('close'), button:contains('cancel'), button:contains('×'), button:contains('✕'), button:contains('back')"
+    },
+    "actions": {
+      "create": {
+        "button": ".border-b-0 > .flex > .sm\\:px-4",
+        "savePopup": "button:contains('save'), button:contains('submit'), button:contains('add'), button:contains('create')"
+      },
+      "edit": {
+        "savePopup": "button:contains('save'), button:contains('update')"
+      },
+      "delete": {
+        "menuItem": "li:contains('Delete'), button:contains('Delete')"
+      },
+      "approve": {
+        "buttonPopup": "button:contains('approve')"
+      }
+    }
+  },
+  "modules": {}
+}

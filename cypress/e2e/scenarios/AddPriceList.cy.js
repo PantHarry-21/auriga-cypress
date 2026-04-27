@@ -4,10 +4,11 @@ describe("Login", () => {
   });
 
     it("should add a price list", () => {
-        cy.get(':nth-child(16) > :nth-child(1) > .w-full.px-3 > .truncate').click()
-        cy.get(':nth-child(16) > :nth-child(1) > .grid > .overflow-hidden > .ml-6 > .relative > .px-3').click()
+        cy.get(':nth-child(19) > :nth-child(1) > .w-full.px-3').click()
+        cy.get(':nth-child(19) > :nth-child(1) > .grid > .overflow-hidden > .ml-6 > .relative > .px-3 > .truncate > .flex > span').click()
         cy.wait(1000)
         cy.contains('New Price List').click()
+        cy.wait(1000)
         cy.get(':nth-child(1) > :nth-child(2) > :nth-child(1) > .w-full').type('Test Price List')
 
         cy.get(':nth-child(1) > :nth-child(2) > :nth-child(2) > .w-full')

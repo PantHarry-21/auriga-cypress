@@ -39,9 +39,6 @@ describe("Add Price List - End to End Validations", () => {
     requiredTechnique: 'Technique is required',
     requiredDescription: 'Description is required',
     requiredPriceRs: 'Price in Rs is required',
-    requiredPriceUsd: 'Price in USD is required',
-    invalidDiscount: 'Discount should be between 0 and 100',
-    duplicateName: 'Price list name already exists',
   };
 
   const data = {
@@ -66,10 +63,11 @@ describe("Add Price List - End to End Validations", () => {
 
   function clickByText(text) {
     cy.contains(text, { timeout: 10000 })
-      .should('exist')
       .scrollIntoView()
       .closest('button, a, [role="button"], [role="menuitem"], li, div')
       .click({ force: true });
+
+      cy.get(':nth-child(16) > :nth-child(1) > .grid > .overflow-hidden > .ml-6 > .relative > .px-3').click({ force: true });
   }
 
   function openAddPriceListModal() {

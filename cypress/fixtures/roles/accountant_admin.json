@@ -1,0 +1,21 @@
+{
+  "Accountant Admin": {
+    "login": {
+      "username": "harry2",
+      "password": "Harry@123"
+    },
+    "modules": {
+      "Home Page": { "read": true, "create": false, "update": false, "delete": false, "approve": false },
+      "TRF Links": { "read": true, "create": false, "update": false, "delete": false, "approve": false },
+      "Archive Samples": { "read": true, "create": false, "update": false, "delete": false, "approve": false },
+      "Sample Discarded": { "read": true, "create": false, "update": false, "delete": false, "approve": false },
+      "Sample Discard Report": { "read": true, "create": false, "update": false, "delete": false, "approve": false },
+      "Client Profile": { "read": true, "create": false, "update": false, "delete": false, "approve": false },
+      "Credit approval": { "read": true, "create": false, "update": true, "delete": false, "approve": true },
+      "Mailer": { "read": true, "create": true, "update": true, "delete": false, "approve": false },
+      "Ticket": { "read": true, "create": true, "update": true, "delete": false, "approve": false },
+      "Indent Manage": { "read": true, "create": true, "update": true, "delete": false, "approve": false },
+      "Generate PO": { "read": true, "create": false, "update": false, "delete": false, "approve": false }
+    }
+  }
+}
