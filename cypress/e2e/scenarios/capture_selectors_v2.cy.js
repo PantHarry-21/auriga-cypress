@@ -21,7 +21,8 @@ describe('Capture Selectors V2', () => {
 
     modules.forEach((mod) => {
       cy.visit(mod.url, { failOnStatusCode: false });
-      cy.wait(3000); // Wait for load
+      // Wait for page content to be ready instead of a fixed delay
+      cy.get('button, tbody tr, table, h2', { timeout: 20000 }).first().should('be.visible');
       
       cy.get('body').then(($body) => {
         const title = $body.find('h2, span.text-xl, .font-bold').first().text().trim();

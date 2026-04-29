@@ -132,7 +132,8 @@ describe('Selector Discovery (Admin)', { testIsolation: false }, () => {
           cy.contains('Scientist is fetching your data', { timeout: 30000 }).should('not.exist');
         }
       });
-      cy.wait(2500);
+      // Wait for page to be interactive — at least one button or data row must be visible
+      cy.get('button, tbody tr', { timeout: 20000 }).first().should('be.visible');
 
       // ── Phase 1: Table + page-level buttons ──
       cy.get('body').then($body => {
@@ -172,7 +173,8 @@ describe('Selector Discovery (Admin)', { testIsolation: false }, () => {
         if (!addEl) return;
 
         cy.wrap(addEl).click({ force: true });
-        cy.wait(1500);
+        // Wait for the create panel to appear before inspecting it
+        cy.get(SLIDE_OVER, { timeout: 10000 }).filter(':visible').should('have.length.gt', 0);
 
         cy.get('body').then($panelBody => {
           const panel = $panelBody.find(SLIDE_OVER).filter((_, el) => Cypress.$(el).is(':visible'));
@@ -190,9 +192,9 @@ describe('Selector Discovery (Admin)', { testIsolation: false }, () => {
             cy.log('SAVE BUTTON → not found in panel');
           }
 
-          // Close panel
+          // Close panel and wait for it to dismiss
           cy.get('body').type('{esc}');
-          cy.wait(1000);
+          cy.get(SLIDE_OVER).should('not.be.visible');
         });
       });
 
@@ -201,8 +203,9 @@ describe('Selector Discovery (Admin)', { testIsolation: false }, () => {
         if ($body.find('tbody tr').length === 0) return;
 
         const rows = $body.find('tbody tr');
+        cy.intercept({ method: 'GET', url: /\/api\// }).as('rowLoad');
         cy.wrap(rows.first()).click({ force: true });
-        cy.wait(1500);
+        cy.wait('@rowLoad', { timeout: 8000 });
 
         cy.get('body').then($panelBody => {
           const panel = $panelBody.find(SLIDE_OVER).filter((_, el) => Cypress.$(el).is(':visible'));
@@ -232,9 +235,9 @@ describe('Selector Discovery (Admin)', { testIsolation: false }, () => {
           entry.panelButtons = panelBtns;
           cy.log(`PANEL BUTTONS → ${panelBtns.join(' | ')}`);
 
-          // Close panel
+          // Close panel and wait for it to dismiss
           cy.get('body').type('{esc}');
-          cy.wait(800);
+          cy.get(SLIDE_OVER).should('not.be.visible');
         });
       });
     });

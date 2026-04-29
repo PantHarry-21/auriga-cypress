@@ -19,14 +19,13 @@ describe('Complete Application CRUDA Verification', () => {
   });
 
   const waitForLoading = () => {
-    // Wait for the specific loading state mentioned by the user
     cy.get('body').then(($body) => {
       if ($body.find(selectors.CommonSelectors.LoadingState).length > 0) {
         cy.get(selectors.CommonSelectors.LoadingState, { timeout: 60000 }).should('not.exist');
       }
     });
-    // Additional wait for data to load if needed
-    cy.wait(2000); 
+    // Wait for at least one interactive element to confirm page is ready
+    cy.get('button, tbody tr, table', { timeout: 20000 }).first().should('be.visible');
   };
 
   const modulesToTest = [

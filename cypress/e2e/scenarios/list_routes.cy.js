@@ -5,13 +5,12 @@ describe('List All Routes', () => {
     cy.get('[name="password"]').type('Password@123');
     cy.get('.inline-flex').click();
     cy.url().should('include', '/dashboard');
-    cy.wait(5000);
+    // Wait for the sidebar nav to be fully rendered before expanding menus
+    cy.get('nav button', { timeout: 15000 }).should('have.length.gt', 0);
 
     // Expand all menus to see sub-links
-    // Some buttons might be hidden or nested
     cy.get('nav button').each(($btn) => {
       cy.wrap($btn).click({ force: true });
-      cy.wait(500);
     });
 
     // Extract all unique routes from the sidebar

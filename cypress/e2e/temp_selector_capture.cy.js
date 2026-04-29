@@ -49,9 +49,9 @@ describe('Capture Selectors', () => {
         });
       });
 
-      // Close Popup
+      // Close Popup and wait for it to fully dismiss
       cy.get('body').type('{esc}');
-      cy.wait(1000);
+      cy.get('div.animate-slide-in-right, [role="dialog"]').should('not.be.visible');
 
       // Open Edit Popup
       cy.get('tbody tr').first().click();

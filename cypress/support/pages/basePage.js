@@ -68,7 +68,6 @@ export default class BasePage {
       const ready = this.getSelector('PageReady') || this.getSelector('TableRow') || this.listSelector;
       cy.get(ready, { timeout: 20000 }).should('be.visible');
     });
-    cy.wait(1500);
   }
 
   _closePanel() {
@@ -82,7 +81,7 @@ export default class BasePage {
           } else {
             cy.get('body').type('{esc}');
           }
-          cy.wait(800); 
+          cy.get(this.slideOver).should('not.be.visible'); 
         }
       });
     });
@@ -102,6 +101,7 @@ export default class BasePage {
         const row = this.getSelector('TableRow') || this.rowSelector;
         cy.get(row, { timeout: 15000 }).should('have.length.at.least', 1);
       }
+      cy.screenshot();
     });
     cy.log('✅ CAN READ verified');
   }
@@ -117,6 +117,7 @@ export default class BasePage {
             /not authorized|forbidden|403|access denied/i.test($b.text());
         expect(denied, `Expected ${this.url} to be denied access`).to.be.true;
       });
+      cy.screenshot();
     });
     cy.log('✅ CANNOT READ verified');
   }
@@ -158,6 +159,7 @@ export default class BasePage {
       cy.get(this.slideOver).within(() => {
         cy.get(saveSelector).should('exist').and('be.visible');
       });
+      cy.screenshot();
       cy.log('✅ CAN CREATE verified');
       this._closePanel();
     });
@@ -172,6 +174,7 @@ export default class BasePage {
         return;
       }
       cy.get(addBtn).should('be.disabled');
+      cy.screenshot();
       cy.log('✅ CANNOT CREATE verified (button disabled)');
     });
   }
@@ -213,6 +216,7 @@ export default class BasePage {
         cy.get(this.slideOver).within(() => {
           cy.get(updateBtn, { timeout: 8000 }).should('be.visible').and('not.be.disabled');
         });
+        cy.screenshot();
         cy.log('✅ CAN UPDATE verified');
         this._closePanel();
       });
@@ -233,6 +237,9 @@ export default class BasePage {
         const editIcon = this.getSelector('EditIcon');
         const editRowClick = this.getSelector('EditRowClick');
 
+        // Intercept the API call triggered by clicking a row so we know when the app has responded
+        cy.intercept({ method: 'GET', url: /\/api\// }).as('rowDetailLoad');
+
         if (editIcon) {
           cy.get(row).first().within(() => {
             cy.get(editIcon).click({ force: true });
@@ -243,7 +250,7 @@ export default class BasePage {
           cy.get(row).first().click({ force: true });
         }
 
-        cy.wait(1500);
+        cy.wait('@rowDetailLoad', { timeout: 8000 });
         cy.get('body').then($b => {
           const panel = $b.find(this.slideOver).filter(':visible');
           if (panel.length === 0) {
@@ -258,6 +265,7 @@ export default class BasePage {
             if (btn.length > 0) expect(btn).to.be.disabled;
           }
         });
+        cy.screenshot();
         cy.log('✅ CANNOT UPDATE verified');
         this._closePanel();
       });
@@ -280,6 +288,7 @@ export default class BasePage {
       } else if (deleteBtn) {
         cy.get(deleteBtn).should('be.visible');
       }
+      cy.screenshot();
       cy.log('✅ CAN DELETE verified');
     });
   }
@@ -296,6 +305,7 @@ export default class BasePage {
         }
         // Fallback or complex check logic could go here
       });
+      cy.screenshot();
       cy.log('✅ CANNOT DELETE verified');
     });
   }
@@ -329,6 +339,7 @@ export default class BasePage {
             cy.contains('button', /approve/i).should('exist');
           });
         }
+        cy.screenshot();
         cy.log('✅ CAN APPROVE verified');
         this._closePanel();
       });
@@ -339,8 +350,9 @@ export default class BasePage {
     this.visit();
     this._withSelectors((s) => {
       const row = this.getSelector('TableRow') || this.rowSelector;
+      cy.intercept({ method: 'GET', url: /\/api\// }).as('rowDetailLoad');
       cy.get(row).first().click({ force: true });
-      cy.wait(1500);
+      cy.wait('@rowDetailLoad', { timeout: 8000 });
       cy.get('body').then($body => {
         const panel = $body.find(this.slideOver).filter(':visible');
         if (panel.length > 0) {
@@ -348,6 +360,7 @@ export default class BasePage {
           expect(btn.length).to.equal(0);
         }
       });
+      cy.screenshot();
       cy.log('✅ CANNOT APPROVE verified');
       this._closePanel();
     });
