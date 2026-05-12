@@ -9,7 +9,7 @@ import { getPage } from '../../support/pages';
 const ROLE_KEY = 'master_personel';
 const PERMISSIONS = [
   {
-    "parent_module": "Masters Library",
+    "parent_module": "Master Library",
     "sub_module": "Analyte Master",
     "module_key": "masters_library_analyte_master",
     "url": "/dashboard/products/parameters-v2",
@@ -22,7 +22,7 @@ const PERMISSIONS = [
     }
   },
   {
-    "parent_module": "Masters Library",
+    "parent_module": "Master Library",
     "sub_module": "STP Master",
     "module_key": "masters_library_stp_master",
     "url": "/dashboard/testing/stp",
@@ -35,7 +35,7 @@ const PERMISSIONS = [
     }
   },
   {
-    "parent_module": "Masters Library",
+    "parent_module": "Master Library",
     "sub_module": "Generic Master",
     "module_key": "masters_library_generic_master",
     "url": "/dashboard/products/generic-master-v2",

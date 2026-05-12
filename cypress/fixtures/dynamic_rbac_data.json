@@ -1,0 +1,262 @@
+{
+  "description": "Dynamic RBAC test data. Each role entry defines a grant→verify→revoke→verify cycle. The admin toggles a module ON (grant), the role user verifies access, then admin revokes it, and the role user confirms denial.",
+  "location": "Arbro - Delhi",
+  "rolesToTest": [
+    {
+      "name": "Reception",
+      "roleKey": "reception",
+      "scenarios": [
+        {
+          "description": "Grant Price List VIEW access to Reception, then revoke it",
+          "moduleName": "Price List",
+          "parentCategory": "Sample Management",
+          "sidebarCategory": "Sample Management",
+          "sidebarLinkText": "Price List",
+          "moduleUrl": "/dashboard/price-list",
+          "grantPermissions": { "view": true },
+          "originalPermissions": null
+        }
+      ]
+    },
+    {
+      "name": "Booking Personnel",
+      "roleKey": "booking_personel",
+      "scenarios": [
+        {
+          "description": "Grant Generic Master VIEW access to Booking Personnel, then revoke it",
+          "moduleName": "Generic Master",
+          "parentCategory": "Master Library",
+          "sidebarCategory": "Master Library",
+          "sidebarLinkText": "Generic Master",
+          "moduleUrl": "/dashboard/products/generic-master-v2",
+          "grantPermissions": { "view": true },
+          "originalPermissions": null
+        }
+      ]
+    },
+    {
+      "name": "Master Personal",
+      "roleKey": "master_personel",
+      "scenarios": [
+        {
+          "description": "Grant Equipment PM VIEW access to Master Personnel, then revoke it",
+          "moduleName": "Equipment PM",
+          "parentCategory": "Equipment Management",
+          "sidebarCategory": "Equipment Management",
+          "sidebarLinkText": "Equipment PM",
+          "moduleUrl": "/dashboard/equipment/pm",
+          "grantPermissions": { "view": true },
+          "originalPermissions": null
+        }
+      ]
+    },
+    {
+      "name": "Master Controller",
+      "roleKey": "master_controler",
+      "scenarios": [
+        {
+          "description": "Grant Equipment PM VIEW access to Master Controller, then revoke it",
+          "moduleName": "Equipment PM",
+          "parentCategory": "Equipment Management",
+          "sidebarCategory": "Equipment Management",
+          "sidebarLinkText": "Equipment PM",
+          "moduleUrl": "/dashboard/equipment/pm",
+          "grantPermissions": { "view": true },
+          "originalPermissions": null
+        }
+      ]
+    },
+    {
+      "name": "Analyst",
+      "roleKey": "analyst",
+      "scenarios": [
+        {
+          "description": "Grant Price List VIEW access to Analyst, then revoke it",
+          "moduleName": "Price List",
+          "parentCategory": "Sample Management",
+          "sidebarCategory": "Sample Management",
+          "sidebarLinkText": "Price List",
+          "moduleUrl": "/dashboard/price-list",
+          "grantPermissions": { "view": true },
+          "originalPermissions": null
+        }
+      ]
+    },
+    {
+      "name": "Department Reviewer",
+      "roleKey": "department_reviewer",
+      "scenarios": [
+        {
+          "description": "Grant Price List VIEW access to Department Reviewer, then revoke it",
+          "moduleName": "Price List",
+          "parentCategory": "Sample Management",
+          "sidebarCategory": "Sample Management",
+          "sidebarLinkText": "Price List",
+          "moduleUrl": "/dashboard/price-list",
+          "grantPermissions": { "view": true },
+          "originalPermissions": null
+        }
+      ]
+    },
+    {
+      "name": "Department Head",
+      "roleKey": "department_head",
+      "scenarios": [
+        {
+          "description": "Grant Equipment Transfer VIEW access to Department Head, then revoke it",
+          "moduleName": "Equipment Transfer",
+          "parentCategory": "Equipment Management",
+          "sidebarCategory": "Equipment Management",
+          "sidebarLinkText": "Equipment Transfer",
+          "moduleUrl": "/dashboard/equipment/transfer",
+          "grantPermissions": { "view": true },
+          "originalPermissions": null
+        }
+      ]
+    },
+    {
+      "name": "Compilation",
+      "roleKey": "compilation",
+      "scenarios": [
+        {
+          "description": "Grant Price List VIEW access to Compilation, then revoke it",
+          "moduleName": "Price List",
+          "parentCategory": "Sample Management",
+          "sidebarCategory": "Sample Management",
+          "sidebarLinkText": "Price List",
+          "moduleUrl": "/dashboard/price-list",
+          "grantPermissions": { "view": true },
+          "originalPermissions": null
+        }
+      ]
+    },
+    {
+      "name": "Reviewer",
+      "roleKey": "reviewer",
+      "scenarios": [
+        {
+          "description": "Grant Equipment PM VIEW access to Reviewer, then revoke it",
+          "moduleName": "Equipment PM",
+          "parentCategory": "Equipment Management",
+          "sidebarCategory": "Equipment Management",
+          "sidebarLinkText": "Equipment PM",
+          "moduleUrl": "/dashboard/equipment/pm",
+          "grantPermissions": { "view": true },
+          "originalPermissions": null
+        }
+      ]
+    },
+    {
+      "name": "Person Incharge",
+      "roleKey": "person_incharge",
+      "scenarios": [
+        {
+          "description": "Grant Equipment PM VIEW access to Person Incharge, then revoke it",
+          "moduleName": "Equipment PM",
+          "parentCategory": "Equipment Management",
+          "sidebarCategory": "Equipment Management",
+          "sidebarLinkText": "Equipment PM",
+          "moduleUrl": "/dashboard/equipment/pm",
+          "grantPermissions": { "view": true },
+          "originalPermissions": null
+        }
+      ]
+    },
+    {
+      "name": "Customer Coordinator",
+      "roleKey": "customer_coordinator",
+      "scenarios": [
+        {
+          "description": "Grant Price List VIEW access to Customer Coordinator, then revoke it",
+          "moduleName": "Price List",
+          "parentCategory": "Sample Management",
+          "sidebarCategory": "Sample Management",
+          "sidebarLinkText": "Price List",
+          "moduleUrl": "/dashboard/price-list",
+          "grantPermissions": { "view": true },
+          "originalPermissions": null
+        }
+      ]
+    },
+    {
+      "name": "Sales Personel AM",
+      "roleKey": "sales_personel_am",
+      "scenarios": [
+        {
+          "description": "Grant Equipment PM VIEW access to Sales Personnel AM, then revoke it",
+          "moduleName": "Equipment PM",
+          "parentCategory": "Equipment Management",
+          "sidebarCategory": "Equipment Management",
+          "sidebarLinkText": "Equipment PM",
+          "moduleUrl": "/dashboard/equipment/pm",
+          "grantPermissions": { "view": true },
+          "originalPermissions": null
+        }
+      ]
+    },
+    {
+      "name": "Accountant (Admin)",
+      "roleKey": "accountant_admin",
+      "scenarios": [
+        {
+          "description": "Grant Equipment PM VIEW access to Accountant Admin, then revoke it",
+          "moduleName": "Equipment PM",
+          "parentCategory": "Equipment Management",
+          "sidebarCategory": "Equipment Management",
+          "sidebarLinkText": "Equipment PM",
+          "moduleUrl": "/dashboard/equipment/pm",
+          "grantPermissions": { "view": true },
+          "originalPermissions": null
+        }
+      ]
+    },
+    {
+      "name": "Accountant (CRM)",
+      "roleKey": "accountant_crm",
+      "scenarios": [
+        {
+          "description": "Grant Equipment PM VIEW access to Accountant CRM, then revoke it",
+          "moduleName": "Equipment PM",
+          "parentCategory": "Equipment Management",
+          "sidebarCategory": "Equipment Management",
+          "sidebarLinkText": "Equipment PM",
+          "moduleUrl": "/dashboard/equipment/pm",
+          "grantPermissions": { "view": true },
+          "originalPermissions": null
+        }
+      ]
+    },
+    {
+      "name": "Quality Personal",
+      "roleKey": "quality_personel",
+      "scenarios": [
+        {
+          "description": "Grant Price List VIEW access to Quality Personnel, then revoke it",
+          "moduleName": "Price List",
+          "parentCategory": "Sample Management",
+          "sidebarCategory": "Sample Management",
+          "sidebarLinkText": "Price List",
+          "moduleUrl": "/dashboard/price-list",
+          "grantPermissions": { "view": true },
+          "originalPermissions": null
+        }
+      ]
+    },
+    {
+      "name": "Quality Manger",
+      "roleKey": "quality_manger",
+      "scenarios": [
+        {
+          "description": "Grant Price List VIEW access to Quality Manager, then revoke it",
+          "moduleName": "Price List",
+          "parentCategory": "Sample Management",
+          "sidebarCategory": "Sample Management",
+          "sidebarLinkText": "Price List",
+          "moduleUrl": "/dashboard/price-list",
+          "grantPermissions": { "view": true },
+          "originalPermissions": null
+        }
+      ]
+    }
+  ]
+}

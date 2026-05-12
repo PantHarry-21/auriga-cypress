@@ -1,4 +1,4 @@
-// URL: /dashboard/testing/stp  — Masters Library > STP Master
+// URL: /dashboard/testing/stp  — Master Library > STP Master
 import StandardTablePage from './StandardTablePage';
 
 class StpMasterPage extends StandardTablePage {

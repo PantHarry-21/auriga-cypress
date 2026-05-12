@@ -1,0 +1,53 @@
+
+Method – New Method Development (Add / Edit) Test Scenarios (Auriga LIMS)
+
+Verify clicking New Method Development opens the New Method Development form as a side/modal panel.  Done
+Verify clicking Edit on an existing row opens the same form pre-filled with that method’s data.  Done
+Verify all mandatory fields are clearly marked with * (Client Name, Method Title, Method Code, Department, No of Approval Required, No of Client Approval Required, Word Method File, Customer Method Signature Approval PDF).  Done
+Verify a new method can be successfully created when all mandatory and valid data is entered. Done
+Verify an existing method can be successfully updated and changes are reflected in the list view. Done
+Verify Client Name dropdown supports search and lists valid clients; selecting a client auto-fills Client Address (if configured).  Done
+Verify manual typing in Client Name is allowed only as per rule (if no match) and does not break search. Done
+Verify Client Address accepts free text and supports long addresses without UI break.  Done
+Verify Method Title accepts alphanumeric text and typical special characters (%, /, -, (), .).  Done
+Verify Method Code enforces required format (e.g., AMVP/2504/005) and does not allow duplicates.  Done
+Verify Guide Line dropdown defaults to “[As per ICH Guideline]” and other options (if any) can be selected.  Done
+Verify Issue No accepts only numeric or allowed format and is mandatory only if business rule requires.  Done
+Verify Issue Date and Next Revision Date accept only valid dates via date picker and prevent invalid formats.  Done
+Verify Next Revision Date cannot be earlier than Issue Date; appropriate validation message shown. Done
+Verify Department dropdown lists all relevant departments and enforces a selection.  Done
+Verify No of Approval Required dropdown values (e.g., 2, 3, 4 Approval Required) correctly control which “Approved By” fields become mandatory.  Done
+Verify that when “4 Approval Required” is selected, all four “Approved By 1–4” / related approver fields must be filled before save. Done
+Verify reducing No of Approval Required (e.g., from 4 to 2) relaxes mandatory requirement appropriately for some approver fields. Done
+Verify each “Approved By” field accepts valid approver names (text or dropdown as per system) and rejects invalid entries. Done
+Verify Author dropdown lists only valid users; selection is mandatory when required by workflow.  Done
+Verify Process Owner dropdown lists valid owners and stores the selected value correctly.  Done
+Verify Reviewer dropdown lists valid reviewers; selection is mandatory if review is part of workflow.  Done
+Verify Approval dropdown lists valid approval types/statuses and stores selection correctly.  Done
+Verify No of Client Approval Required dropdown (e.g., No Approval Required / 1 / 2 / 3…) drives mandatory client approval behaviour per business rules.  
+Verify Owner(s) text field allows multiple names separated by comma and has a sensible max length.  
+Verify Description text area accepts detailed free text, supports line breaks, and saves full content.  
+Verify attempting to Save with any mandatory field blank shows clear, field-level validation messages and does not close the form.  
+Verify validation errors disappear once corrected and Save re-enabled. 
+Verify leading/trailing spaces in text fields are trimmed on save (e.g., Method Title, Method Code). 
+Verify Word Method File upload accepts only allowed file types (e.g., .doc, .docx) and rejects others with proper error message.  
+Verify Word Method File upload enforces maximum file size and shows error if exceeded.  
+Verify optional PDF File upload accepts only .pdf and handles invalid type/size gracefully.  
+Verify Customer Method Signature Approval PDF upload is mandatory, accepts only .pdf, and enforces size limit.  
+Verify uploaded file names are shown near each field and can be replaced by uploading a new file. 
+Verify attempting to save without required files shows appropriate validations. 
+Verify clicking Save with valid data creates/updates the method, closes the form, and shows a confirmation/toast.  
+Verify newly created/updated record appears in the Method Development list with correct status, dates, and Method PDF link. 
+Verify clicking Cancel closes the form without saving and does not alter existing data.  
+Verify closing the form using the X icon behaves same as Cancel (no save).  
+Verify in Edit mode, changing only one field and saving updates only that record and preserves other fields unchanged. 
+Verify user cannot change fields they are not authorized to (e.g., Status, Approver fields) if role restrictions apply. 
+Verify concurrent edit scenario: if two users edit the same method, system handles conflict as per design (last save wins / warning). 
+Verify that browser refresh or navigation away while the form has unsaved changes either prompts a warning or discards data per design. 
+Verify form is fully scrollable; all sections (client, method details, approvals, uploads) remain accessible at common resolutions. 
+Verify tab order flows logically from top to bottom and left to right across all fields. 
+Verify pressing Enter in a field does not bypass validations or create duplicate submissions. 
+Verify system prevents multiple rapid clicks on Save from creating duplicate method records.  
+Verify special characters or script tags entered in text fields are either escaped or blocked to prevent XSS. 
+Verify any server/network error during save displays a user-friendly error and does not lose entered data. 
+Verify Add and Edit flows use the same validation rules and produce consistent results for identical input. 

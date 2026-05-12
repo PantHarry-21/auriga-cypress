@@ -108,15 +108,95 @@ function classifyError(message = '', testTitle = '', isForbidden = false) {
     };
 }
 
-// ── Extract screenshot from Mochawesome context ────────────────────────────────
+// ── Extract screenshot, video, and step log from Mochawesome context ──────────
 function extractFromContext(contextRaw) {
-    if (!contextRaw) return { screenshot: null, video: null };
+    if (!contextRaw) return { screenshot: null, video: null, steps: [] };
     try {
-        const arr = JSON.parse(contextRaw);
-        const ss = arr.find(c => typeof c.value === 'string' && c.value.startsWith('data:image'));
-        const vid = arr.find(c => typeof c.value === 'string' && /\.mp4$/.test(c.value));
-        return { screenshot: ss ? ss.value : null, video: vid ? vid.value : null };
-    } catch (_) { return { screenshot: null, video: null }; }
+        const parsed = JSON.parse(contextRaw);
+        // Context may be a single object or an array depending on how many items
+        // were attached via cy.addTestContext / embeddedScreenshots.
+        const arr = Array.isArray(parsed) ? parsed : [parsed];
+        const ss      = arr.find(c => typeof c.value === 'string' && c.value.startsWith('data:image'));
+        const vid     = arr.find(c => typeof c.value === 'string' && /\.mp4$/.test(c.value));
+        const stepsCtx = arr.find(c => c.title === 'test-steps');
+        let steps = [];
+        if (stepsCtx && stepsCtx.value) {
+            try { steps = JSON.parse(stepsCtx.value); } catch (_) {}
+        }
+        return { screenshot: ss ? ss.value : null, video: vid ? vid.value : null, steps };
+    } catch (_) { return { screenshot: null, video: null, steps: [] }; }
+}
+
+// ── Render a Cypress-command-log–style step timeline ─────────────────────────
+function stepsHtml(steps, escHtml) {
+    if (!steps || steps.length === 0) {
+        return `<div style="padding:10px 12px;background:rgba(0,0,0,0.3);border-radius:6px;font-size:12px;color:#475569;font-style:italic">
+            No step logs captured — tests must be re-run with the updated support/e2e.js to collect steps.
+        </div>`;
+    }
+
+    const ICONS = {
+        log: '▸', visit: '⤇', click: '↖', type: '⌨',
+        select: '▾', check: '☑', uncheck: '☐', clear: '⌫',
+        screenshot: '📷', wait: '⏳',
+    };
+
+    const rows = steps.map((step, i) => {
+        const num  = String(i + 1).padStart(2, '0');
+        const name = step.name || 'cmd';
+        const isLog     = name === 'log';
+        const isAssert  = name === 'assert';
+        const isFailed  = step.state === 'failed';
+        const isVisit   = name === 'visit';
+        const isAction  = ['click', 'type', 'select', 'check', 'uncheck', 'clear'].includes(name);
+
+        let icon, cmdColor, msgColor, bg, fw;
+
+        if (isAssert) {
+            icon     = isFailed ? '✗' : '✓';
+            cmdColor = isFailed ? '#f87171' : '#4ade80';
+            msgColor = isFailed ? '#fca5a5' : '#86efac';
+            bg       = isFailed ? 'rgba(239,68,68,0.08)' : 'rgba(74,222,128,0.04)';
+            fw       = '600';
+        } else if (isLog) {
+            icon = ICONS.log;
+            cmdColor = '#60a5fa';
+            msgColor = '#e2e8f0';
+            bg       = 'rgba(96,165,250,0.07)';
+            fw       = '600';
+        } else if (isVisit) {
+            icon = ICONS.visit;
+            cmdColor = '#22d3ee';
+            msgColor = '#a5f3fc';
+            bg       = 'transparent';
+            fw       = '400';
+        } else if (isAction) {
+            icon = ICONS[name] || '↖';
+            cmdColor = '#fb923c';
+            msgColor = '#94a3b8';
+            bg       = 'transparent';
+            fw       = '400';
+        } else {
+            icon = ICONS[name] || '·';
+            cmdColor = '#64748b';
+            msgColor = '#94a3b8';
+            bg       = 'transparent';
+            fw       = '400';
+        }
+
+        const msgDisplay = step.msg.length > 160
+            ? escHtml(step.msg.substring(0, 157)) + '…'
+            : escHtml(step.msg);
+
+        return `<div style="display:flex;align-items:flex-start;gap:8px;padding:4px 10px;background:${bg};border-radius:3px;margin-bottom:1px">
+            <span style="font-size:10px;color:#334155;min-width:20px;flex-shrink:0;font-family:monospace;padding-top:2px">${num}</span>
+            <span style="font-size:12px;color:${cmdColor};min-width:14px;flex-shrink:0;text-align:center;padding-top:1px">${icon}</span>
+            <span style="font-size:10px;font-weight:700;color:${cmdColor};min-width:72px;flex-shrink:0;text-transform:uppercase;font-family:monospace;letter-spacing:0.5px;padding-top:2px">${escHtml(name)}</span>
+            <span style="font-size:12px;color:${msgColor};font-family:monospace;word-break:break-all;font-weight:${fw};line-height:1.5">${msgDisplay}</span>
+        </div>`;
+    }).join('');
+
+    return `<div style="background:rgba(2,6,23,0.85);border-radius:8px;padding:8px 4px;max-height:420px;overflow-y:auto;border:1px solid rgba(255,255,255,0.05);font-family:monospace">${rows}</div>`;
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -173,14 +253,14 @@ function generateReport() {
             roles[roleName].modules[moduleName] = { pass: [], fail: [], skip: [] };
         }
         const title = test.title.trim();
-        const { screenshot, video } = extractFromContext(test.context);
+        const { screenshot, video, steps } = extractFromContext(test.context);
 
         if (test.pass) {
             roles[roleName].modules[moduleName].pass.push(title);
             roles[roleName].stats.pass++;
             totalPassed++;
             passCounter++;
-            passedTests.push({ id: passCounter, role: roleName, module: moduleName, test: title, screenshot, video, duration: test.duration });
+            passedTests.push({ id: passCounter, role: roleName, module: moduleName, test: title, screenshot, video, steps, duration: test.duration });
         } else if (test.fail) {
             roles[roleName].modules[moduleName].fail.push(title);
             roles[roleName].stats.fail++;
@@ -203,6 +283,7 @@ function generateReport() {
                 errStack,
                 screenshot,
                 video,
+                steps,
                 duration:   test.duration,
                 isForbidden: isForbid
             };
@@ -313,10 +394,17 @@ function generateReport() {
                 </div>
 
                 <!-- Error -->
-                <details style="margin-bottom:4px">
+                <details style="margin-bottom:8px">
                     <summary style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#64748b;cursor:pointer;margin-bottom:6px">Error Message</summary>
                     <div style="font-size:12px;color:#f87171;font-family:monospace;background:rgba(239,68,68,0.06);padding:10px 14px;border-radius:8px;overflow-x:auto;white-space:pre-wrap;word-break:break-word;max-height:120px;overflow-y:auto">${errPreview}</div>
                 </details>
+
+                <!-- Step Log -->
+                ${issue.steps && issue.steps.length > 0 ? `
+                <details style="margin-bottom:8px">
+                    <summary style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#64748b;cursor:pointer;margin-bottom:6px">Test Execution Log (${issue.steps.length} steps)</summary>
+                    ${stepsHtml(issue.steps, escHtml)}
+                </details>` : ''}
 
                 ${ssHtml}
                 ${videoHtml}
@@ -326,24 +414,30 @@ function generateReport() {
 
     const passedCard = (p) => {
         const ssHtml = p.screenshot
-            ? `<div style="margin-top:12px">
+            ? `<div style="margin-top:16px">
                  <div style="font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Screenshot</div>
                  <img src="${p.screenshot}" style="max-width:100%;border-radius:8px;border:1px solid rgba(74,222,128,0.15)" loading="lazy" />
                </div>`
-            : '<div style="margin-top:10px;font-size:12px;color:#475569;font-style:italic">No screenshot captured for this test.</div>';
+            : '';
+        const stepCount = (p.steps || []).length;
         return `
-        <div class="issue-card glass" style="border-radius:16px;overflow:hidden;margin-bottom:16px;border-left:4px solid #4ade80">
+        <div class="issue-card glass" style="border-radius:16px;overflow:hidden;margin-bottom:20px;border-left:4px solid #4ade80">
             <div style="padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
                 <div style="flex:1">
                     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">
                         <span style="background:#166534;color:#4ade80;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;letter-spacing:1px">#${p.id} ✅ PASSED</span>
+                        <span style="background:rgba(100,116,139,0.2);color:#94a3b8;font-size:10px;padding:3px 8px;border-radius:6px">${stepCount} steps</span>
                     </div>
                     <div style="font-size:15px;font-weight:700;color:#f1f5f9">${escHtml(p.module)}</div>
                     <div style="font-size:12px;color:#94a3b8;margin-top:2px">${escHtml(p.role)} → <span style="color:#cbd5e1">${escHtml(p.test)}</span></div>
                 </div>
                 ${p.duration ? `<div style="font-size:11px;color:#475569;white-space:nowrap">${(p.duration/1000).toFixed(1)}s</div>` : ''}
             </div>
-            <div style="padding:14px 20px">${ssHtml}</div>
+            <div style="padding:16px 20px">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-bottom:8px">Test Execution Log</div>
+                ${stepsHtml(p.steps, escHtml)}
+                ${ssHtml}
+            </div>
         </div>`;
     };
 

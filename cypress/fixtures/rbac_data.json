@@ -1,0 +1,24 @@
+{
+  "rolesToTest": [
+    {
+      "name": "Reception",
+      "id": 2,
+      "roleKey": "reception",
+      "scenarios": [
+        {
+          "moduleName": "Price List",
+          "parentCategory": "Sample Management",
+          "sidebarCategory": "Sample Management",
+          "action": "grant",
+          "permissions": ["VIEW"]
+        },
+        {
+          "moduleName": "Price List",
+          "parentCategory": "Sample Management",
+          "sidebarCategory": "Sample Management",
+          "action": "revoke"
+        }
+      ]
+    }
+  ]
+}

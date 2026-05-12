@@ -14,7 +14,7 @@ import mailer from './MailerPage';
 import ticket from './TicketPage';
 import indent from './IndentPage';
 
-// Masters Library
+// Master Library
 import analyteMaster from './AnalyteMasterPage';
 import stpMaster from './StpMasterPage';
 import genericMaster from './GenericMasterPage';
@@ -88,7 +88,7 @@ const MODULE_PAGES = {
   'sample_management_sample_discarded': sampleDiscarded,
   'sample_management_sample_discard_report': sampleDiscardReport,
 
-  // ── Masters Library ───────────────────────────────────────────────────────
+  // ── Master Library ───────────────────────────────────────────────────────
   'masters_library_analyte_master': analyteMaster,
   'masters_library_stp_master': stpMaster,
   'masters_library_generic_master': genericMaster,

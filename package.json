@@ -6,6 +6,8 @@
   "scripts": {
     "test": "cypress open",
     "test:all": "cypress run --spec 'cypress/e2e/roles/*.cy.js'",
+    "test:p1": "cypress run --spec 'cypress/e2e/scenarios/p1_*.cy.js' --browser chrome",
+    "test:modules": "cypress run --spec 'cypress/e2e/modules/*.cy.js' --browser chrome",
     "prereport": "rimraf cypress/reports",
     "report": "cypress run --spec 'cypress/e2e/roles/*.cy.js' --browser chrome || cd .",
     "postreport": "node cypress/scripts/generate-executive-report.js && node cypress/scripts/send-email-report.js",
@@ -18,7 +20,9 @@
   "devDependencies": {
     "cypress": "^15.10.0",
     "cypress-mochawesome-reporter": "^3.8.2",
-    "rimraf": "^5.0.5"
+    "playwright": "^1.60.0",
+    "rimraf": "^5.0.5",
+    "xlsx": "^0.18.5"
   },
   "dependencies": {
     "kogi": "^1.7.1128",

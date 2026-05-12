@@ -35,7 +35,7 @@ const PERMISSIONS = [
     }
   },
   {
-    "parent_module": "Masters Library",
+    "parent_module": "Master Library",
     "sub_module": "Generic Master",
     "module_key": "masters_library_generic_master",
     "url": "/dashboard/products/generic-master-v2",

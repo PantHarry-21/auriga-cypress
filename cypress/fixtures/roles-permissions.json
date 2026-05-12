@@ -132,21 +132,21 @@
       "status": "active",
       "modules": [
         {
-          "parent_module": "Masters Library",
+          "parent_module": "Master Library",
           "sub_module": "Analyte Master",
           "module_key": "masters_library_analyte_master",
           "url": "/dashboard/products/parameters-v2",
           "permissions": { "create": true, "read": true, "update": true, "delete": false, "approve": false }
         },
         {
-          "parent_module": "Masters Library",
+          "parent_module": "Master Library",
           "sub_module": "STP Master",
           "module_key": "masters_library_stp_master",
           "url": "/dashboard/testing/stp",
           "permissions": { "create": true, "read": true, "update": true, "delete": false, "approve": false }
         },
         {
-          "parent_module": "Masters Library",
+          "parent_module": "Master Library",
           "sub_module": "Generic Master",
           "module_key": "masters_library_generic_master",
           "url": "/dashboard/products/generic-master-v2",
@@ -216,21 +216,21 @@
       "status": "active",
       "modules": [
         {
-          "parent_module": "Masters Library",
+          "parent_module": "Master Library",
           "sub_module": "Analyte Master",
           "module_key": "masters_library_analyte_master",
           "url": "/dashboard/products/parameters-v2",
           "permissions": { "create": true, "read": true, "update": true, "delete": false, "approve": true }
         },
         {
-          "parent_module": "Masters Library",
+          "parent_module": "Master Library",
           "sub_module": "STP Master",
           "module_key": "masters_library_stp_master",
           "url": "/dashboard/testing/stp",
           "permissions": { "create": true, "read": true, "update": true, "delete": false, "approve": true }
         },
         {
-          "parent_module": "Masters Library",
+          "parent_module": "Master Library",
           "sub_module": "Generic Master",
           "module_key": "masters_library_generic_master",
           "url": "/dashboard/products/generic-master-v2",
@@ -489,14 +489,14 @@
           "permissions": { "create": true, "read": true, "update": true, "delete": false, "approve": true }
         },
         {
-          "parent_module": "Masters Library",
+          "parent_module": "Master Library",
           "sub_module": "STP Master",
           "module_key": "masters_library_stp_master",
           "url": "/dashboard/testing/stp",
           "permissions": { "create": false, "read": true, "update": false, "delete": false, "approve": false }
         },
         {
-          "parent_module": "Masters Library",
+          "parent_module": "Master Library",
           "sub_module": "Generic Master",
           "module_key": "masters_library_generic_master",
           "url": "/dashboard/products/generic-master-v2",
@@ -696,7 +696,7 @@
           "permissions": { "create": false, "read": true, "update": false, "delete": false, "approve": false }
         },
         {
-          "parent_module": "Masters Library",
+          "parent_module": "Master Library",
           "sub_module": "Generic Master",
           "module_key": "masters_library_generic_master",
           "url": "/dashboard/products/generic-master-v2",
@@ -724,7 +724,7 @@
           "permissions": { "create": false, "read": true, "update": false, "delete": false, "approve": false }
         },
         {
-          "parent_module": "Masters Library",
+          "parent_module": "Master Library",
           "sub_module": "STP Master",
           "module_key": "masters_library_stp_master",
           "url": "/dashboard/testing/stp",
@@ -794,7 +794,7 @@
           "permissions": { "create": false, "read": true, "update": false, "delete": false, "approve": false }
         },
         {
-          "parent_module": "Masters Library",
+          "parent_module": "Master Library",
           "sub_module": "Generic Master",
           "module_key": "masters_library_generic_master",
           "url": "/dashboard/products/generic-master-v2",
@@ -822,7 +822,7 @@
           "permissions": { "create": false, "read": true, "update": false, "delete": false, "approve": false }
         },
         {
-          "parent_module": "Masters Library",
+          "parent_module": "Master Library",
           "sub_module": "STP Master",
           "module_key": "masters_library_stp_master",
           "url": "/dashboard/testing/stp",
@@ -955,7 +955,7 @@
           "permissions": { "create": false, "read": true, "update": false, "delete": false, "approve": false }
         },
         {
-          "parent_module": "Masters Library",
+          "parent_module": "Master Library",
           "sub_module": "Generic Master",
           "module_key": "masters_library_generic_master",
           "url": "/dashboard/products/generic-master-v2",

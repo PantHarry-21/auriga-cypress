@@ -1,4 +1,4 @@
-// URL: /dashboard/products/generic-master-v2  — Masters Library > Generic Master
+// URL: /dashboard/products/generic-master-v2  — Master Library > Generic Master
 import StandardTablePage from './StandardTablePage';
 
 class GenericMasterPage extends StandardTablePage {

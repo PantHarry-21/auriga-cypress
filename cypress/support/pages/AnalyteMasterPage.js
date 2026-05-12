@@ -1,7 +1,7 @@
 // cypress/support/pages/AnalyteMasterPage.js
 //
 // URL: /dashboard/products/parameters-v2
-// Masters Library > Parameters (Analyte Master)
+// Master Library > Parameters (Analyte Master)
 // Used by: Master Personal (C/R/U), Master Controller (C/R/U + Approve)
 
 import StandardTablePage from './StandardTablePage';

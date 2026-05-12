@@ -1,0 +1,37 @@
+Method Module – Method Validation Upload – List View Test Scenarios
+
+Verify authorized user can navigate to Method → Method Validation Upload and list view loads without error.  Done
+Verify default columns shown: Method No, Supersedes No, Creation Date, Effective Date, Department, Method Type, Files, Created By, Created Date, Updated By, Updated Date, Edit. Done
+Verify each row correctly displays data for all columns based on backend records. Done
+Verify “New Method Validation” button is visible and enabled for users with create permission. Done
+Verify Columns menu opens “Manage Columns” and lists all available columns with checkboxes.  Done
+Verify toggling column visibility (check/uncheck) reflects immediately in the grid. Done
+Verify column re-ordering in “Manage Columns” is applied to the grid. Done
+Verify grid shows a horizontal scrollbar and all columns remain aligned when scrolled. Done
+Verify global search box filters records by Method Name / Client Name / Method No text (as per requirement). Done
+Verify search is case-insensitive and supports partial text (contains) search. Done
+Verify search with no matching value shows “No records found” (or equivalent empty-state message). Done
+Verify Filters panel expands/collapses on click and is closed when user clicks outside/Close.  Done
+Verify Serial No filter (All Serial No / specific) returns correct subset of records.  Done
+Verify Method Name dropdown filter (All Method Name / specific) returns correct records.  
+Verify Client Name dropdown filter returns only methods for the selected client.  
+Verify Method No dropdown filter returns records matching the selected method number.  
+Verify Creation Date picker filter returns records created on the selected date.  
+Verify Effective Date picker filter returns records effective on the selected date.  
+Verify Supersedes No filter returns records with that superseded method number.  
+Verify applying multiple filters together (e.g., Client Name + Creation Date) uses correct AND logic. 
+Verify Clear All Filters resets all filter fields and reloads full unfiltered dataset.  
+Verify filter controls handle invalid combinations by showing empty results without breaking UI. 
+Verify pagination: Next, Previous, page numbers, First/Last (if present) navigate correctly between pages. 
+Verify “Show X per page” dropdown correctly changes number of records shown per page and updates total text (e.g., “Showing 65 results”). 
+Verify performance when large number of records exist (e.g., 60+ rows) — grid should load within acceptable time and scrolling remains smooth. 
+Verify Files column reflects correct count of files attached for each method (0,1,2…).  
+Verify clicking Edit icon for a row opens the Method Validation record in edit mode. 
+Verify Edit icon is hidden/disabled for users without edit permission. 
+Verify that any record with past Effective Date and a newer superseding method displays correct Supersedes No mapping. 
+Verify grid behavior when there are no records in Method Validation Upload (clean “No data” message). 
+Verify unauthorized user cannot access Method Validation Upload list view via direct URL (gets access denied or redirected). 
+Verify that any backend/API failure while loading list or applying filters shows user-friendly error message and does not crash the page. 
+
+
+
