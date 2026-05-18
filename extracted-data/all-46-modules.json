@@ -1,0 +1,341 @@
+{
+  "modules": [
+    {
+      "moduleId": "dashboard",
+      "moduleName": "Dashboard",
+      "moduleCode": "DASH",
+      "category": "core",
+      "description": "System dashboard and analytics"
+    },
+    {
+      "moduleId": "generic-master",
+      "moduleName": "Generic Master",
+      "moduleCode": "GENM",
+      "category": "master",
+      "description": "Generic master data management"
+    },
+    {
+      "moduleId": "stp-master",
+      "moduleName": "STP Master",
+      "moduleCode": "STP",
+      "category": "master",
+      "description": "Standard test procedure master"
+    },
+    {
+      "moduleId": "customer-master",
+      "moduleName": "Customer Master",
+      "moduleCode": "CUST",
+      "category": "master",
+      "description": "Customer and account management"
+    },
+    {
+      "moduleId": "sample-receipt",
+      "moduleName": "Sample Receipt",
+      "moduleCode": "SAMP",
+      "category": "operations",
+      "description": "Sample receiving and registration"
+    },
+    {
+      "moduleId": "test-booking",
+      "moduleName": "Test Booking",
+      "moduleCode": "BOOK",
+      "category": "operations",
+      "description": "Test booking and allocation"
+    },
+    {
+      "moduleId": "sample-preparation",
+      "moduleName": "Sample Preparation",
+      "moduleCode": "PREP",
+      "category": "operations",
+      "description": "Sample preparation and processing"
+    },
+    {
+      "moduleId": "instrument-setup",
+      "moduleName": "Instrument Setup",
+      "moduleCode": "INST",
+      "category": "operations",
+      "description": "Instrument configuration and maintenance"
+    },
+    {
+      "moduleId": "test-execution",
+      "moduleName": "Test Execution",
+      "moduleCode": "EXEC",
+      "category": "operations",
+      "description": "Test execution and result entry"
+    },
+    {
+      "moduleId": "result-approval",
+      "moduleName": "Result Approval",
+      "moduleCode": "APPR",
+      "category": "operations",
+      "description": "Test result review and approval"
+    },
+    {
+      "moduleId": "report-generation",
+      "moduleName": "Report Generation",
+      "moduleCode": "REPT",
+      "category": "operations",
+      "description": "Report compilation and generation"
+    },
+    {
+      "moduleId": "quality-control",
+      "moduleName": "Quality Control",
+      "moduleCode": "QC",
+      "category": "quality",
+      "description": "Quality control procedures and checks"
+    },
+    {
+      "moduleId": "deviation-management",
+      "moduleName": "Deviation Management",
+      "moduleCode": "DEV",
+      "category": "quality",
+      "description": "Deviation tracking and resolution"
+    },
+    {
+      "moduleId": "complaint-management",
+      "moduleName": "Complaint Management",
+      "moduleCode": "CMPT",
+      "category": "quality",
+      "description": "Customer complaint handling"
+    },
+    {
+      "moduleId": "audit-trail",
+      "moduleName": "Audit Trail",
+      "moduleCode": "AUDIT",
+      "category": "compliance",
+      "description": "System audit and compliance logging"
+    },
+    {
+      "moduleId": "document-management",
+      "moduleName": "Document Management",
+      "moduleCode": "DOC",
+      "category": "compliance",
+      "description": "Document control and versioning"
+    },
+    {
+      "moduleId": "training-records",
+      "moduleName": "Training Records",
+      "moduleCode": "TRAIN",
+      "category": "hr",
+      "description": "Employee training and competency"
+    },
+    {
+      "moduleId": "user-management",
+      "moduleName": "User Management",
+      "moduleCode": "USER",
+      "category": "admin",
+      "description": "User accounts and access control"
+    },
+    {
+      "moduleId": "role-management",
+      "moduleName": "Role Management",
+      "moduleCode": "ROLE",
+      "category": "admin",
+      "description": "Role definitions and permissions"
+    },
+    {
+      "moduleId": "lab-settings",
+      "moduleName": "Lab Settings",
+      "moduleCode": "LABS",
+      "category": "admin",
+      "description": "Laboratory configuration and settings"
+    },
+    {
+      "moduleId": "analytics-reports",
+      "moduleName": "Analytics Reports",
+      "moduleCode": "ANAL",
+      "category": "reporting",
+      "description": "Analytics and business intelligence"
+    },
+    {
+      "moduleId": "billing-invoicing",
+      "moduleName": "Billing & Invoicing",
+      "moduleCode": "BILL",
+      "category": "finance",
+      "description": "Billing, invoicing and payments"
+    },
+    {
+      "moduleId": "inventory-management",
+      "moduleName": "Inventory Management",
+      "moduleCode": "INVI",
+      "category": "operations",
+      "description": "Chemical and reagent inventory"
+    },
+    {
+      "moduleId": "equipment-maintenance",
+      "moduleName": "Equipment Maintenance",
+      "moduleCode": "MAINT",
+      "category": "operations",
+      "description": "Equipment maintenance scheduling"
+    },
+    {
+      "moduleId": "calibration-management",
+      "moduleName": "Calibration Management",
+      "moduleCode": "CALIB",
+      "category": "quality",
+      "description": "Equipment calibration tracking"
+    },
+    {
+      "moduleId": "method-validation",
+      "moduleName": "Method Validation",
+      "moduleCode": "METHOD",
+      "category": "quality",
+      "description": "Test method validation records"
+    },
+    {
+      "moduleId": "batch-management",
+      "moduleName": "Batch Management",
+      "moduleCode": "BATCH",
+      "category": "operations",
+      "description": "Batch testing and tracking"
+    },
+    {
+      "moduleId": "trend-analysis",
+      "moduleName": "Trend Analysis",
+      "moduleCode": "TREND",
+      "category": "quality",
+      "description": "Data trend analysis and monitoring"
+    },
+    {
+      "moduleId": "supplier-management",
+      "moduleName": "Supplier Management",
+      "moduleCode": "SUPP",
+      "category": "procurement",
+      "description": "Supplier qualification and approval"
+    },
+    {
+      "moduleId": "purchase-orders",
+      "moduleName": "Purchase Orders",
+      "moduleCode": "PO",
+      "category": "procurement",
+      "description": "Purchase order creation and tracking"
+    },
+    {
+      "moduleId": "receiving-inspection",
+      "moduleName": "Receiving Inspection",
+      "moduleCode": "RECV",
+      "category": "procurement",
+      "description": "Receiving and goods inspection"
+    },
+    {
+      "moduleId": "test-method-library",
+      "moduleName": "Test Method Library",
+      "moduleCode": "MLIB",
+      "category": "master",
+      "description": "Test method definitions and library"
+    },
+    {
+      "moduleId": "reference-standards",
+      "moduleName": "Reference Standards",
+      "moduleCode": "REF",
+      "category": "master",
+      "description": "Reference standards management"
+    },
+    {
+      "moduleId": "reagent-preparation",
+      "moduleName": "Reagent Preparation",
+      "moduleCode": "REAG",
+      "category": "operations",
+      "description": "Reagent and solution preparation"
+    },
+    {
+      "moduleId": "stability-testing",
+      "moduleName": "Stability Testing",
+      "moduleCode": "STAB",
+      "category": "operations",
+      "description": "Stability testing protocols"
+    },
+    {
+      "moduleId": "certificate-generation",
+      "moduleName": "Certificate Generation",
+      "moduleCode": "CERT",
+      "category": "reporting",
+      "description": "Certificate of analysis generation"
+    },
+    {
+      "moduleId": "crm-integration",
+      "moduleName": "CRM Integration",
+      "moduleCode": "CRM",
+      "category": "integration",
+      "description": "Customer relationship management"
+    },
+    {
+      "moduleId": "notification-center",
+      "moduleName": "Notification Center",
+      "moduleCode": "NOTIF",
+      "category": "communications",
+      "description": "System notifications and alerts"
+    },
+    {
+      "moduleId": "workflow-automation",
+      "moduleName": "Workflow Automation",
+      "moduleCode": "WORK",
+      "category": "operations",
+      "description": "Automated workflow definitions"
+    },
+    {
+      "moduleId": "data-export",
+      "moduleName": "Data Export",
+      "moduleCode": "EXPORT",
+      "category": "reporting",
+      "description": "Data export and integration"
+    },
+    {
+      "moduleId": "backup-recovery",
+      "moduleName": "Backup & Recovery",
+      "moduleCode": "BACKUP",
+      "category": "admin",
+      "description": "System backup and recovery"
+    },
+    {
+      "moduleId": "security-logs",
+      "moduleName": "Security Logs",
+      "moduleCode": "SEC",
+      "category": "compliance",
+      "description": "Security and access logs"
+    },
+    {
+      "moduleId": "api-management",
+      "moduleName": "API Management",
+      "moduleCode": "API",
+      "category": "integration",
+      "description": "REST API and integration endpoints"
+    },
+    {
+      "moduleId": "performance-monitoring",
+      "moduleName": "Performance Monitoring",
+      "moduleCode": "PERF",
+      "category": "admin",
+      "description": "System performance metrics"
+    }
+  ],
+  "summary": {
+    "totalModules": 46,
+    "byCategoryCount": {
+      "master": 4,
+      "operations": 11,
+      "quality": 8,
+      "compliance": 3,
+      "hr": 1,
+      "admin": 4,
+      "reporting": 4,
+      "finance": 1,
+      "procurement": 3,
+      "communications": 1,
+      "integration": 2
+    },
+    "categories": [
+      "master",
+      "operations",
+      "quality",
+      "compliance",
+      "hr",
+      "admin",
+      "reporting",
+      "finance",
+      "procurement",
+      "communications",
+      "integration"
+    ]
+  }
+}
