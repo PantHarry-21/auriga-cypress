@@ -22,6 +22,11 @@ export function getRoleCredentials(env: Record<string, string>) {
     accountant_crm:       { username: env.ACCOUNTANT_CRM_USERNAME,      password: env.ACCOUNTANT_CRM_PASSWORD },
     quality_personel:     { username: env.QUALITY_PERSONEL_USERNAME,    password: env.QUALITY_PERSONEL_PASSWORD },
     quality_manger:       { username: env.QUALITY_MANGER_USERNAME,      password: env.QUALITY_MANGER_PASSWORD },
+    // Add aliases for correct English spelling (maintained for backward compatibility)
+    booking_personnel:    { username: env.BOOKING_PERSONEL_USERNAME,    password: env.BOOKING_PERSONEL_PASSWORD },
+    master_personnel:     { username: env.MASTER_PERSONEL_USERNAME,     password: env.MASTER_PERSONEL_PASSWORD },
+    master_controller:    { username: env.MASTER_CONTROLER_USERNAME,    password: env.MASTER_CONTROLER_PASSWORD },
+    quality_manager:      { username: env.QUALITY_MANGER_USERNAME,      password: env.QUALITY_MANGER_PASSWORD },
   } as Record<string, { username: string; password: string }>;
 }
 
