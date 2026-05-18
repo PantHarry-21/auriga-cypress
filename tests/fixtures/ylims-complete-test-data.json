@@ -1,0 +1,1010 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created": "2026-05-17",
+    "application": "YLIMS",
+    "environment": "UAT",
+    "total_modules": 46,
+    "total_roles": 19,
+    "coverage_target": "100%"
+  },
+  "roles": {
+    "admin": {
+      "username": "admin",
+      "password": "Password@123",
+      "display_name": "Administrator",
+      "modules_accessible": "ALL"
+    },
+    "reception": {
+      "username": "reception",
+      "password": "Reception@123",
+      "display_name": "Reception",
+      "modules_accessible": ["sample_registration", "customer_management", "dashboard"]
+    },
+    "booking_personel": {
+      "username": "Booking_P",
+      "password": "Booking@123",
+      "display_name": "Booking Personnel",
+      "modules_accessible": ["sample_registration", "test_requests"]
+    },
+    "master_personel": {
+      "username": "Master",
+      "password": "Master@123",
+      "display_name": "Master Personnel",
+      "modules_accessible": ["master_data", "configuration"]
+    },
+    "master_controler": {
+      "username": "Master_C",
+      "password": "Master@123",
+      "display_name": "Master Controller",
+      "modules_accessible": ["master_data", "configuration", "approval"]
+    },
+    "analyst": {
+      "username": "Analysts",
+      "password": "Analyst@123",
+      "display_name": "Analyst",
+      "modules_accessible": ["test_analysis", "test_results", "sample_status"]
+    },
+    "department_reviewer": {
+      "username": "DepartmentR",
+      "password": "Department@123",
+      "display_name": "Department Reviewer",
+      "modules_accessible": ["test_results", "approval", "reports"]
+    },
+    "department_head": {
+      "username": "DepartmentH",
+      "password": "Department@123",
+      "display_name": "Department Head",
+      "modules_accessible": ["department_management", "approval", "reports", "team_management"]
+    },
+    "compilation": {
+      "username": "Compilation",
+      "password": "Compilation@123",
+      "display_name": "Compilation",
+      "modules_accessible": ["test_results", "compilation", "report_generation"]
+    },
+    "reviewer": {
+      "username": "Reviewer_U",
+      "password": "Reviewer@123",
+      "display_name": "Reviewer",
+      "modules_accessible": ["test_results", "approval", "peer_review"]
+    },
+    "person_incharge": {
+      "username": "person_i",
+      "password": "Person@123",
+      "display_name": "Person In Charge",
+      "modules_accessible": ["team_management", "sample_status", "approval"]
+    },
+    "customer_coordinator": {
+      "username": "Coordinator",
+      "password": "Coordinator@123",
+      "display_name": "Customer Coordinator",
+      "modules_accessible": ["customer_management", "sample_registration", "billing"]
+    },
+    "sales_personel_am": {
+      "username": "Sales_p",
+      "password": "Sales@123",
+      "display_name": "Sales Personnel (Account Manager)",
+      "modules_accessible": ["customer_management", "orders", "billing", "reports"]
+    },
+    "accountant_admin": {
+      "username": "ac_admin",
+      "password": "Admin@123",
+      "display_name": "Accountant Admin",
+      "modules_accessible": ["accounting", "invoicing", "payment", "financial_reports"]
+    },
+    "accountant_crm": {
+      "username": "ac_crm",
+      "password": "Admin@123",
+      "display_name": "Accountant CRM",
+      "modules_accessible": ["customer_management", "billing", "invoicing", "payment"]
+    },
+    "quality_personel": {
+      "username": "quality_p",
+      "password": "Quality@123",
+      "display_name": "Quality Personnel",
+      "modules_accessible": ["quality_control", "sample_acceptance", "test_results"]
+    },
+    "quality_manger": {
+      "username": "quality_m",
+      "password": "Quality@123",
+      "display_name": "Quality Manager",
+      "modules_accessible": ["quality_control", "approval", "quality_reports", "standards"]
+    }
+  },
+  "modules": {
+    "admin_indent": {
+      "url": "/dashboard/purchase/admin-indent",
+      "category": "Purchase Management",
+      "form_type": "single-step",
+      "fields": {
+        "indent_number": {
+          "type": "text",
+          "required": true,
+          "readonly": true,
+          "validation": ["format: AUTO_GENERATED"]
+        },
+        "vendor_name": {
+          "type": "combobox",
+          "required": true,
+          "validation": ["must_be_existing_vendor"],
+          "test_values": ["Test Vendor A", "Test Vendor B"]
+        },
+        "item_description": {
+          "type": "text",
+          "required": true,
+          "max_length": 500,
+          "validation": ["required", "max_length_500"]
+        },
+        "quantity": {
+          "type": "number",
+          "required": true,
+          "min_value": 1,
+          "max_value": 10000,
+          "validation": ["required", "positive_number", "min_1", "max_10000"]
+        },
+        "unit": {
+          "type": "dropdown",
+          "required": true,
+          "options": ["kg", "liters", "units", "boxes"],
+          "test_value": "kg"
+        },
+        "estimated_cost": {
+          "type": "number",
+          "required": false,
+          "validation": ["positive_number"]
+        },
+        "priority": {
+          "type": "dropdown",
+          "required": true,
+          "options": ["High", "Medium", "Low"],
+          "test_value": "High"
+        },
+        "required_by_date": {
+          "type": "date",
+          "required": true,
+          "validation": ["required", "future_date"]
+        },
+        "remarks": {
+          "type": "textarea",
+          "required": false,
+          "max_length": 1000
+        }
+      },
+      "buttons": {
+        "create": {
+          "selector": "button:has-text('New'), button:has-text('Create')",
+          "behavior": "Opens create form"
+        },
+        "search": {
+          "selector": "button:has-text('Search')",
+          "behavior": "Filters list by search criteria"
+        },
+        "filters": {
+          "selector": "button:has-text('Filters')",
+          "behavior": "Opens advanced filter panel"
+        },
+        "export_excel": {
+          "selector": "button:has-text('Excel')",
+          "behavior": "Exports list to Excel"
+        },
+        "export_pdf": {
+          "selector": "button:has-text('PDF')",
+          "behavior": "Exports list to PDF"
+        }
+      },
+      "data_display": {
+        "format": "table",
+        "pagination": true,
+        "sortable": true,
+        "columns": ["Indent No", "Vendor Name", "Item", "Quantity", "Status", "Required Date", "Actions"]
+      },
+      "workflow": {
+        "statuses": ["Pending", "Approved", "Rejected", "Cancelled"],
+        "initial_status": "Pending",
+        "transitions": {
+          "Pending": ["Approved", "Rejected"],
+          "Approved": ["Completed"],
+          "Rejected": [],
+          "Cancelled": []
+        }
+      },
+      "rbac_permissions": {
+        "admin": ["C", "R", "U", "D", "Approve", "Reject"],
+        "master_personel": ["R"],
+        "master_controler": ["R", "Approve", "Reject"],
+        "reception": []
+      },
+      "test_data": {
+        "valid_create": {
+          "vendor_name": "Test Vendor",
+          "item_description": "Laboratory Equipment",
+          "quantity": 50,
+          "unit": "kg",
+          "priority": "High",
+          "required_by_date": "2026-06-15",
+          "remarks": "Urgent requirement"
+        },
+        "invalid_create": {
+          "missing_vendor": {"item_description": "Item", "quantity": 10},
+          "invalid_quantity": {"vendor_name": "Vendor", "item_description": "Item", "quantity": -5},
+          "past_date": {"vendor_name": "Vendor", "item_description": "Item", "quantity": 10, "required_by_date": "2020-01-01"}
+        }
+      }
+    },
+    "purchase_orders": {
+      "url": "/dashboard/purchase/purchase-orders",
+      "category": "Purchase Management",
+      "form_type": "single-step",
+      "fields": {
+        "po_number": {
+          "type": "text",
+          "required": true,
+          "readonly": true,
+          "validation": ["format: AUTO_GENERATED"]
+        },
+        "vendor": {
+          "type": "combobox",
+          "required": true,
+          "validation": ["must_be_existing_vendor"],
+          "test_values": ["Vendor A", "Vendor B", "Vendor C"]
+        },
+        "po_date": {
+          "type": "date",
+          "required": true,
+          "validation": ["required", "past_or_current_date"]
+        },
+        "delivery_date": {
+          "type": "date",
+          "required": true,
+          "validation": ["required", "future_date"]
+        },
+        "total_amount": {
+          "type": "number",
+          "required": true,
+          "validation": ["required", "positive_number"]
+        },
+        "items": {
+          "type": "combobox_multi",
+          "required": true,
+          "validation": ["min_one_item"],
+          "test_values": ["Item 1", "Item 2", "Item 3"]
+        },
+        "notes": {
+          "type": "textarea",
+          "required": false,
+          "max_length": 1000
+        }
+      },
+      "buttons": {
+        "create": {"selector": "button:has-text('Create'), button:has-text('New')"},
+        "edit": {"selector": "button:has-text('Edit')"},
+        "delete": {"selector": "button:has-text('Delete')"},
+        "approve": {"selector": "button:has-text('Approve')"}
+      },
+      "data_display": {
+        "format": "table",
+        "pagination": true,
+        "columns": ["PO Number", "Vendor", "Amount", "Status", "Delivery Date", "Actions"]
+      },
+      "workflow": {
+        "statuses": ["Draft", "Submitted", "Approved", "Rejected", "Completed"],
+        "initial_status": "Draft",
+        "transitions": {
+          "Draft": ["Submitted"],
+          "Submitted": ["Approved", "Rejected"],
+          "Approved": ["Completed"],
+          "Rejected": [],
+          "Completed": []
+        }
+      },
+      "rbac_permissions": {
+        "admin": ["C", "R", "U", "D", "Approve"],
+        "master_controler": ["R", "Approve"],
+        "purchase_manager": ["C", "R", "U"]
+      },
+      "test_data": {
+        "valid_create": {
+          "vendor": "Vendor A",
+          "po_date": "2026-05-17",
+          "delivery_date": "2026-06-17",
+          "total_amount": 50000,
+          "items": ["Item 1", "Item 2"],
+          "notes": "Standard delivery terms apply"
+        }
+      }
+    },
+    "sample_registration": {
+      "url": "/dashboard/sample/registration",
+      "category": "Sample Management",
+      "form_type": "multi-step",
+      "fields": {
+        "customer": {
+          "type": "combobox",
+          "required": true,
+          "validation": ["must_be_existing_customer"],
+          "test_values": ["Customer A", "Customer B"]
+        },
+        "sample_type": {
+          "type": "dropdown",
+          "required": true,
+          "options": ["Water", "Soil", "Food", "Chemical", "Microbiological"],
+          "test_value": "Water"
+        },
+        "sample_description": {
+          "type": "textarea",
+          "required": true,
+          "max_length": 1000
+        },
+        "quantity": {
+          "type": "number",
+          "required": true,
+          "min_value": 0.1,
+          "validation": ["required", "positive_number"]
+        },
+        "unit": {
+          "type": "dropdown",
+          "required": true,
+          "options": ["ml", "grams", "liters", "units"],
+          "test_value": "ml"
+        },
+        "sample_date": {
+          "type": "date",
+          "required": true,
+          "validation": ["required", "past_or_current_date"]
+        },
+        "collection_point": {
+          "type": "text",
+          "required": true,
+          "max_length": 200
+        },
+        "test_required": {
+          "type": "combobox_multi",
+          "required": true,
+          "validation": ["min_one_test"]
+        }
+      },
+      "buttons": {
+        "create": {"selector": "button:has-text('Register'), button:has-text('Create')"},
+        "next": {"selector": "button:has-text('Next')"},
+        "prev": {"selector": "button:has-text('Previous')"},
+        "submit": {"selector": "button:has-text('Submit')"}
+      },
+      "data_display": {
+        "format": "table",
+        "pagination": true,
+        "columns": ["Sample ID", "Customer", "Type", "Quantity", "Status", "Registration Date", "Actions"]
+      },
+      "workflow": {
+        "statuses": ["Registered", "Accepted", "Rejected", "Testing", "Completed"],
+        "initial_status": "Registered"
+      },
+      "rbac_permissions": {
+        "admin": ["C", "R", "U", "D"],
+        "reception": ["C", "R"],
+        "booking_personel": ["C", "R"],
+        "quality_personel": ["R", "Accept", "Reject"]
+      },
+      "test_data": {
+        "valid_create": {
+          "customer": "Customer A",
+          "sample_type": "Water",
+          "sample_description": "Test water sample from well",
+          "quantity": 500,
+          "unit": "ml",
+          "sample_date": "2026-05-17",
+          "collection_point": "Well - Building A",
+          "test_required": ["pH Test", "Hardness"]
+        }
+      }
+    },
+    "test_analysis": {
+      "url": "/dashboard/testing/analysis",
+      "category": "Testing & Analysis",
+      "form_type": "single-step",
+      "fields": {
+        "sample": {
+          "type": "combobox",
+          "required": true,
+          "validation": ["must_have_accepted_status"]
+        },
+        "test_name": {
+          "type": "dropdown",
+          "required": true,
+          "options": ["pH Test", "Hardness", "TDS", "Microbial Count", "Chemical Analysis"]
+        },
+        "analysis_method": {
+          "type": "dropdown",
+          "required": true,
+          "options": ["Method A", "Method B", "Standard Method"]
+        },
+        "analyst": {
+          "type": "combobox",
+          "required": true,
+          "validation": ["must_be_qualified_analyst"]
+        },
+        "result_value": {
+          "type": "number",
+          "required": true,
+          "validation": ["required", "numeric"]
+        },
+        "unit": {
+          "type": "text",
+          "required": true
+        },
+        "observations": {
+          "type": "textarea",
+          "required": false,
+          "max_length": 1000
+        },
+        "analysis_date": {
+          "type": "date",
+          "required": true,
+          "validation": ["required", "past_or_current_date"]
+        }
+      },
+      "buttons": {
+        "create": {"selector": "button:has-text('New'), button:has-text('Add Analysis')"},
+        "submit": {"selector": "button:has-text('Submit')"}
+      },
+      "data_display": {
+        "format": "table",
+        "pagination": true,
+        "columns": ["Sample", "Test", "Analyst", "Result", "Unit", "Date", "Status", "Actions"]
+      },
+      "workflow": {
+        "statuses": ["Draft", "Submitted", "Reviewed", "Approved", "Published"],
+        "initial_status": "Draft"
+      },
+      "rbac_permissions": {
+        "admin": ["C", "R", "U", "D", "Approve"],
+        "analyst": ["C", "R", "U"],
+        "department_reviewer": ["R", "Approve"],
+        "department_head": ["R", "Approve"]
+      },
+      "test_data": {
+        "valid_create": {
+          "sample": "SAM-001",
+          "test_name": "pH Test",
+          "analysis_method": "Standard Method",
+          "analyst": "John Analyst",
+          "result_value": 7.2,
+          "unit": "pH",
+          "observations": "Sample appears clear",
+          "analysis_date": "2026-05-17"
+        }
+      }
+    },
+    "customer_master": {
+      "url": "/dashboard/customer/master",
+      "category": "Customer Management",
+      "form_type": "single-step",
+      "fields": {
+        "customer_code": {
+          "type": "text",
+          "required": true,
+          "readonly": true,
+          "validation": ["format: AUTO_GENERATED"]
+        },
+        "customer_name": {
+          "type": "text",
+          "required": true,
+          "max_length": 200,
+          "validation": ["required", "max_length_200"]
+        },
+        "email": {
+          "type": "email",
+          "required": true,
+          "validation": ["required", "valid_email", "unique"]
+        },
+        "phone": {
+          "type": "phone",
+          "required": true,
+          "validation": ["required", "valid_phone"]
+        },
+        "address": {
+          "type": "textarea",
+          "required": true,
+          "max_length": 500
+        },
+        "city": {
+          "type": "text",
+          "required": true,
+          "max_length": 100
+        },
+        "state": {
+          "type": "dropdown",
+          "required": true,
+          "options": ["Delhi", "Maharashtra", "Karnataka", "Gujarat", "Other"]
+        },
+        "pincode": {
+          "type": "text",
+          "required": true,
+          "pattern": "^[0-9]{6}$",
+          "validation": ["required", "pattern_6_digits"]
+        },
+        "gst_number": {
+          "type": "text",
+          "required": false,
+          "pattern": "^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$"
+        },
+        "customer_type": {
+          "type": "dropdown",
+          "required": true,
+          "options": ["Individual", "Business", "Government", "Educational Institution"]
+        }
+      },
+      "buttons": {
+        "create": {"selector": "button:has-text('New'), button:has-text('Create')"},
+        "edit": {"selector": "button:has-text('Edit')"},
+        "delete": {"selector": "button:has-text('Delete')"}
+      },
+      "data_display": {
+        "format": "table",
+        "pagination": true,
+        "columns": ["Code", "Name", "Email", "Phone", "City", "Type", "Actions"]
+      },
+      "rbac_permissions": {
+        "admin": ["C", "R", "U", "D"],
+        "customer_coordinator": ["C", "R", "U"],
+        "sales_personel_am": ["R", "U"]
+      },
+      "test_data": {
+        "valid_create": {
+          "customer_name": "Test Customer ABC",
+          "email": "customer@test.com",
+          "phone": "9876543210",
+          "address": "123 Test Street, Lab Building",
+          "city": "Delhi",
+          "state": "Delhi",
+          "pincode": "110001",
+          "gst_number": "07AADCT5055K1Z0",
+          "customer_type": "Business"
+        },
+        "invalid_create": {
+          "invalid_email": {
+            "customer_name": "Test",
+            "email": "invalid-email",
+            "phone": "9876543210"
+          },
+          "invalid_phone": {
+            "customer_name": "Test",
+            "email": "test@test.com",
+            "phone": "abc"
+          },
+          "invalid_pincode": {
+            "customer_name": "Test",
+            "email": "test@test.com",
+            "phone": "9876543210",
+            "pincode": "123"
+          }
+        }
+      }
+    },
+    "invoicing": {
+      "url": "/dashboard/accounting/invoicing",
+      "category": "Accounting & Finance",
+      "form_type": "single-step",
+      "fields": {
+        "invoice_number": {
+          "type": "text",
+          "required": true,
+          "readonly": true,
+          "validation": ["format: AUTO_GENERATED"]
+        },
+        "customer": {
+          "type": "combobox",
+          "required": true,
+          "validation": ["must_be_existing_customer"]
+        },
+        "invoice_date": {
+          "type": "date",
+          "required": true,
+          "validation": ["required", "past_or_current_date"]
+        },
+        "due_date": {
+          "type": "date",
+          "required": true,
+          "validation": ["required", "future_date"]
+        },
+        "items": {
+          "type": "table_inline",
+          "required": true,
+          "validation": ["min_one_item"],
+          "columns": ["Description", "Quantity", "Unit Price", "Amount"]
+        },
+        "subtotal": {
+          "type": "number",
+          "required": true,
+          "readonly": true,
+          "validation": ["calculated"]
+        },
+        "tax_percentage": {
+          "type": "number",
+          "required": false,
+          "default": 18,
+          "validation": ["numeric"]
+        },
+        "tax_amount": {
+          "type": "number",
+          "required": true,
+          "readonly": true,
+          "validation": ["calculated"]
+        },
+        "total_amount": {
+          "type": "number",
+          "required": true,
+          "readonly": true,
+          "validation": ["calculated"]
+        },
+        "payment_terms": {
+          "type": "textarea",
+          "required": false
+        }
+      },
+      "buttons": {
+        "create": {"selector": "button:has-text('Create'), button:has-text('New')"},
+        "save": {"selector": "button:has-text('Save')"},
+        "finalize": {"selector": "button:has-text('Finalize')"},
+        "send": {"selector": "button:has-text('Send')"}
+      },
+      "data_display": {
+        "format": "table",
+        "pagination": true,
+        "columns": ["Invoice Number", "Customer", "Amount", "Due Date", "Status", "Actions"]
+      },
+      "workflow": {
+        "statuses": ["Draft", "Finalized", "Sent", "Paid", "Overdue"],
+        "initial_status": "Draft"
+      },
+      "rbac_permissions": {
+        "admin": ["C", "R", "U", "D"],
+        "accountant_admin": ["C", "R", "U", "D", "Finalize", "Send"],
+        "accountant_crm": ["C", "R"]
+      },
+      "test_data": {
+        "valid_create": {
+          "customer": "Customer A",
+          "invoice_date": "2026-05-17",
+          "due_date": "2026-06-17",
+          "items": [
+            {"description": "Lab Test A", "quantity": 1, "unit_price": 5000},
+            {"description": "Lab Test B", "quantity": 2, "unit_price": 3000}
+          ],
+          "tax_percentage": 18,
+          "payment_terms": "Net 30"
+        }
+      }
+    },
+    "user_management": {
+      "url": "/dashboard/admin/users",
+      "category": "Administration",
+      "form_type": "single-step",
+      "fields": {
+        "username": {
+          "type": "text",
+          "required": true,
+          "max_length": 50,
+          "pattern": "^[a-zA-Z0-9_]+$",
+          "validation": ["required", "unique", "alphanumeric_underscore"]
+        },
+        "email": {
+          "type": "email",
+          "required": true,
+          "validation": ["required", "valid_email", "unique"]
+        },
+        "full_name": {
+          "type": "text",
+          "required": true,
+          "max_length": 200
+        },
+        "phone": {
+          "type": "phone",
+          "required": false,
+          "validation": ["valid_phone"]
+        },
+        "department": {
+          "type": "dropdown",
+          "required": true,
+          "options": ["Laboratory", "Reception", "Accounting", "Quality", "Management"]
+        },
+        "role": {
+          "type": "dropdown",
+          "required": true,
+          "options": ["Admin", "Reception", "Analyst", "Department Head", "Accountant", "Quality Manager", "Reviewer"],
+          "depends_on": "department"
+        },
+        "status": {
+          "type": "dropdown",
+          "required": true,
+          "options": ["Active", "Inactive", "Suspended"],
+          "default": "Active"
+        },
+        "password": {
+          "type": "password",
+          "required": true,
+          "min_length": 8,
+          "validation": ["required", "min_8_chars", "strong_password"]
+        }
+      },
+      "buttons": {
+        "create": {"selector": "button:has-text('Create'), button:has-text('New')"},
+        "edit": {"selector": "button:has-text('Edit')"},
+        "delete": {"selector": "button:has-text('Delete')"},
+        "reset_password": {"selector": "button:has-text('Reset Password')"}
+      },
+      "data_display": {
+        "format": "table",
+        "pagination": true,
+        "columns": ["Username", "Full Name", "Email", "Department", "Role", "Status", "Actions"]
+      },
+      "rbac_permissions": {
+        "admin": ["C", "R", "U", "D"]
+      },
+      "test_data": {
+        "valid_create": {
+          "username": "testuser_001",
+          "email": "testuser001@ylims.com",
+          "full_name": "Test User One",
+          "phone": "9876543210",
+          "department": "Laboratory",
+          "role": "Analyst",
+          "status": "Active",
+          "password": "SecurePass123@"
+        },
+        "invalid_create": {
+          "invalid_username": {
+            "username": "test-user 001",
+            "email": "test@test.com",
+            "full_name": "Test"
+          },
+          "weak_password": {
+            "username": "testuser",
+            "email": "test@test.com",
+            "full_name": "Test",
+            "password": "weak"
+          },
+          "duplicate_username": {
+            "username": "admin",
+            "email": "newemail@test.com",
+            "full_name": "Admin Test"
+          }
+        }
+      }
+    }
+  },
+  "validation": {
+    "email": {
+      "valid": [
+        "user@example.com",
+        "test.user@example.co.uk",
+        "user+tag@domain.com",
+        "123@example.com"
+      ],
+      "invalid": [
+        "user@",
+        "@example.com",
+        "user@example",
+        "user example@com",
+        "user@@example.com"
+      ]
+    },
+    "phone": {
+      "valid_india": [
+        "9876543210",
+        "+919876543210",
+        "91-9876543210",
+        "(98) 765-43210"
+      ],
+      "invalid": [
+        "123",
+        "abc",
+        "9876",
+        "98765 43210"
+      ]
+    },
+    "date": {
+      "valid": [
+        "2026-05-17",
+        "2025-01-01",
+        "2030-12-31"
+      ],
+      "invalid": [
+        "2026-13-01",
+        "2026-00-15",
+        "not-a-date",
+        "2026/05/17"
+      ]
+    },
+    "number": {
+      "valid": [
+        "100",
+        "1000.50",
+        "0.5",
+        "-100"
+      ],
+      "invalid": [
+        "abc",
+        "100abc",
+        "1,000",
+        "$ 100"
+      ]
+    },
+    "pincode": {
+      "valid_india": [
+        "110001",
+        "400001",
+        "560001",
+        "380001"
+      ],
+      "invalid": [
+        "11000",
+        "1100001",
+        "1100-1",
+        "abc001"
+      ]
+    },
+    "gst_number": {
+      "valid": [
+        "07AADCT5055K1Z0",
+        "18AABCP5055A1Z0"
+      ],
+      "invalid": [
+        "INVALID123",
+        "12345",
+        "07AADCT5055K1"
+      ]
+    },
+    "username": {
+      "valid": [
+        "user123",
+        "test_user",
+        "analyst_001",
+        "john_doe_1"
+      ],
+      "invalid": [
+        "user@123",
+        "test-user",
+        "test user",
+        "user#123"
+      ]
+    },
+    "password": {
+      "strong": [
+        "SecurePass123@",
+        "MyP@ssw0rd2026",
+        "Test@Secure123"
+      ],
+      "weak": [
+        "password",
+        "123456",
+        "test123",
+        "abcd1234"
+      ]
+    }
+  },
+  "security": {
+    "xss_payloads": [
+      "<script>alert('XSS')</script>",
+      "<img src=x onerror='alert(1)'>",
+      "<svg/onload=alert('XSS')>",
+      "javascript:alert('XSS')",
+      "<iframe src='javascript:alert(1)'></iframe>",
+      "<body onload=alert('XSS')>"
+    ],
+    "sql_injection": [
+      "'; DROP TABLE users; --",
+      "1' OR '1'='1",
+      "admin' --",
+      "1' UNION SELECT * FROM users --"
+    ]
+  },
+  "edge_cases": {
+    "text_field": {
+      "min_length": "a",
+      "max_length": "a".repeat(1000),
+      "special_characters": "!@#$%^&*()_+-=[]{}|;:',.<>?",
+      "unicode": "مرحبا 你好 こんにちは",
+      "emoji": "😀😃😄😁😆"
+    },
+    "number_field": {
+      "min_boundary": "-2147483648",
+      "max_boundary": "2147483647",
+      "zero": "0",
+      "negative": "-100",
+      "decimal": "123.456"
+    },
+    "date_field": {
+      "epoch": "1900-01-01",
+      "far_future": "2099-12-31",
+      "leap_year": "2024-02-29",
+      "today": "2026-05-17"
+    }
+  },
+  "workflow": {
+    "sample_registration": {
+      "states": ["Registered", "Accepted", "Rejected", "Testing", "Completed"],
+      "transitions": {
+        "Registered": ["Accepted", "Rejected"],
+        "Accepted": ["Testing"],
+        "Rejected": [],
+        "Testing": ["Completed"],
+        "Completed": []
+      },
+      "approval_chain": ["Quality Personnel", "Quality Manager"]
+    },
+    "test_analysis": {
+      "states": ["Draft", "Submitted", "Reviewed", "Approved", "Published"],
+      "transitions": {
+        "Draft": ["Submitted"],
+        "Submitted": ["Reviewed"],
+        "Reviewed": ["Approved"],
+        "Approved": ["Published"],
+        "Published": []
+      },
+      "approval_chain": ["Analyst", "Department Reviewer", "Department Head"]
+    },
+    "purchase_orders": {
+      "states": ["Draft", "Submitted", "Approved", "Rejected", "Completed"],
+      "transitions": {
+        "Draft": ["Submitted"],
+        "Submitted": ["Approved", "Rejected"],
+        "Approved": ["Completed"],
+        "Rejected": [],
+        "Completed": []
+      },
+      "approval_chain": ["Master Controller"]
+    }
+  },
+  "rbac_matrix": {
+    "admin": {
+      "all_modules": ["C", "R", "U", "D"]
+    },
+    "reception": {
+      "sample_registration": ["C", "R"],
+      "customer_master": ["R"],
+      "dashboard": ["R"]
+    },
+    "analyst": {
+      "sample_registration": ["R"],
+      "test_analysis": ["C", "R", "U"],
+      "quality_control": ["R"]
+    },
+    "department_head": {
+      "department_management": ["C", "R", "U", "D"],
+      "team_management": ["C", "R", "U"],
+      "approval": ["R", "Approve"],
+      "test_analysis": ["R", "Approve"]
+    },
+    "accountant_admin": {
+      "invoicing": ["C", "R", "U", "D", "Finalize"],
+      "payment": ["C", "R", "U"],
+      "financial_reports": ["R"]
+    }
+  },
+  "selectors": {
+    "form": {
+      "submit_button": "button[type='submit'], button:has-text('Submit'), button:has-text('Save'), button:has-text('Create')",
+      "cancel_button": "button:has-text('Cancel'), button:has-text('Close')",
+      "required_indicator": ".required, [aria-required='true']",
+      "validation_error": ".error, .invalid, [role='alert']"
+    },
+    "table": {
+      "first_row": "tbody tr:first-child",
+      "last_row": "tbody tr:last-child",
+      "action_menu": "button:has-text('Actions'), button:last-of-type",
+      "checkbox": "input[type='checkbox']"
+    },
+    "pagination": {
+      "next_button": "button:has-text('Next')",
+      "prev_button": "button:has-text('Previous')",
+      "page_input": "input[type='number'][placeholder*='Page']"
+    },
+    "toolbar": {
+      "search_input": "input[placeholder*='Search']",
+      "filter_button": "button:has-text('Filters')",
+      "export_excel": "button:has-text('Excel')",
+      "export_pdf": "button:has-text('PDF')"
+    }
+  }
+}

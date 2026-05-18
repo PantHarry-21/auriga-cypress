@@ -3,7 +3,11 @@
     "allow": [
       "Bash(node -e ' *)",
       "Bash(node cypress/scripts/generate-executive-report.js)",
-      "Bash(cmd.exe /c \"where node 2>&1 & where npx 2>&1 & echo PATH=%PATH%\")"
+      "Bash(cmd.exe /c \"where node 2>&1 & where npx 2>&1 & echo PATH=%PATH%\")",
+      "Bash(mv fixtures/ylims-complete-test-data.json tests/fixtures/)",
+      "Bash(rmdir fixtures *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'Clean up project: Remove Cypress framework, documentation files, and unused artifacts *)"
     ]
   }
 }

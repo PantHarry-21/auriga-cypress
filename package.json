@@ -1,31 +1,29 @@
 {
-  "name": "auriga-cypress",
+  "name": "auriga-playwright",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cypress open",
-    "test:all": "cypress run --spec 'cypress/e2e/roles/*.cy.js'",
-    "test:p1": "cypress run --spec 'cypress/e2e/scenarios/p1_*.cy.js' --browser chrome",
-    "test:modules": "cypress run --spec 'cypress/e2e/modules/*.cy.js' --browser chrome",
-    "prereport": "rimraf cypress/reports",
-    "report": "cypress run --spec 'cypress/e2e/roles/*.cy.js' --browser chrome || cd .",
-    "postreport": "node cypress/scripts/generate-executive-report.js && node cypress/scripts/send-email-report.js",
-    "send-email": "node cypress/scripts/send-email-report.js"
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:report": "npx playwright show-report",
+    "test:dev": "npx playwright test --project=dev",
+    "test:uat": "npx playwright test --project=uat",
+    "test:parallel": "npx playwright test --project=uat --fully-parallel --workers=10",
+    "test:fast": "npx playwright test --project=uat --fully-parallel --workers=100%",
+    "test:shard": "npx playwright test --project=uat --shard=1/4"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "cypress": "^15.10.0",
-    "cypress-mochawesome-reporter": "^3.8.2",
-    "playwright": "^1.60.0",
+    "@playwright/test": "^1.50.0",
+    "dotenv": "^17.4.2",
     "rimraf": "^5.0.5",
     "xlsx": "^0.18.5"
   },
   "dependencies": {
-    "kogi": "^1.7.1128",
     "nodemailer": "^8.0.6",
     "papaparse": "^5.5.3"
   }

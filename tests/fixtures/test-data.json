@@ -1,0 +1,230 @@
+{
+  "generic_master": {
+    "create": {
+      "valid": {
+        "name": "Test Generic Master",
+        "description": "Test Description",
+        "status": "Active"
+      },
+      "invalid_email": {
+        "name": "Test",
+        "email": "not-an-email",
+        "status": "Active"
+      },
+      "max_length": {
+        "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "description": "Test"
+      },
+      "missing_required": {
+        "description": "No name provided"
+      },
+      "special_chars": {
+        "name": "Test@#$%^&*()",
+        "description": "Special chars test"
+      }
+    },
+    "update": {
+      "valid": {
+        "name": "Updated Generic Master",
+        "description": "Updated Description"
+      },
+      "partial": {
+        "description": "Only description updated"
+      }
+    },
+    "search": ["test", "master", "generic"],
+    "filter": ["active", "inactive"]
+  },
+  "product_master": {
+    "create": {
+      "valid": {
+        "product_name": "Test Product",
+        "product_code": "TP001",
+        "category": "Test Category",
+        "price": "999",
+        "status": "Active"
+      },
+      "invalid_price": {
+        "product_name": "Test",
+        "product_code": "TP002",
+        "price": "invalid"
+      },
+      "missing_code": {
+        "product_name": "Test",
+        "category": "Test"
+      },
+      "duplicate": {
+        "product_code": "TP001"
+      },
+      "negative_price": {
+        "product_name": "Test",
+        "price": "-100"
+      }
+    },
+    "update": {
+      "valid": {
+        "product_name": "Updated Product",
+        "price": "1500"
+      }
+    },
+    "search": ["product", "test", "code"],
+    "filter": ["active", "inactive"]
+  },
+  "stp_master": {
+    "create": {
+      "valid": {
+        "stp_name": "Standard Test Procedure",
+        "version": "1.0",
+        "status": "Active"
+      },
+      "invalid_version": {
+        "stp_name": "Test",
+        "version": "invalid"
+      },
+      "missing_name": {
+        "version": "1.0"
+      }
+    },
+    "update": {
+      "valid": {
+        "stp_name": "Updated STP",
+        "version": "2.0"
+      }
+    },
+    "search": ["stp", "procedure", "test"],
+    "filter": ["active", "inactive", "draft"]
+  },
+  "dashboard": {
+    "search": ["dashboard", "analytics"],
+    "filter": ["today", "week", "month"]
+  },
+  "reception": {
+    "create": {
+      "valid": {
+        "patient_name": "John Doe",
+        "email": "john@example.com",
+        "phone": "9876543210",
+        "appointment_date": "2026-05-20"
+      },
+      "invalid_email": {
+        "patient_name": "Jane",
+        "email": "invalid-email"
+      },
+      "invalid_phone": {
+        "patient_name": "Test",
+        "phone": "abc"
+      },
+      "missing_name": {
+        "email": "test@example.com"
+      }
+    },
+    "update": {
+      "valid": {
+        "patient_name": "Jane Doe",
+        "phone": "9876543211"
+      }
+    },
+    "search": ["john", "doe", "test"],
+    "filter": ["pending", "completed", "cancelled"]
+  },
+  "test_request": {
+    "create": {
+      "valid": {
+        "test_name": "Blood Test",
+        "patient_id": "PT001",
+        "test_date": "2026-05-20",
+        "status": "Pending"
+      },
+      "invalid_date": {
+        "test_name": "Test",
+        "test_date": "invalid"
+      },
+      "missing_patient": {
+        "test_name": "Blood Test"
+      }
+    },
+    "update": {
+      "valid": {
+        "test_name": "Blood Test Updated",
+        "status": "Completed"
+      }
+    },
+    "search": ["blood", "test", "patient"],
+    "filter": ["pending", "completed", "cancelled"]
+  },
+  "user_management": {
+    "create": {
+      "valid": {
+        "username": "testuser",
+        "email": "test@example.com",
+        "role": "User",
+        "status": "Active"
+      },
+      "duplicate_username": {
+        "username": "testuser",
+        "email": "other@example.com"
+      },
+      "invalid_email": {
+        "username": "newuser",
+        "email": "invalid"
+      },
+      "missing_email": {
+        "username": "newuser",
+        "role": "User"
+      }
+    },
+    "update": {
+      "valid": {
+        "email": "newemail@example.com",
+        "role": "Admin"
+      }
+    },
+    "search": ["test", "user", "admin"],
+    "filter": ["active", "inactive", "suspended"]
+  },
+  "role_management": {
+    "create": {
+      "valid": {
+        "role_name": "Test Role",
+        "description": "Test role description"
+      },
+      "missing_name": {
+        "description": "No role name"
+      }
+    },
+    "update": {
+      "valid": {
+        "role_name": "Updated Role",
+        "description": "Updated description"
+      }
+    },
+    "search": ["role", "test", "admin"],
+    "filter": ["active", "inactive"]
+  },
+  "permission_matrix": {
+    "create": {
+      "valid": {
+        "role_id": "R001",
+        "module_id": "M001",
+        "create": true,
+        "read": true,
+        "update": true,
+        "delete": false,
+        "approve": false
+      }
+    }
+  },
+  "validation_rules": {
+    "email_format": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+    "phone_format": "^[0-9]{10}$",
+    "max_length": 255,
+    "min_length": 1
+  },
+  "common": {
+    "status_options": ["Active", "Inactive", "Draft", "Archived"],
+    "date_format": "YYYY-MM-DD",
+    "special_chars": "@#$%^&*()",
+    "sql_injection": "'; DROP TABLE users; --",
+    "xss_payload": "<script>alert('xss')</script>"
+  }
+}

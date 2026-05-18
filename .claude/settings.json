@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"d:\\\\Harry\\\\OneDrive\\\\Desktop\\\\Auriga Cypress\" -Force)",
+      "Bash(Get-ChildItem -Path \"d:\\\\Harry\\\\OneDrive\\\\Desktop\\\\Auriga Cypress\\\\tests\\\\fixtures\" -Filter \"*.xlsx\")",
+      "Bash(Select-Object -ExpandProperty Name)",
+      "Bash(npx playwright *)",
+      "Bash(tee test-execution.log)",
+      "Bash(Get-ChildItem -Path \"d:\\\\Harry\\\\OneDrive\\\\Desktop\\\\Auriga Cypress\" -Directory)",
+      "Bash(Select-Object Name)"
+    ]
+  }
+}

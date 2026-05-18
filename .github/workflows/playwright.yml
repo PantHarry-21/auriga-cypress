@@ -1,0 +1,211 @@
+name: Playwright Automation
+
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: 'Project to run (dev, uat, or leave blank for both)'
+        required: false
+        default: 'uat'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  actions: read
+
+jobs:
+  playwright-run:
+    name: Playwright - ${{ matrix.shard }}/4
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Write UAT env file
+        run: |
+          cat > cypress.env.uat.json <<'EOF'
+          ${{ secrets.CYPRESS_ENV_UAT }}
+          EOF
+
+      - name: Write DEV env file
+        run: |
+          cat > cypress.env.dev.json <<'EOF'
+          ${{ secrets.CYPRESS_ENV_DEV }}
+          EOF
+
+      - name: Capture start time
+        id: start_time
+        run: echo "value=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
+
+      - name: Run Playwright tests (shard ${{ matrix.shard }}/4)
+        id: playwright
+        run: |
+          PROJECT="${{ github.event.inputs.project || 'uat' }}"
+          if [ "$PROJECT" = "both" ] || [ -z "$PROJECT" ]; then
+            npx playwright test --shard=${{ matrix.shard }}/4
+          else
+            npx playwright test --project="$PROJECT" --shard=${{ matrix.shard }}/4
+          fi
+        env:
+          CI: true
+
+      - name: Capture end time
+        if: always()
+        id: end_time
+        run: echo "value=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
+
+      - name: Upload Playwright report blob
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-blob-${{ matrix.shard }}
+          path: blob-report/
+          if-no-files-found: ignore
+
+      - name: Upload screenshots and videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results-${{ matrix.shard }}
+          path: test-results/
+          if-no-files-found: ignore
+
+  merge-report:
+    name: Merge report and publish
+    runs-on: ubuntu-latest
+    needs: playwright-run
+    if: always()
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Download all blob reports
+        uses: actions/download-artifact@v4
+        with:
+          path: all-blob-reports
+          pattern: playwright-blob-*
+          merge-multiple: true
+
+      - name: Merge Playwright HTML report
+        run: npx playwright merge-reports --reporter html all-blob-reports
+
+      - name: Extract test summary
+        id: aggregate
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os, glob
+          from pathlib import Path
+
+          # Try to read from Playwright's JSON summary if available
+          passed = 0
+          failed = 0
+          skipped = 0
+          total = 0
+
+          # Playwright blob reports contain JSON metadata
+          for f in glob.glob("all-blob-reports/**/*.json", recursive=True):
+              try:
+                  data = json.loads(Path(f).read_text())
+                  if "stats" in data:
+                      s = data["stats"]
+                      passed += s.get("expected", 0)
+                      failed += s.get("unexpected", 0)
+                      skipped += s.get("skipped", 0)
+                      total += s.get("total", 0)
+              except Exception:
+                  pass
+
+          out = Path(os.environ["GITHUB_OUTPUT"])
+          with out.open("a") as f:
+              f.write(f"total={total}\n")
+              f.write(f"passed={passed}\n")
+              f.write(f"failed={failed}\n")
+              f.write(f"skipped={skipped}\n")
+          PY
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: playwright-report
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
+
+      - name: Zip report for email attachment
+        shell: bash
+        run: |
+          cd playwright-report
+          zip -r ../playwright-report.zip .
+
+      - name: Send email
+        uses: dawidd6/action-send-mail@v6
+        with:
+          server_address: ${{ secrets.MAIL_SERVER }}
+          server_port: ${{ secrets.MAIL_PORT }}
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "${{ steps.aggregate.outputs.failed == '0' && '✅ Playwright Passed' || '❌ Playwright Failed' }} - ${{ github.repository }}"
+          to: ${{ secrets.MAIL_TO }}
+          from: ${{ secrets.MAIL_FROM }}
+          content_type: text/html
+          attachments: playwright-report.zip
+          html_body: |
+            <h2>${{ steps.aggregate.outputs.failed == '0' && '✅ Playwright Test Run Passed' || '❌ Playwright Test Run Failed' }}</h2>
+
+            <p>📦 Repository: <strong>${{ github.repository }}</strong></p>
+            <p>🌿 Branch: <strong>${{ github.ref_name }}</strong></p>
+
+            <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+              <tr><th align="left">Metric</th><th align="left">Value</th></tr>
+              <tr><td>🧪 Total</td><td>${{ steps.aggregate.outputs.total }}</td></tr>
+              <tr><td>✅ Passed</td><td>${{ steps.aggregate.outputs.passed }}</td></tr>
+              <tr><td>❌ Failed</td><td>${{ steps.aggregate.outputs.failed }}</td></tr>
+              <tr><td>⏭️ Skipped</td><td>${{ steps.aggregate.outputs.skipped }}</td></tr>
+              <tr><td>🌐 Hosted Report</td><td><a href="${{ steps.deploy.outputs.page_url }}">Open HTML Report</a></td></tr>
+              <tr><td>📎 Workflow Run</td><td><a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Open Workflow</a></td></tr>
+            </table>
+
+            <p>📬 Attached: <strong>playwright-report.zip</strong></p>
+            <p>📦 Screenshots and videos are available in workflow artifacts.</p>
