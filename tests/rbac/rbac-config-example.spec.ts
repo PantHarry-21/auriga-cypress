@@ -13,11 +13,8 @@ import {
   MODULES,
   PERMISSIONS,
   ROLE_MODULE_PERMISSIONS,
-  ROLE_DEFINITIONS,
-  MODULE_DEFINITIONS,
-  PERMISSION_DEFINITIONS,
-} from '../extracted-data/rbac-config';
-import { RBACService } from '../extracted-data/rbac-service';
+  RBAC_SCENARIOS,
+} from '../../extracted-data/complete-rbac-config';
 
 const rbacService = new RBACService();
 
