@@ -7,7 +7,9 @@
       "Bash(mv fixtures/ylims-complete-test-data.json tests/fixtures/)",
       "Bash(rmdir fixtures *)",
       "Bash(git add *)",
-      "Bash(git commit -m 'Clean up project: Remove Cypress framework, documentation files, and unused artifacts *)"
+      "Bash(git commit -m 'Clean up project: Remove Cypress framework, documentation files, and unused artifacts *)",
+      "Bash(git commit -m 'Add comprehensive framework fixes summary and next steps *)",
+      "Bash(git commit -m 'Add RBAC extraction guide and execution instructions *)"
     ]
   }
 }
