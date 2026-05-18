@@ -1,0 +1,1013 @@
+{
+  "metadata": {
+    "extractionDate": "2026-05-18T14:30:00Z",
+    "extractedBy": "admin",
+    "systemUrl": "https://uat.ylims.com",
+    "systemName": "YLIMS",
+    "labName": "Arbro - Delhi"
+  },
+  "summary": {
+    "totalRoles": 19,
+    "totalModules": 14,
+    "totalPermissionTypes": 5,
+    "totalMappings": 987
+  },
+  "roles": [
+    {
+      "roleId": "admin",
+      "roleName": "Administrator",
+      "description": "Full system access with all permissions",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "dashboard",
+          "moduleName": "Dashboard",
+          "moduleCode": "DASH",
+          "description": "System dashboard and analytics",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='dashboard'][data-permission='view']"
+            },
+            {
+              "permissionId": "create",
+              "permissionName": "Create",
+              "permissionCode": "CREATE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='dashboard'][data-permission='create']"
+            },
+            {
+              "permissionId": "edit",
+              "permissionName": "Edit",
+              "permissionCode": "EDIT",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='dashboard'][data-permission='edit']"
+            },
+            {
+              "permissionId": "delete",
+              "permissionName": "Delete",
+              "permissionCode": "DELETE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='dashboard'][data-permission='delete']"
+            },
+            {
+              "permissionId": "export",
+              "permissionName": "Export",
+              "permissionCode": "EXPORT",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='dashboard'][data-permission='export']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='dashboard']",
+            "permissionWrapper": "div.permissions-container[data-module='dashboard']"
+          }
+        },
+        {
+          "moduleId": "generic-master",
+          "moduleName": "Generic Master",
+          "moduleCode": "GENM",
+          "description": "Generic master data management",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='view']"
+            },
+            {
+              "permissionId": "create",
+              "permissionName": "Create",
+              "permissionCode": "CREATE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='create']"
+            },
+            {
+              "permissionId": "edit",
+              "permissionName": "Edit",
+              "permissionCode": "EDIT",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='edit']"
+            },
+            {
+              "permissionId": "delete",
+              "permissionName": "Delete",
+              "permissionCode": "DELETE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='delete']"
+            },
+            {
+              "permissionId": "approve",
+              "permissionName": "Approve",
+              "permissionCode": "APPROVE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='approve']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='generic-master']",
+            "permissionWrapper": "div.permissions-container[data-module='generic-master']"
+          }
+        },
+        {
+          "moduleId": "stp-master",
+          "moduleName": "STP Master",
+          "moduleCode": "STP",
+          "description": "Standard test procedure master",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='stp-master'][data-permission='view']"
+            },
+            {
+              "permissionId": "create",
+              "permissionName": "Create",
+              "permissionCode": "CREATE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='stp-master'][data-permission='create']"
+            },
+            {
+              "permissionId": "edit",
+              "permissionName": "Edit",
+              "permissionCode": "EDIT",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='stp-master'][data-permission='edit']"
+            },
+            {
+              "permissionId": "delete",
+              "permissionName": "Delete",
+              "permissionCode": "DELETE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='stp-master'][data-permission='delete']"
+            },
+            {
+              "permissionId": "approve",
+              "permissionName": "Approve",
+              "permissionCode": "APPROVE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='stp-master'][data-permission='approve']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='stp-master']",
+            "permissionWrapper": "div.permissions-container[data-module='stp-master']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='admin'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "reception",
+      "roleName": "Reception",
+      "description": "Reception desk operations",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "dashboard",
+          "moduleName": "Dashboard",
+          "moduleCode": "DASH",
+          "description": "System dashboard and analytics",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='dashboard'][data-permission='view']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='dashboard']",
+            "permissionWrapper": "div.permissions-container[data-module='dashboard']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='reception'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "booking_personel",
+      "roleName": "Booking Personnel",
+      "description": "Booking and test request management",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "generic-master",
+          "moduleName": "Generic Master",
+          "moduleCode": "GENM",
+          "description": "Generic master data management",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='view']"
+            },
+            {
+              "permissionId": "create",
+              "permissionName": "Create",
+              "permissionCode": "CREATE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='create']"
+            },
+            {
+              "permissionId": "edit",
+              "permissionName": "Edit",
+              "permissionCode": "EDIT",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='edit']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='generic-master']",
+            "permissionWrapper": "div.permissions-container[data-module='generic-master']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='booking_personel'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "master_personel",
+      "roleName": "Master Personnel",
+      "description": "Master data management operations",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "generic-master",
+          "moduleName": "Generic Master",
+          "moduleCode": "GENM",
+          "description": "Generic master data management",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='view']"
+            },
+            {
+              "permissionId": "create",
+              "permissionName": "Create",
+              "permissionCode": "CREATE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='create']"
+            },
+            {
+              "permissionId": "edit",
+              "permissionName": "Edit",
+              "permissionCode": "EDIT",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='edit']"
+            },
+            {
+              "permissionId": "delete",
+              "permissionName": "Delete",
+              "permissionCode": "DELETE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='delete']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='generic-master']",
+            "permissionWrapper": "div.permissions-container[data-module='generic-master']"
+          }
+        },
+        {
+          "moduleId": "stp-master",
+          "moduleName": "STP Master",
+          "moduleCode": "STP",
+          "description": "Standard test procedure master",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='stp-master'][data-permission='view']"
+            },
+            {
+              "permissionId": "create",
+              "permissionName": "Create",
+              "permissionCode": "CREATE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='stp-master'][data-permission='create']"
+            },
+            {
+              "permissionId": "edit",
+              "permissionName": "Edit",
+              "permissionCode": "EDIT",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='stp-master'][data-permission='edit']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='stp-master']",
+            "permissionWrapper": "div.permissions-container[data-module='stp-master']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='master_personel'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "master_controler",
+      "roleName": "Master Controller",
+      "description": "Master data approval and control",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "generic-master",
+          "moduleName": "Generic Master",
+          "moduleCode": "GENM",
+          "description": "Generic master data management",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='view']"
+            },
+            {
+              "permissionId": "edit",
+              "permissionName": "Edit",
+              "permissionCode": "EDIT",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='edit']"
+            },
+            {
+              "permissionId": "approve",
+              "permissionName": "Approve",
+              "permissionCode": "APPROVE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='approve']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='generic-master']",
+            "permissionWrapper": "div.permissions-container[data-module='generic-master']"
+          }
+        },
+        {
+          "moduleId": "stp-master",
+          "moduleName": "STP Master",
+          "moduleCode": "STP",
+          "description": "Standard test procedure master",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='stp-master'][data-permission='view']"
+            },
+            {
+              "permissionId": "approve",
+              "permissionName": "Approve",
+              "permissionCode": "APPROVE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='stp-master'][data-permission='approve']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='stp-master']",
+            "permissionWrapper": "div.permissions-container[data-module='stp-master']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='master_controler'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "analyst",
+      "roleName": "Analyst",
+      "description": "Data analysis and reporting",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "dashboard",
+          "moduleName": "Dashboard",
+          "moduleCode": "DASH",
+          "description": "System dashboard and analytics",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='dashboard'][data-permission='view']"
+            },
+            {
+              "permissionId": "export",
+              "permissionName": "Export",
+              "permissionCode": "EXPORT",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='dashboard'][data-permission='export']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='dashboard']",
+            "permissionWrapper": "div.permissions-container[data-module='dashboard']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='analyst'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "department_reviewer",
+      "roleName": "Department Reviewer",
+      "description": "Department level review and approval",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "generic-master",
+          "moduleName": "Generic Master",
+          "moduleCode": "GENM",
+          "description": "Generic master data management",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='view']"
+            },
+            {
+              "permissionId": "approve",
+              "permissionName": "Approve",
+              "permissionCode": "APPROVE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='approve']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='generic-master']",
+            "permissionWrapper": "div.permissions-container[data-module='generic-master']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='department_reviewer'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "department_head",
+      "roleName": "Department Head",
+      "description": "Department head management and oversight",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "generic-master",
+          "moduleName": "Generic Master",
+          "moduleCode": "GENM",
+          "description": "Generic master data management",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='view']"
+            },
+            {
+              "permissionId": "approve",
+              "permissionName": "Approve",
+              "permissionCode": "APPROVE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='approve']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='generic-master']",
+            "permissionWrapper": "div.permissions-container[data-module='generic-master']"
+          }
+        },
+        {
+          "moduleId": "stp-master",
+          "moduleName": "STP Master",
+          "moduleCode": "STP",
+          "description": "Standard test procedure master",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='stp-master'][data-permission='view']"
+            },
+            {
+              "permissionId": "approve",
+              "permissionName": "Approve",
+              "permissionCode": "APPROVE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='stp-master'][data-permission='approve']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='stp-master']",
+            "permissionWrapper": "div.permissions-container[data-module='stp-master']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='department_head'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "compilation",
+      "roleName": "Compilation",
+      "description": "Report compilation and generation",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "dashboard",
+          "moduleName": "Dashboard",
+          "moduleCode": "DASH",
+          "description": "System dashboard and analytics",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='dashboard'][data-permission='view']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='dashboard']",
+            "permissionWrapper": "div.permissions-container[data-module='dashboard']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='compilation'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "reviewer",
+      "roleName": "Reviewer",
+      "description": "Data and process review",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "generic-master",
+          "moduleName": "Generic Master",
+          "moduleCode": "GENM",
+          "description": "Generic master data management",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='view']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='generic-master']",
+            "permissionWrapper": "div.permissions-container[data-module='generic-master']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='reviewer'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "person_incharge",
+      "roleName": "Person In Charge",
+      "description": "Person in charge operations",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "generic-master",
+          "moduleName": "Generic Master",
+          "moduleCode": "GENM",
+          "description": "Generic master data management",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='view']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='generic-master']",
+            "permissionWrapper": "div.permissions-container[data-module='generic-master']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='person_incharge'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "customer_coordinator",
+      "roleName": "Customer Coordinator",
+      "description": "Customer coordination and support",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "dashboard",
+          "moduleName": "Dashboard",
+          "moduleCode": "DASH",
+          "description": "System dashboard and analytics",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='dashboard'][data-permission='view']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='dashboard']",
+            "permissionWrapper": "div.permissions-container[data-module='dashboard']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='customer_coordinator'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "sales_personel",
+      "roleName": "Sales Personnel (AM)",
+      "description": "Sales and account management",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "dashboard",
+          "moduleName": "Dashboard",
+          "moduleCode": "DASH",
+          "description": "System dashboard and analytics",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='dashboard'][data-permission='view']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='dashboard']",
+            "permissionWrapper": "div.permissions-container[data-module='dashboard']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='sales_personel'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "accountant_admin",
+      "roleName": "Accountant (Admin)",
+      "description": "Accounting administration",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "dashboard",
+          "moduleName": "Dashboard",
+          "moduleCode": "DASH",
+          "description": "System dashboard and analytics",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='dashboard'][data-permission='view']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='dashboard']",
+            "permissionWrapper": "div.permissions-container[data-module='dashboard']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='accountant_admin'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "accountant_crm",
+      "roleName": "Accountant (CRM)",
+      "description": "CRM accounting operations",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "dashboard",
+          "moduleName": "Dashboard",
+          "moduleCode": "DASH",
+          "description": "System dashboard and analytics",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='dashboard'][data-permission='view']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='dashboard']",
+            "permissionWrapper": "div.permissions-container[data-module='dashboard']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='accountant_crm'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "quality_personel",
+      "roleName": "Quality Personnel",
+      "description": "Quality assurance operations",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "generic-master",
+          "moduleName": "Generic Master",
+          "moduleCode": "GENM",
+          "description": "Generic master data management",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='view']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='generic-master']",
+            "permissionWrapper": "div.permissions-container[data-module='generic-master']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='quality_personel'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "quality_manger",
+      "roleName": "Quality Manager",
+      "description": "Quality management and oversight",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "generic-master",
+          "moduleName": "Generic Master",
+          "moduleCode": "GENM",
+          "description": "Generic master data management",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='view']"
+            },
+            {
+              "permissionId": "approve",
+              "permissionName": "Approve",
+              "permissionCode": "APPROVE",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='approve']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='generic-master']",
+            "permissionWrapper": "div.permissions-container[data-module='generic-master']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='quality_manger'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "dept_assistant",
+      "roleName": "Department Assistant",
+      "description": "Department administrative support",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "generic-master",
+          "moduleName": "Generic Master",
+          "moduleCode": "GENM",
+          "description": "Generic master data management",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='view']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='generic-master']",
+            "permissionWrapper": "div.permissions-container[data-module='generic-master']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='dept_assistant'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "jr_analyst",
+      "roleName": "Jr. Analyst",
+      "description": "Junior analyst operations",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "generic-master",
+          "moduleName": "Generic Master",
+          "moduleCode": "GENM",
+          "description": "Generic master data management",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='generic-master'][data-permission='view']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='generic-master']",
+            "permissionWrapper": "div.permissions-container[data-module='generic-master']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='jr_analyst'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    },
+    {
+      "roleId": "dept_trainee",
+      "roleName": "Department Trainee",
+      "description": "Department trainee program",
+      "status": "active",
+      "modules": [
+        {
+          "moduleId": "dashboard",
+          "moduleName": "Dashboard",
+          "moduleCode": "DASH",
+          "description": "System dashboard and analytics",
+          "permissions": [
+            {
+              "permissionId": "view",
+              "permissionName": "View",
+              "permissionCode": "VIEW",
+              "isGranted": true,
+              "isDisabled": false,
+              "selector": "input[data-module='dashboard'][data-permission='view']"
+            }
+          ],
+          "selectors": {
+            "moduleContainer": "div.module-item[data-module-id='dashboard']",
+            "permissionWrapper": "div.permissions-container[data-module='dashboard']"
+          }
+        }
+      ],
+      "selectors": {
+        "editButton": "button[data-role-id='dept_trainee'][data-action='edit']",
+        "saveButton": "button.btn-save, button:has-text('Save')",
+        "cancelButton": "button.btn-cancel, button:has-text('Cancel')",
+        "backButton": "button.btn-back, a.btn-back"
+      }
+    }
+  ]
+}
