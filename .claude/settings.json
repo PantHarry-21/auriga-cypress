@@ -7,7 +7,14 @@
       "Bash(npx playwright *)",
       "Bash(tee test-execution.log)",
       "Bash(Get-ChildItem -Path \"d:\\\\Harry\\\\OneDrive\\\\Desktop\\\\Auriga Cypress\" -Directory)",
-      "Bash(Select-Object Name)"
+      "Bash(Select-Object Name)",
+      "Bash(Get-ChildItem \"d:\\\\Harry\\\\OneDrive\\\\Desktop\\\\Auriga Cypress\" -Filter \".env*\" -Force)",
+      "Bash(npx tsc *)",
+      "Bash(node -e ' *)",
+      "Bash(node discover-modules.js)",
+      "Bash(git -C \"D:\\\\Harry\\\\OneDrive\\\\Desktop\\\\Auriga Cypress\\\\.claude\\\\worktrees\\\\agent-a8a24a336ae4ec918\" show HEAD --name-only)",
+      "Bash(findstr /R \"^  x \")",
+      "Bash(findstr /V \"retry\")"
     ]
   }
 }

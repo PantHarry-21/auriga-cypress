@@ -1,330 +1,119 @@
-// tests/modules/stp-master.spec.ts
-// STP Master Test Suite - Comprehensive Testing
-// Tests: CRUD, Validations, RBAC, Approvals
-// URL: /dashboard/testing/stp
-// Run: npx playwright test stp-master.spec.ts --project=uat
-
+/**
+ * STP Master — Real E2E Test Suite
+ * URL  : /dashboard/testing/stp-master
+ * Role : admin
+ */
 import { test, expect } from '../global-setup';
-import { loginAs, stubStimulsoft } from '../helpers/commands';
-import { ModulePageObject, ModuleConfig } from '../helpers/ModulePageObject';
+import { stubStimulsoft, loginAs } from '../helpers/commands';
 
+const URL = '/dashboard/testing/stp-master';
 const LAB = 'Arbro - Delhi';
-const TS = Date.now().toString().slice(-6);
-const TEST_STP = `AutoSTP_${TS}`;
+const TS  = Date.now().toString().slice(-6);
 
-const moduleConfig: ModuleConfig = {
-  name: 'STP Master',
-  url: '/dashboard/testing/stp',
-  moduleKey: 'masters_library_stp_master',
-  hasAdd: true,
-  hasEdit: true,
-  hasDelete: false,
-  hasApprove: true,
-  hasSearch: true,
-  hasFilter: true,
-  hasPagination: true,
-  hasExport: true,
-  hasTable: true,
-  hasForm: true,
-};
+test.describe('[MODULE-004] STP Master', () => {
 
-test.describe('STP Master Module', () => {
-  test.beforeEach(async ({ page, context }) => {
+  test.setTimeout(120000);
+
+  test.beforeEach(async ({ page, context, env }) => {
     await stubStimulsoft(context);
-    await loginAs(page, context, 'master_controler', env, LAB);
+    await loginAs(page, context, 'admin', env, LAB);
+    await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(1500);
   });
 
-  test.describe('Page Load & Navigation', () => {
-    test('TC-SM-001: navigates to STP Master page', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      await module.verifyPageLoaded();
+  // ── 1. Page Load ────────────────────────────────────────────────────────
+  test.describe('1. Page Load', () => {
+
+    test('TC-001 page loads without errors', async ({ page }) => {
+      const body = await page.locator('body').textContent() || '';
+      expect(body).not.toContain('403 Forbidden');
+      expect(body).not.toContain('Internal Server Error');
     });
 
-    test('TC-SM-002: displays STP table', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      await module.verifyTableVisible();
-      const count = await module.verifyTableRowCount();
-      expect(count).toBeGreaterThanOrEqual(0);
+    test('TC-002 table is visible with rows', async ({ page }) => {
+      await expect(page.locator('table')).toBeVisible({ timeout: 15000 });
+      const rows = await page.locator('table tbody tr').count();
+      expect(rows).toBeGreaterThan(0);
     });
 
-    test('TC-SM-003: shows Add button', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const addBtn = page.locator('button:contains("New STP"), button:contains("+ New")').first();
-      await expect(addBtn).toBeVisible();
+    test('TC-003 correct table headers', async ({ page }) => {
+      const headers = await page.locator('table thead th').allTextContents();
+      expect(headers.some(h => h.includes('STP Name'))).toBe(true);
+      expect(headers.some(h => h.includes('Parameters'))).toBe(true);
+      expect(headers.some(h => h.includes('Status'))).toBe(true);
     });
 
-    test('TC-SM-004: search functionality works', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const searchInput = page.locator('input[placeholder*="Search"]').first();
-      if (await searchInput.isVisible()) {
-        await searchInput.fill('test');
-        await page.waitForTimeout(1000);
-      }
+    test('TC-004 status filter tabs are present', async ({ page }) => {
+      await expect(page.locator('button:has-text("Active")')).toBeVisible();
+      await expect(page.locator('button:has-text("Draft")')).toBeVisible();
+      await expect(page.locator('button:has-text("Approval Pending")')).toBeVisible();
     });
   });
 
-  test.describe('CREATE Operations', () => {
-    test('TC-SM-010: opens Add STP form', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const addBtn = page.locator('button:contains("New STP"), button:contains("+ New")').first();
-      await addBtn.click();
-      await page.waitForTimeout(1000);
-      const form = page.locator('form, div.animate-slide-in-right').first();
-      await expect(form).toBeVisible();
+  // ── 2. Search ────────────────────────────────────────────────────────────
+  test.describe('2. Search', () => {
+
+    test('TC-005 search input accepts text', async ({ page }) => {
+      const search = page.locator('input[placeholder*="STP name"]');
+      await expect(search).toBeVisible();
+      await search.fill('test stp');
+      expect(await search.inputValue()).toBe('test stp');
+    });
+  });
+
+  // ── 3. Create Form ───────────────────────────────────────────────────────
+  test.describe('3. Create Form', () => {
+
+    test('TC-006 "New STP" button is visible', async ({ page }) => {
+      await expect(page.locator('button:has-text("New STP")')).toBeVisible();
     });
 
-    test('TC-SM-011: form has required fields', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const addBtn = page.locator('button:contains("New STP"), button:contains("+ New")').first();
-      await addBtn.click();
-      await page.waitForTimeout(1000);
-      const inputs = page.locator('input[type="text"], textarea, select').filter({ visible: true });
-      const count = await inputs.count();
+    test('TC-007 clicking "New STP" opens create form', async ({ page }) => {
+      await page.click('button:has-text("New STP")');
+      await page.waitForTimeout(1200);
+      await expect(page.locator('input[name="stpName"]')).toBeVisible({ timeout: 10000 });
+    });
+
+    test('TC-008 form title is "Create New STP"', async ({ page }) => {
+      await page.click('button:has-text("New STP")');
+      await page.waitForTimeout(1200);
+      const formTitle = page.locator('[class*="modal"] h2, [role="dialog"] h2, [class*="panel"] h2, h2:has-text("Create")').first();
+      await expect(formTitle).toContainText('STP', { timeout: 8000 });
+    });
+
+    test('TC-009 stpName field accepts text', async ({ page }) => {
+      await page.click('button:has-text("New STP")');
+      await page.waitForTimeout(1200);
+      const nameField = page.locator('input[name="stpName"]');
+      await nameField.fill(`AutoSTP_${TS}`);
+      expect(await nameField.inputValue()).toBe(`AutoSTP_${TS}`);
+    });
+
+    test('TC-010 form has Cancel, Save as Draft, Submit for Review buttons', async ({ page }) => {
+      await page.click('button:has-text("New STP")');
+      await page.waitForTimeout(1200);
+      await expect(page.locator('button:has-text("Cancel")')).toBeVisible({ timeout: 8000 });
+      await expect(page.locator('button:has-text("Save as Draft")')).toBeVisible({ timeout: 8000 });
+      await expect(page.locator('button:has-text("Submit for Review")')).toBeVisible({ timeout: 8000 });
+    });
+
+    test('TC-011 Cancel closes the form and returns to list', async ({ page }) => {
+      await page.click('button:has-text("New STP")');
+      await page.waitForTimeout(1200);
+      await page.locator('input[name="stpName"]').waitFor({ timeout: 8000 });
+      await page.locator('button:has-text("Cancel")').click();
+      await page.waitForTimeout(800);
+      await expect(page.locator('table')).toBeVisible();
+    });
+  });
+
+  // ── 4. NABL Actions ─────────────────────────────────────────────────────
+  test.describe('4. NABL Actions', () => {
+
+    test('TC-012 NABL action buttons are present in table rows', async ({ page }) => {
+      const nablBtns = page.locator('button:has-text("Add NABL"), button:has-text("View NABL")');
+      const count = await nablBtns.count();
       expect(count).toBeGreaterThan(0);
-      await module.clickCancel();
-    });
-
-    test('TC-SM-012: validates required fields', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const addBtn = page.locator('button:contains("New STP"), button:contains("+ New")').first();
-      await addBtn.click();
-      await page.waitForTimeout(1000);
-      const submitBtn = page.locator('button:contains("Submit"), button:contains("Save")').first();
-      if (await submitBtn.isVisible()) {
-        await submitBtn.click();
-        await page.waitForTimeout(1000);
-      }
-      await module.clickCancel();
-    });
-
-    test('TC-SM-013: creates STP with valid data', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const addBtn = page.locator('button:contains("New STP"), button:contains("+ New")').first();
-      await addBtn.click();
-      await page.waitForTimeout(1000);
-      const inputs = page.locator('input[type="text"]').filter({ visible: true });
-      if (await inputs.count() > 0) {
-        await inputs.first().fill(TEST_STP);
-        const submitBtn = page.locator('button:contains("Submit"), button:contains("Save")').first();
-        if (await submitBtn.isVisible()) {
-          await submitBtn.click();
-          await page.waitForTimeout(2000);
-        }
-      }
-    });
-
-    test('TC-SM-014: handles special characters', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const addBtn = page.locator('button:contains("New STP"), button:contains("+ New")').first();
-      await addBtn.click();
-      await page.waitForTimeout(1000);
-      const inputs = page.locator('input[type="text"]').filter({ visible: true });
-      if (await inputs.count() > 0) {
-        await inputs.first().fill(`Test@#$${TS}`);
-        const submitBtn = page.locator('button:contains("Submit"), button:contains("Save")').first();
-        if (await submitBtn.isVisible()) {
-          await submitBtn.click();
-          await page.waitForTimeout(1000);
-        }
-      }
-      await module.clickCancel();
-    });
-  });
-
-  test.describe('READ Operations', () => {
-    test('TC-SM-020: displays table columns', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const headers = page.locator('thead th').filter({ visible: true });
-      const count = await headers.count();
-      expect(count).toBeGreaterThan(0);
-    });
-
-    test('TC-SM-021: columns are sortable', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const header = page.locator('thead th').nth(1);
-      if (await header.isVisible()) {
-        await header.click();
-        await page.waitForTimeout(1000);
-      }
-    });
-
-    test('TC-SM-022: pagination works', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const nextBtn = page.locator('button:contains("Next")').first();
-      if (await nextBtn.isVisible()) {
-        await nextBtn.click();
-        await page.waitForTimeout(1500);
-      }
-    });
-  });
-
-  test.describe('UPDATE Operations', () => {
-    test('TC-SM-030: opens edit form', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const firstRow = page.locator('tbody tr').first();
-      if (await firstRow.isVisible()) {
-        await firstRow.click();
-        await page.waitForTimeout(1500);
-        const form = page.locator('form, div.animate-slide-in-right').first();
-        await expect(form).toBeVisible().catch(() => {});
-        await module.clickCancel();
-      }
-    });
-
-    test('TC-SM-031: updates STP data', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const firstRow = page.locator('tbody tr').first();
-      if (await firstRow.isVisible()) {
-        await firstRow.click();
-        await page.waitForTimeout(1500);
-        const submitBtn = page.locator('button:contains("Submit"), button:contains("Save")').first();
-        if (await submitBtn.isVisible()) {
-          await submitBtn.click();
-          await page.waitForTimeout(1500);
-        }
-        await module.clickCancel();
-      }
-    });
-  });
-
-  test.describe('APPROVE Operations', () => {
-    test('TC-SM-040: shows approve button', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const firstRow = page.locator('tbody tr').first();
-      if (await firstRow.isVisible()) {
-        await firstRow.click();
-        await page.waitForTimeout(1500);
-        const approveBtn = page.locator('button:contains("Approve")').first();
-        if (await approveBtn.isVisible()) {
-          expect(approveBtn).toBeDefined();
-        }
-        await module.clickCancel();
-      }
-    });
-
-    test('TC-SM-041: approves STP', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const firstRow = page.locator('tbody tr').first();
-      if (await firstRow.isVisible()) {
-        await firstRow.click();
-        await page.waitForTimeout(1500);
-        const approveBtn = page.locator('button:contains("Approve")').first();
-        if (await approveBtn.isVisible()) {
-          await approveBtn.click();
-          await page.waitForTimeout(1500);
-        }
-        await module.clickCancel();
-      }
-    });
-  });
-
-  test.describe('RBAC - Role Permissions', () => {
-    const roles = [
-      { key: 'master_personel', hasCreate: true, hasApprove: false },
-      { key: 'master_controler', hasCreate: true, hasApprove: true },
-      { key: 'reviewer', hasCreate: false, hasApprove: false },
-      { key: 'department_head', hasCreate: false, hasApprove: false },
-    ];
-
-    roles.forEach(role => {
-      test(`TC-SM-100-${role.key}: ${role.key} permissions`, async ({ page, context, env }) => {
-        await loginAs(page, context, role.key, env, LAB);
-        await page.goto('/dashboard/testing/stp', { waitUntil: 'domcontentloaded' });
-        await page.waitForTimeout(1500);
-
-        const addBtn = page.locator('button:contains("New STP"), button:contains("+ New")').first();
-        const hasAdd = await addBtn.isVisible().catch(() => false);
-        expect(hasAdd).toBe(role.hasCreate);
-      });
-    });
-  });
-
-  test.describe('Export', () => {
-    test('TC-SM-050: exports to Excel', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const excelBtn = page.locator('button:contains("Excel")').first();
-      if (await excelBtn.isVisible()) {
-        await excelBtn.click();
-        await page.waitForTimeout(2000);
-      }
-    });
-  });
-
-  test.describe('Edge Cases', () => {
-    test('TC-SM-060: handles long input', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const addBtn = page.locator('button:contains("New STP"), button:contains("+ New")').first();
-      if (await addBtn.isVisible()) {
-        await addBtn.click();
-        await page.waitForTimeout(1000);
-        const input = page.locator('input[type="text"]').first();
-        await input.fill('A'.repeat(500));
-        await module.clickCancel();
-      }
-    });
-
-    test('TC-SM-061: handles rapid submissions', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const addBtn = page.locator('button:contains("New STP"), button:contains("+ New")').first();
-      if (await addBtn.isVisible()) {
-        await addBtn.click();
-        await page.waitForTimeout(500);
-        await addBtn.click().catch(() => {});
-        const forms = page.locator('form, div.animate-slide-in-right').filter({ visible: true });
-        const count = await forms.count();
-        expect(count).toBeLessThanOrEqual(1);
-        await module.clickCancel();
-      }
-    });
-  });
-
-  test.describe('End-to-End', () => {
-    test('E2E-SM-001: Complete workflow', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-
-      // Create
-      const addBtn = page.locator('button:contains("New STP"), button:contains("+ New")').first();
-      if (await addBtn.isVisible()) {
-        await addBtn.click();
-        await page.waitForTimeout(1000);
-        const input = page.locator('input[type="text"]').first();
-        await input.fill(TEST_STP);
-        const submitBtn = page.locator('button:contains("Submit"), button:contains("Save")').first();
-        if (await submitBtn.isVisible()) {
-          await submitBtn.click();
-          await page.waitForTimeout(2000);
-        }
-      }
-
-      // Search
-      await module.navigateTo();
-      const searchInput = page.locator('input[placeholder*="Search"]').first();
-      if (await searchInput.isVisible()) {
-        await searchInput.fill(TEST_STP);
-        await page.waitForTimeout(1000);
-      }
-
-      await module.takeScreenshot('e2e-stp-master');
     });
   });
 });

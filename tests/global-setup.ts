@@ -1,5 +1,5 @@
 import { test as base, expect, BrowserContext } from '@playwright/test';
-import { stubStimulsoft, loginAs, clearAllSessions, freshLoginAs, getRolePermissions, loadFixture } from './helpers/commands';
+import { stubStimulsoft, loginAs, clearAllSessions, clearRoleSession, freshLoginAs, getRolePermissions, loadFixture } from './helpers/commands';
 
 // ─── Extend base test with project env + stimulsoft stub ─────────────────────
 export const test = base.extend<{
@@ -16,7 +16,7 @@ export const test = base.extend<{
 });
 
 // ─── Re-export helpers so tests only need one import ─────────────────────────
-export { stubStimulsoft, loginAs, clearAllSessions, freshLoginAs, getRolePermissions, loadFixture };
+export { stubStimulsoft, loginAs, clearAllSessions, clearRoleSession, freshLoginAs, getRolePermissions, loadFixture };
 export { expect };
 
 // ─── Uncaught exception guard ─────────────────────────────────────────────────

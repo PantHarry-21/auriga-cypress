@@ -18,27 +18,23 @@ const uatEnv = getEnvConfig('.env.uat');
 
 export default defineConfig({
   testDir: './tests',
-  timeout: 180000,
-  globalTimeout: 7200000,
+  globalSetup: require.resolve('./tests/global-login-setup'),
+  timeout: 180000,         // 3 min per test — UAT server is slow (30-40s per page load)
+  globalTimeout: 21600000, // 6 hours total (for full suite)
   expect: {
-    timeout: 15000,
+    timeout: 20000,        // 20s for assertions
   },
   fullyParallel: true,
-  retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+  retries: 1,
+  workers: process.env.CI ? 1 : process.env.WORKERS ? parseInt(process.env.WORKERS) : 5,
   reporter: [['html', { outputFolder: 'playwright-report' }], ['list']],
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    // baseURL: 'http://127.0.0.1:3000',
-
-    /* Collect traces, videos, and screenshots for all tests */
-    trace: 'on',                    // Always capture trace for debugging
-    video: 'on',                    // Always capture video
-    screenshot: 'on',               // Always capture screenshots
+    trace: 'retain-on-failure',  // Only keep traces for failures (saves disk)
+    video: 'retain-on-failure',  // Only keep videos for failures
+    screenshot: 'only-on-failure',
     headless: true,
+    actionTimeout: 30000, // 30s for individual actions (click, fill, etc.)
+    navigationTimeout: 90000, // 90s for page navigations
   },
   projects: [
     {

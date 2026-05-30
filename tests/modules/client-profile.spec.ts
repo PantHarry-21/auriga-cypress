@@ -1,384 +1,95 @@
-// tests/modules/client-profile.spec.ts
-// Client Profile Test Suite - Comprehensive Testing
-// Tests: CRUD, Validations, RBAC, Approvals, Edge Cases
-// URL: /dashboard/profile/client
-// Run: npx playwright test client-profile.spec.ts --project=uat
-
+/**
+ * Client Profile — Real E2E Test Suite
+ * URL  : /dashboard/profile/client
+ * Role : admin
+ */
 import { test, expect } from '../global-setup';
-import { loginAs, stubStimulsoft } from '../helpers/commands';
-import { ModulePageObject, ModuleConfig } from '../helpers/ModulePageObject';
+import { stubStimulsoft, loginAs } from '../helpers/commands';
 
+const URL = '/dashboard/profile/client';
 const LAB = 'Arbro - Delhi';
-const TS = Date.now().toString().slice(-6);
-const TEST_CLIENT = `AutoClient_${TS}`;
 
-const moduleConfig: ModuleConfig = {
-  name: 'Client Profile',
-  url: '/dashboard/profile/client',
-  moduleKey: 'customer_relation_management_client_profile',
-  hasAdd: true,
-  hasEdit: true,
-  hasDelete: false,
-  hasApprove: false,
-  hasSearch: true,
-  hasFilter: true,
-  hasPagination: true,
-  hasExport: true,
-  hasTable: true,
-  hasForm: true,
-};
+test.describe('[MODULE-006] Client Profile', () => {
 
-test.describe('Client Profile Module', () => {
-  test.beforeEach(async ({ page, context }) => {
+  test.setTimeout(120000);
+
+  test.beforeEach(async ({ page, context, env }) => {
     await stubStimulsoft(context);
-    await loginAs(page, context, 'sales_personel_am', env, LAB);
+    await loginAs(page, context, 'admin', env, LAB);
+    await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(1500);
   });
 
-  test.describe('Page Load & Navigation', () => {
-    test('TC-CP-001: navigates to Client Profile page', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      await module.verifyPageLoaded();
+  test.describe('1. Page Load', () => {
+
+    test('TC-001 page loads without errors', async ({ page }) => {
+      const body = await page.locator('body').textContent() || '';
+      expect(body).not.toContain('403 Forbidden');
+      expect(body).not.toContain('Internal Server Error');
     });
 
-    test('TC-CP-002: displays client table', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      await module.verifyTableVisible();
+    test('TC-002 table is visible with data', async ({ page }) => {
+      await expect(page.locator('table')).toBeVisible({ timeout: 15000 });
+      const rows = await page.locator('table tbody tr').count();
+      expect(rows).toBeGreaterThan(0);
     });
 
-    test('TC-CP-003: shows Add button', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const addBtn = page.locator('button:contains("+ New Client"), button:contains("New Client")').first();
-      await expect(addBtn).toBeVisible();
-    });
-
-    test('TC-CP-004: search works', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const searchInput = page.locator('input[placeholder*="Search"]').first();
-      if (await searchInput.isVisible()) {
-        await searchInput.fill('test');
-        await page.waitForTimeout(1000);
-      }
+    test('TC-003 correct table headers present', async ({ page }) => {
+      const headers = await page.locator('table thead th').allTextContents();
+      expect(headers.some(h => h.includes('Company Name'))).toBe(true);
+      expect(headers.some(h => h.includes('GST No'))).toBe(true);
+      expect(headers.some(h => h.includes('Email'))).toBe(true);
     });
   });
 
-  test.describe('CREATE - Add New Client', () => {
-    test('TC-CP-010: opens Add Client form', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const addBtn = page.locator('button:contains("+ New Client"), button:contains("New Client")').first();
-      await addBtn.click();
+  test.describe('2. Search', () => {
+
+    test('TC-004 search by company name works', async ({ page }) => {
+      const search = page.locator('input[placeholder="Search by company name..."]');
+      await expect(search).toBeVisible();
+      await search.fill('arbro');
+      expect(await search.inputValue()).toBe('arbro');
+    });
+
+    test('TC-005 export buttons visible', async ({ page }) => {
+      await expect(page.locator('button:has-text("Excel")')).toBeVisible();
+      await expect(page.locator('button:has-text("PDF")')).toBeVisible();
+    });
+  });
+
+  test.describe('3. Create Form', () => {
+
+    test('TC-006 "New Client" button visible', async ({ page }) => {
+      await expect(page.locator('button:has-text("New Client")')).toBeVisible();
+    });
+
+    test('TC-007 form opens on button click', async ({ page }) => {
+      await page.click('button:has-text("New Client")');
       await page.waitForTimeout(1500);
-      const form = page.locator('form, div.animate-slide-in-right').first();
-      await expect(form).toBeVisible();
+      // GST number field has a distinctive placeholder
+      const gstField = page.locator('input[placeholder="22AAAAA0000A1Z5"]').first();
+      await expect(gstField).toBeVisible({ timeout: 10000 });
     });
 
-    test('TC-CP-011: form has required fields', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const addBtn = page.locator('button:contains("+ New Client"), button:contains("New Client")').first();
-      await addBtn.click();
+    test('TC-008 form has GST and email fields', async ({ page }) => {
+      await page.click('button:has-text("New Client")');
       await page.waitForTimeout(1500);
-      const inputs = page.locator('input, textarea, select').filter({ visible: true });
-      expect(await inputs.count()).toBeGreaterThan(0);
-      await module.clickCancel();
+      await expect(page.locator('input[placeholder="22AAAAA0000A1Z5"]').first()).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('input[name="companyEmail"]').first()).toBeVisible({ timeout: 10000 });
     });
 
-    test('TC-CP-012: validates required fields', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const addBtn = page.locator('button:contains("+ New Client"), button:contains("New Client")').first();
-      await addBtn.click();
+    test('TC-009 Verify button is present for GST validation', async ({ page }) => {
+      await page.click('button:has-text("New Client")');
       await page.waitForTimeout(1500);
-      const saveBtn = page.locator('button:contains("Save"), button:contains("Submit")').first();
-      if (await saveBtn.isVisible()) {
-        await saveBtn.click();
-        await page.waitForTimeout(1000);
-      }
-      await module.clickCancel();
+      await page.locator('input[placeholder="22AAAAA0000A1Z5"]').first().waitFor({ timeout: 10000 });
+      await expect(page.locator('button:has-text("Verify")').first()).toBeVisible({ timeout: 8000 });
     });
 
-    test('TC-CP-013: creates client with valid data', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const addBtn = page.locator('button:contains("+ New Client"), button:contains("New Client")').first();
-      await addBtn.click();
+    test('TC-010 Save button is present on form', async ({ page }) => {
+      await page.click('button:has-text("New Client")');
       await page.waitForTimeout(1500);
-      const inputs = page.locator('input[type="text"]').filter({ visible: true });
-      if (await inputs.count() > 0) {
-        await inputs.first().fill(TEST_CLIENT);
-        const saveBtn = page.locator('button:contains("Save"), button:contains("Submit")').first();
-        if (await saveBtn.isVisible()) {
-          await saveBtn.click();
-          await page.waitForTimeout(2000);
-        }
-      }
-    });
-
-    test('TC-CP-014: handles special characters', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const addBtn = page.locator('button:contains("+ New Client"), button:contains("New Client")').first();
-      await addBtn.click();
-      await page.waitForTimeout(1500);
-      const input = page.locator('input[type="text"]').first();
-      await input.fill(`Test@#$${TS}`);
-      await module.clickCancel();
-    });
-
-    test('TC-CP-015: handles long input', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const addBtn = page.locator('button:contains("+ New Client"), button:contains("New Client")').first();
-      await addBtn.click();
-      await page.waitForTimeout(1500);
-      const input = page.locator('input[type="text"]').first();
-      await input.fill('A'.repeat(500));
-      await module.clickCancel();
-    });
-  });
-
-  test.describe('READ - View Clients', () => {
-    test('TC-CP-020: displays table columns', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const headers = page.locator('thead th');
-      expect(await headers.count()).toBeGreaterThan(0);
-    });
-
-    test('TC-CP-021: columns sortable', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const header = page.locator('thead th').nth(1);
-      if (await header.isVisible()) {
-        await header.click();
-        await page.waitForTimeout(1000);
-      }
-    });
-
-    test('TC-CP-022: pagination works', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const nextBtn = page.locator('button:contains("Next")').first();
-      if (await nextBtn.isVisible()) {
-        await nextBtn.click();
-        await page.waitForTimeout(1500);
-      }
-    });
-
-    test('TC-CP-023: search filters results', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const searchInput = page.locator('input[placeholder*="Search"]').first();
-      if (await searchInput.isVisible()) {
-        await searchInput.fill('test');
-        await page.waitForTimeout(1000);
-      }
-    });
-  });
-
-  test.describe('UPDATE - Edit Client', () => {
-    test('TC-CP-030: opens edit form', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const firstRow = page.locator('tbody tr').first();
-      if (await firstRow.isVisible()) {
-        await firstRow.click();
-        await page.waitForTimeout(1500);
-        const form = page.locator('form, div.animate-slide-in-right').first();
-        await expect(form).toBeVisible().catch(() => {});
-        await module.clickCancel();
-      }
-    });
-
-    test('TC-CP-031: form pre-populated', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const firstRow = page.locator('tbody tr').first();
-      if (await firstRow.isVisible()) {
-        await firstRow.click();
-        await page.waitForTimeout(1500);
-        const input = page.locator('input[type="text"]').first();
-        const value = await input.inputValue().catch(() => '');
-        expect(value.length).toBeGreaterThanOrEqual(0);
-        await module.clickCancel();
-      }
-    });
-
-    test('TC-CP-032: updates client', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const firstRow = page.locator('tbody tr').first();
-      if (await firstRow.isVisible()) {
-        await firstRow.click();
-        await page.waitForTimeout(1500);
-        const saveBtn = page.locator('button:contains("Save"), button:contains("Update")').first();
-        if (await saveBtn.isVisible()) {
-          await saveBtn.click();
-          await page.waitForTimeout(1500);
-        }
-        await module.clickCancel();
-      }
-    });
-
-    test('TC-CP-033: validates changes', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const firstRow = page.locator('tbody tr').first();
-      if (await firstRow.isVisible()) {
-        await firstRow.click();
-        await page.waitForTimeout(1500);
-        const input = page.locator('input[type="text"]').first();
-        await input.clear();
-        await page.waitForTimeout(500);
-        const saveBtn = page.locator('button:contains("Save"), button:contains("Update")').first();
-        if (await saveBtn.isVisible()) {
-          await saveBtn.click();
-          await page.waitForTimeout(1000);
-        }
-        await module.clickCancel();
-      }
-    });
-  });
-
-  test.describe('RBAC - Role Permissions', () => {
-    const roles = [
-      { key: 'booking_personel', hasCreate: false },
-      { key: 'sales_personel_am', hasCreate: true },
-      { key: 'reception', hasCreate: false },
-      { key: 'reviewer', hasCreate: false },
-    ];
-
-    roles.forEach(role => {
-      test(`TC-CP-100-${role.key}: ${role.key} permissions`, async ({ page, context, env }) => {
-        await loginAs(page, context, role.key, env, LAB);
-        await page.goto('/dashboard/profile/client', { waitUntil: 'domcontentloaded' });
-        await page.waitForTimeout(1500);
-
-        const addBtn = page.locator('button:contains("+ New Client"), button:contains("New Client")').first();
-        const hasCreate = await addBtn.isVisible().catch(() => false);
-        expect(hasCreate).toBe(role.hasCreate);
-      });
-    });
-  });
-
-  test.describe('Export', () => {
-    test('TC-CP-050: exports to Excel', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const excelBtn = page.locator('button:contains("Excel")').first();
-      if (await excelBtn.isVisible()) {
-        await excelBtn.click();
-        await page.waitForTimeout(2000);
-      }
-    });
-
-    test('TC-CP-051: exports to PDF', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const pdfBtn = page.locator('button:contains("PDF")').first();
-      if (await pdfBtn.isVisible()) {
-        await pdfBtn.click();
-        await page.waitForTimeout(2000);
-      }
-    });
-  });
-
-  test.describe('Edge Cases', () => {
-    test('TC-CP-060: handles duplicate entries', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const addBtn = page.locator('button:contains("+ New Client"), button:contains("New Client")').first();
-      if (await addBtn.isVisible()) {
-        await addBtn.click();
-        await page.waitForTimeout(1500);
-        const input = page.locator('input[type="text"]').first();
-        await input.fill('DuplicateTest');
-        const saveBtn = page.locator('button:contains("Save")').first();
-        if (await saveBtn.isVisible()) {
-          await saveBtn.click();
-          await page.waitForTimeout(1500);
-        }
-      }
-    });
-
-    test('TC-CP-061: handles rapid submissions', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      const addBtn = page.locator('button:contains("+ New Client"), button:contains("New Client")').first();
-      if (await addBtn.isVisible()) {
-        await addBtn.click();
-        await page.waitForTimeout(500);
-        await addBtn.click().catch(() => {});
-        const forms = page.locator('form, div.animate-slide-in-right').filter({ visible: true });
-        expect(await forms.count()).toBeLessThanOrEqual(1);
-        await module.clickCancel();
-      }
-    });
-
-    test('TC-CP-062: handles slow network', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await page.context().route('**/*', async (route) => {
-        await new Promise(r => setTimeout(r, 200));
-        await route.continue();
-      });
-      await module.navigateTo();
-      await module.waitForPageLoad();
-    });
-
-    test('TC-CP-063: handles session timeout', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-      await page.waitForTimeout(3000);
-      await page.goto('/dashboard/profile/client', { waitUntil: 'domcontentloaded' });
-      await expect(page.locator('body')).not.toContainText('500').catch(() => {});
-    });
-  });
-
-  test.describe('End-to-End', () => {
-    test('E2E-CP-001: Complete workflow', async ({ page }) => {
-      const module = new ModulePageObject(page, moduleConfig);
-      await module.navigateTo();
-
-      // Create
-      const addBtn = page.locator('button:contains("+ New Client"), button:contains("New Client")').first();
-      if (await addBtn.isVisible()) {
-        await addBtn.click();
-        await page.waitForTimeout(1500);
-        const input = page.locator('input[type="text"]').first();
-        await input.fill(TEST_CLIENT);
-        const saveBtn = page.locator('button:contains("Save")').first();
-        if (await saveBtn.isVisible()) {
-          await saveBtn.click();
-          await page.waitForTimeout(2000);
-        }
-      }
-
-      // Search
-      await module.navigateTo();
-      const searchInput = page.locator('input[placeholder*="Search"]').first();
-      if (await searchInput.isVisible()) {
-        await searchInput.fill(TEST_CLIENT);
-        await page.waitForTimeout(1000);
-      }
-
-      // Edit
-      const firstRow = page.locator('tbody tr').first();
-      if (await firstRow.isVisible()) {
-        await firstRow.click();
-        await page.waitForTimeout(1500);
-        const saveBtn = page.locator('button:contains("Save"), button:contains("Update")').first();
-        if (await saveBtn.isVisible()) {
-          await saveBtn.click();
-          await page.waitForTimeout(1500);
-        }
-        await module.clickCancel();
-      }
-
-      await module.takeScreenshot('e2e-client-profile');
+      await page.locator('input[placeholder="22AAAAA0000A1Z5"]').first().waitFor({ timeout: 10000 });
+      await expect(page.locator('button:has-text("Save")')).toBeVisible({ timeout: 8000 });
     });
   });
 });

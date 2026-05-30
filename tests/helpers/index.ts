@@ -1,15 +1,22 @@
 // tests/helpers/index.ts
-// Centralized exports for all helpers, page objects, and selectors
+// Centralized exports for all helpers
 
 export {
-  AdminRolePage
-} from './AdminRolePage';
+  getRoleCredentials,
+  stubStimulsoft,
+  loginAs,
+  clearAllSessions,
+  clearRoleSession,
+  freshLoginAs,
+  getRolePermissions,
+  loadFixture,
+} from './commands';
 
 export {
-  DynamicRBACManager,
-  type RolePermissions,
-  type RoleUser,
-} from './DynamicRBACManager';
+  YLIMS_SELECTORS,
+  isChipSelected,
+  isPermissionActive,
+} from './selectors';
 
 export {
   BasePage,
@@ -27,29 +34,3 @@ export {
   ClientQuotationPage,
   ClientProductPricingPage,
 } from './PageObjects';
-
-export {
-  ModulePageObject,
-  type ModuleConfig,
-} from './ModulePageObject';
-
-export {
-  RBACPage,
-  type RolePermission,
-} from './RBACPage';
-
-export {
-  getRoleCredentials,
-  stubStimulsoft,
-  loginAs,
-  clearAllSessions,
-  freshLoginAs,
-  getRolePermissions,
-  loadFixture,
-} from './commands';
-
-export {
-  YLIMS_SELECTORS,
-  isChipSelected,
-  isPermissionActive,
-} from './selectors';

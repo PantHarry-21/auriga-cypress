@@ -8,10 +8,10 @@ export const YLIMS_SELECTORS = {
 
   // ── Login Page ──────────────────────────────────────────────────────────
   login: {
-    usernameInput: 'input[name="username"]',
-    passwordInput: 'input[name="password"]',
-    signInButton: 'button:has-text("Sign in")',
-    locationDropdown: 'div:has-text("Choose your location")',
+    usernameInput: '#username',
+    passwordInput: '#password',
+    signInButton: 'button[type="submit"]',
+    locationButton: 'button:has-text("Choose your location")',
     locationOption: (name: string) => `span:has-text("${name}")`,
   },
 

@@ -2,7 +2,7 @@ import { Page, BrowserContext } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 
-// ─── Role credentials (reads from project env passed via playwright.config.ts) ─
+// ─── Role credentials ─────────────────────────────────────────────────────────
 export function getRoleCredentials(env: Record<string, string>) {
   return {
     admin:                { username: env.ADMIN_USERNAME,               password: env.ADMIN_PASSWORD },
@@ -22,7 +22,6 @@ export function getRoleCredentials(env: Record<string, string>) {
     accountant_crm:       { username: env.ACCOUNTANT_CRM_USERNAME,      password: env.ACCOUNTANT_CRM_PASSWORD },
     quality_personel:     { username: env.QUALITY_PERSONEL_USERNAME,    password: env.QUALITY_PERSONEL_PASSWORD },
     quality_manger:       { username: env.QUALITY_MANGER_USERNAME,      password: env.QUALITY_MANGER_PASSWORD },
-    // Add aliases for correct English spelling (maintained for backward compatibility)
     booking_personnel:    { username: env.BOOKING_PERSONEL_USERNAME,    password: env.BOOKING_PERSONEL_PASSWORD },
     master_personnel:     { username: env.MASTER_PERSONEL_USERNAME,     password: env.MASTER_PERSONEL_PASSWORD },
     master_controller:    { username: env.MASTER_CONTROLER_USERNAME,    password: env.MASTER_CONTROLER_PASSWORD },
@@ -30,19 +29,25 @@ export function getRoleCredentials(env: Record<string, string>) {
   } as Record<string, { username: string; password: string }>;
 }
 
-// ─── Stub Stimulsoft blocking scripts ────────────────────────────────────────
+// ─── Stub Stimulsoft blocking scripts ─────────────────────────────────────────
 export async function stubStimulsoft(context: BrowserContext) {
   await context.route('**/stimulsoft*.js', route =>
-    route.fulfill({ status: 200, contentType: 'application/javascript', body: '/* stubbed for test performance */' })
+    route.fulfill({ status: 200, contentType: 'application/javascript', body: '/* stubbed */' })
   );
 }
 
-// ─── Core login flow ──────────────────────────────────────────────────────────
-// Equivalent of cy.loginAs(roleKey, labName)
-// Handles two login types:
-//   - ADMIN: Requires location selection after login
-//   - REGULAR USERS: No location selection needed
-// Uses Playwright storageState to cache sessions (equivalent of cy.session).
+// ─── Core login flow ───────────────────────────────────────────────────────────
+// EXACT FLOW (confirmed against live app):
+//   1. Navigate to /login
+//   2. Fill username + password
+//   3. Click "Sign in" (button[type="submit"]) — first click
+//   4. Location picker appears on same page
+//   5. Click "Choose your location" button to open dropdown
+//   6. Click the lab name span to select it
+//   7. Click "Sign in" again — second click
+//   8. Dashboard loads
+//
+// This flow applies to ALL roles (not admin-only).
 export async function loginAs(
   page: Page,
   context: BrowserContext,
@@ -52,141 +57,103 @@ export async function loginAs(
 ) {
   const credentials = getRoleCredentials(env);
   const creds = credentials[roleKey];
-  if (!creds) throw new Error(`No credentials configured for role_key="${roleKey}"`);
-  if (!creds.username || !creds.password) {
-    console.error('Environment variables missing for role:', roleKey);
-    console.error('Available keys in env:', Object.keys(env));
-    throw new Error(`Credentials for "${roleKey}" are incomplete. Check your .env file.`);
-  }
+  if (!creds) throw new Error(`No credentials for role_key="${roleKey}"`);
+  if (!creds.username || !creds.password)
+    throw new Error(`Credentials for "${roleKey}" are incomplete. Check .env file.`);
 
-  const lab = labName || env.LAB_NAME;
-  const isAdmin = roleKey === 'admin';
-  const sessionFile = path.join(__dirname, '../../.auth', `${roleKey}__${lab || 'default'}.json`);
+  const lab = labName || env.LAB_NAME || 'Arbro - Delhi';
+  const sessionFile = path.join(__dirname, '../../.auth', `${roleKey}__${lab.replace(/\s+/g, '_')}.json`);
 
-  // Reuse saved session if it exists and is valid
+  // ── Try reusing a saved session (inject cookies directly — no extra navigation) ──
   if (fs.existsSync(sessionFile)) {
     try {
-      const sessionData = JSON.parse(fs.readFileSync(sessionFile, 'utf-8'));
-      if (sessionData.cookies && sessionData.cookies.length > 0) {
-        await context.addCookies(sessionData.cookies);
-        await page.goto('/dashboard', { waitUntil: 'domcontentloaded', timeout: 30000 });
-        if (page.url().includes('/dashboard')) return;
+      const saved = JSON.parse(fs.readFileSync(sessionFile, 'utf-8'));
+      if (saved.cookies?.length) {
+        // Check cookie expiry before injecting (avoids silent failures)
+        const nowSec = Date.now() / 1000;
+        const stillValid = saved.cookies.some((c: any) => !c.expires || c.expires > nowSec + 60);
+        if (stillValid) {
+          await context.addCookies(saved.cookies);
+          // No /dashboard navigation here — the test's own page.goto handles it.
+          // If the session is actually expired, the test page will redirect to /login
+          // and the test will fail fast with a clear error rather than a slow timeout.
+          return;
+        }
       }
-    } catch (e) {
-      // Session file invalid or corrupted, continue with fresh login
+    } catch {
+      // corrupted session — fall through to fresh login
+    }
+    try { fs.unlinkSync(sessionFile); } catch { /* ignore */ }
+  }
+
+  // ── Fresh login ───────────────────────────────────────────────────────────
+  await stubStimulsoft(context);
+  await page.goto('/login', { waitUntil: 'domcontentloaded', timeout: 120000 });
+  await page.waitForTimeout(1500);
+
+  // Handle transient 500 errors
+  const initialBody = await page.locator('body').innerText().catch(() => '');
+  if (initialBody.includes('500') || initialBody.includes('Internal Server Error')) {
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(1000);
+  }
+
+  // Fill credentials
+  await page.waitForSelector('#username', { timeout: 15000 });
+  await page.fill('#username', creds.username);
+  await page.fill('#password', creds.password);
+
+  // ── Step 3: First Sign in click ───────────────────────────────────────────
+  await page.click('button[type="submit"]');
+  await page.waitForTimeout(2500);
+
+  // ── Handle password reset screen ─────────────────────────────────────────
+  const urlAfterSignin = page.url();
+  const bodyAfterSignin = await page.locator('body').innerText({ timeout: 3000 }).catch(() => '');
+  if (urlAfterSignin.includes('/password-reset') || bodyAfterSignin.toLowerCase().includes('reset password')) {
+    console.log(`🔄 Password reset required for ${roleKey} — resetting with same password...`);
+    await page.waitForSelector('input[type="password"]', { timeout: 10000 }).catch(() => {});
+    const pwInputs = await page.locator('input[type="password"]').all();
+    if (pwInputs.length >= 2) {
+      await pwInputs[0].fill(creds.password);
+      await pwInputs[1].fill(creds.password);
+      if (pwInputs.length >= 3) await pwInputs[2].fill(creds.password);
+    }
+    const resetBtn = page.locator('button[type="submit"], button:has-text("Reset"), button:has-text("Save"), button:has-text("Confirm")').first();
+    if (await resetBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await resetBtn.click();
+      await page.waitForTimeout(2000);
     }
   }
 
-  await stubStimulsoft(context);
-  await page.goto('/login', { waitUntil: 'domcontentloaded', timeout: 30000 });
+  // ── Step 5+6+7: Location picker (applies to ALL roles) ───────────────────
+  const bodyForLocation = await page.locator('body').innerText({ timeout: 3000 }).catch(() => '');
+  if (bodyForLocation.includes('Choose your location')) {
+    // Open the location dropdown
+    await page.click('button:has-text("Choose your location")');
+    await page.waitForTimeout(1000);
 
-  // Handle transient server errors
-  const initialBody = await page.locator('body').innerText().catch(() => '');
-  if (initialBody.includes('Internal Server Error') || initialBody.includes('500')) {
-    await page.reload({ waitUntil: 'domcontentloaded' });
-  }
-
-  // Fill login credentials
-  await page.waitForSelector('[name="username"]', { timeout: 15000 });
-  await page.fill('[name="username"]', creds.username);
-  await page.fill('[name="password"]', creds.password);
-  await page.getByRole('button', { name: /sign in/i }).click();
-
-  // Wait for page to load and check for password reset requirement
-  await page.waitForLoadState('domcontentloaded', { timeout: 30000 }).catch(() => {});
-  await page.waitForTimeout(1000);
-
-  // Handle password reset if required
-  let currentUrl = page.url();
-  let bodyText = await page.locator('body').innerText({ timeout: 3000 }).catch(() => '');
-
-  if (currentUrl.includes('/password-reset') || bodyText.includes('Reset') || bodyText.includes('Password') || bodyText.includes('reset')) {
-    console.log(`🔄 Password reset required for ${roleKey}. Resetting with same credentials...`);
-
-    // Wait for password input fields
-    await page.waitForSelector('input[type="password"]', { timeout: 15000 }).catch(() => {});
+    // Select the lab by name
+    const labSpan = page.locator(`span:has-text("${lab}")`).first();
+    const found = await labSpan.isVisible({ timeout: 5000 }).catch(() => false);
+    if (found) {
+      await labSpan.click();
+    } else {
+      // Fallback: click any first available lab item
+      const firstLab = page.locator('div.relative.cursor-pointer span, li span').first();
+      await firstLab.click({ timeout: 5000 }).catch(() => {});
+    }
     await page.waitForTimeout(500);
 
-    // Find all password input fields
-    const passwordInputs = await page.locator('input[type="password"]').all();
-    const inputCount = passwordInputs.length;
-
-    if (inputCount >= 2) {
-      try {
-        if (inputCount === 2) {
-          // Two fields: new password, confirm password
-          await passwordInputs[0].fill(creds.password);
-          await passwordInputs[1].fill(creds.password);
-        } else if (inputCount >= 3) {
-          // Three or more fields: current password, new password, confirm password
-          await passwordInputs[0].fill(creds.password); // current
-          await passwordInputs[1].fill(creds.password); // new
-          await passwordInputs[2].fill(creds.password); // confirm
-        }
-
-        // Submit reset form - try multiple button selectors
-        let submitted = false;
-        const buttonSelectors = [
-          'button:has-text("Reset Password")',
-          'button:has-text("Save")',
-          'button:has-text("Confirm")',
-          'button:has-text("Submit")',
-          'button:has-text("Update")',
-          'button:has-text("Change")',
-          'button[type="submit"]',
-        ];
-
-        for (const selector of buttonSelectors) {
-          const btn = page.locator(selector).first();
-          if (await btn.isVisible({ timeout: 5000 }).catch(() => false)) {
-            await btn.click();
-            submitted = true;
-            console.log(`✅ Password reset form submitted`);
-            break;
-          }
-        }
-
-        if (submitted) {
-          await page.waitForTimeout(2000);
-          console.log(`✅ Password reset completed for ${roleKey}`);
-        }
-      } catch (error) {
-        console.log(`⚠️ Password reset error: ${error}`);
-      }
-    }
+    // Second Sign in click
+    await page.click('button[type="submit"]');
   }
 
-  // ADMIN LOGIN: Wait for and handle location picker
-  if (isAdmin) {
-    const deadline = Date.now() + 20000;
-    while (Date.now() < deadline) {
-      const txt = await page.locator('body').innerText({ timeout: 3000 }).catch(() => '');
-      if (txt.includes('Choose your location')) break;
-      if (!page.url().includes('/login') && !page.url().includes('/password-reset')) break;
-      await page.waitForTimeout(200);
-    }
+  // ── Wait for dashboard ────────────────────────────────────────────────────
+  await page.waitForURL('**/dashboard**', { timeout: 60000 });
+  console.log(`✅ Logged in as ${roleKey} → ${page.url()}`);
 
-    bodyText = await page.locator('body').innerText().catch(() => '');
-    if (bodyText.includes('Choose your location')) {
-      await page.getByRole('button', { name: /choose your location/i }).click();
-      await page.waitForTimeout(500);
-      if (lab) {
-        await page.locator('span').filter({ hasText: new RegExp(lab.split(' ')[0], 'i') }).first().click({ timeout: 8000 });
-      } else {
-        await page.locator('span[class*="cursor-pointer"], li').first().click();
-      }
-      await page.waitForTimeout(200);
-      await page.getByRole('button', { name: /sign in/i }).click();
-    }
-  }
-
-  // Wait for dashboard to load (works for both admin and regular users)
-  await page.waitForURL('**/dashboard**', { timeout: 45000 });
-
-  // Verify we're on dashboard
-  await page.waitForSelector('body', { timeout: 10000 });
-
-  // Save session to disk for faster subsequent logins
+  // Save session cookies for reuse
   const authDir = path.join(__dirname, '../../.auth');
   if (!fs.existsSync(authDir)) fs.mkdirSync(authDir, { recursive: true });
   const cookies = await context.cookies();
@@ -194,16 +161,27 @@ export async function loginAs(
 }
 
 // ─── Clear all saved sessions ─────────────────────────────────────────────────
-// Equivalent of cy.clearAllSessions()
 export function clearAllSessions() {
   const authDir = path.join(__dirname, '../../.auth');
   if (fs.existsSync(authDir)) {
-    fs.readdirSync(authDir).forEach(f => fs.unlinkSync(path.join(authDir, f)));
+    fs.readdirSync(authDir).forEach(f => {
+      try { fs.unlinkSync(path.join(authDir, f)); } catch { /* ignore */ }
+    });
   }
 }
 
-// ─── Fresh login (clear sessions then login) ─────────────────────────────────
-// Equivalent of cy.freshLoginAs(roleKey, labName)
+// ─── Clear one role's session so the next loginAs forces a fresh login ────────
+// Use this before verifying permission changes — stale cookies won't reflect
+// permission updates made by admin until the role logs in fresh.
+export function clearRoleSession(roleKey: string, labName = 'Arbro - Delhi') {
+  const sessionFile = path.join(
+    __dirname, '../../.auth',
+    `${roleKey}__${labName.replace(/\s+/g, '_')}.json`
+  );
+  try { fs.unlinkSync(sessionFile); } catch { /* ignore if not present */ }
+}
+
+// ─── Fresh login (clear sessions then login) ──────────────────────────────────
 export async function freshLoginAs(
   page: Page,
   context: BrowserContext,
@@ -216,22 +194,19 @@ export async function freshLoginAs(
 }
 
 // ─── Get role permissions from fixture ───────────────────────────────────────
-// Equivalent of cy.getRolePermissions(roleKey)
 export function getRolePermissions(roleKey: string) {
   const fixturePath = path.join(__dirname, '../fixtures/roles-permissions.json');
+  if (!fs.existsSync(fixturePath)) return null;
   const data = JSON.parse(fs.readFileSync(fixturePath, 'utf-8'));
-  return data.roles.find((r: { role_key: string }) => r.role_key === roleKey);
+  return data.roles?.find((r: { role_key: string }) => r.role_key === roleKey) || null;
 }
 
 // ─── Wait for a network response matching URL pattern ────────────────────────
-// Equivalent of cy.wait('@alias') after cy.intercept()
 export async function waitForResponse(page: Page, urlPattern: string | RegExp) {
   return page.waitForResponse(urlPattern);
 }
 
 // ─── Load a fixture file ─────────────────────────────────────────────────────
-// Equivalent of cy.fixture('filename')
-// NOTE: no direct equivalent — using direct JSON import instead
 export function loadFixture<T = unknown>(fixtureName: string): T {
   const fixturePath = path.join(__dirname, '../fixtures', fixtureName);
   return JSON.parse(fs.readFileSync(fixturePath, 'utf-8')) as T;
