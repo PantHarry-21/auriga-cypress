@@ -1,4 +1,4 @@
-import { test as base, expect, BrowserContext } from '@playwright/test';
+import { test as base, expect, BrowserContext, Page } from '@playwright/test';
 import { stubStimulsoft, loginAs, clearAllSessions, clearRoleSession, freshLoginAs, getRolePermissions, loadFixture } from './helpers/commands';
 
 // ─── Extend base test with project env + stimulsoft stub ─────────────────────
@@ -12,6 +12,13 @@ export const test = base.extend<{
     // Store in global so helper classes can access it
     (global as any).__testEnv__ = projectEnv;
     await use(projectEnv);
+  },
+
+  // Override page fixture: after every test navigate to about:blank so the
+  // context teardown doesn't hang waiting for dashboard WebSocket/SSE connections.
+  page: async ({ page }, use) => {
+    await use(page);
+    await page.goto('about:blank', { timeout: 5000 }).catch(() => {});
   },
 });
 

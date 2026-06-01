@@ -28,9 +28,10 @@ test.describe('[MODULE-000] Login', () => {
   test.setTimeout(180000);
 
   test.beforeEach(async ({ page }) => {
-    await page.goto('/login', { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.goto('/login', { waitUntil: 'domcontentloaded', timeout: 90000 });
     await page.waitForTimeout(800);
   });
+
 
   // ── 1. Page Elements ──────────────────────────────────────────────────────
   test.describe('1. Page Elements', () => {

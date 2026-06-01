@@ -26,7 +26,8 @@ export default defineConfig({
   },
   fullyParallel: true,
   retries: 1,
-  workers: process.env.CI ? 1 : process.env.WORKERS ? parseInt(process.env.WORKERS) : 5,
+  // UAT server is slow — 2 workers avoids hammering it while still running faster than serial
+  workers: process.env.CI ? 1 : process.env.WORKERS ? parseInt(process.env.WORKERS) : 2,
   reporter: [['html', { outputFolder: 'playwright-report' }], ['list']],
   use: {
     trace: 'retain-on-failure',  // Only keep traces for failures (saves disk)
