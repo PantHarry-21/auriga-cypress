@@ -30,9 +30,9 @@ export default defineConfig({
   workers: process.env.CI ? 1 : process.env.WORKERS ? parseInt(process.env.WORKERS) : 2,
   reporter: [['html', { outputFolder: 'playwright-report' }], ['list']],
   use: {
-    trace: 'retain-on-failure',  // Only keep traces for failures (saves disk)
-    video: 'retain-on-failure',  // Only keep videos for failures
-    screenshot: 'only-on-failure',
+    trace: 'on',        // Always capture trace (viewable in Playwright UI / show-trace)
+    video: 'on',        // Always record video for every test
+    screenshot: 'on',   // Always take screenshot at end of every test
     headless: true,
     actionTimeout: 30000, // 30s for individual actions (click, fill, etc.)
     navigationTimeout: 90000, // 90s for page navigations
