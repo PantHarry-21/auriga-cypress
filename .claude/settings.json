@@ -14,7 +14,9 @@
       "Bash(node discover-modules.js)",
       "Bash(git -C \"D:\\\\Harry\\\\OneDrive\\\\Desktop\\\\Auriga Cypress\\\\.claude\\\\worktrees\\\\agent-a8a24a336ae4ec918\" show HEAD --name-only)",
       "Bash(findstr /R \"^  x \")",
-      "Bash(findstr /V \"retry\")"
+      "Bash(findstr /V \"retry\")",
+      "Bash(git commit -m 'Enable video/screenshot/trace for all tests to aid debugging *)",
+      "Bash(git push *)"
     ]
   }
 }
