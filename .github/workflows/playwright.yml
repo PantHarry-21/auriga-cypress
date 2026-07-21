@@ -42,13 +42,13 @@ jobs:
 
       - name: Write UAT env file
         run: |
-          cat > cypress.env.uat.json <<'EOF'
+          cat > .env.uat <<'EOF'
           ${{ secrets.CYPRESS_ENV_UAT }}
           EOF
 
       - name: Write DEV env file
         run: |
-          cat > cypress.env.dev.json <<'EOF'
+          cat > .env.dev <<'EOF'
           ${{ secrets.CYPRESS_ENV_DEV }}
           EOF
 

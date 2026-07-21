@@ -15,6 +15,7 @@ function getEnvConfig(envFile: string) {
 
 const devEnv = getEnvConfig('.env.dev');
 const uatEnv = getEnvConfig('.env.uat');
+const prodEnv = getEnvConfig('.env.prod');
 
 export default defineConfig({
   testDir: './tests',
@@ -49,12 +50,21 @@ export default defineConfig({
     },
     {
       name: 'uat',
-      use: { 
+      use: {
         ...devices['Desktop Chrome'],
-        baseURL: uatEnv.BASE_URL || 'https://uat.ylims.com',
+        baseURL: uatEnv.BASE_URL || 'https://uat.bharatlims.ai',
       },
       // Pass env vars via metadata
       metadata: uatEnv,
+    },
+    {
+      name: 'prod',
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: prodEnv.BASE_URL || 'https://prod.bharatlims.ai',
+      },
+      // Pass env vars via metadata
+      metadata: prodEnv,
     },
   ],
 });

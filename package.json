@@ -10,9 +10,6 @@
     "test:modules": "npx playwright test tests/modules/ --project=uat --workers=3",
     "test:module": "npx playwright test --project=uat --grep",
     "test:login": "npx playwright test tests/modules/000-login.spec.ts --project=uat",
-    "explore": "node explore-all-modules.js",
-    "generate": "node generate-tests.js",
-    "explore:generate": "node explore-all-modules.js && node generate-tests.js",
     "test:rbac": "npx playwright test tests/rbac/ --project=uat --workers=1 --retries=0",
     "test:smoke": "npx playwright test tests/modules/ --project=uat --grep-invert \"crud|CRUD\" --workers=5",
     "test:crud": "npx playwright test tests/modules/*-crud.spec.ts --project=uat --workers=5"

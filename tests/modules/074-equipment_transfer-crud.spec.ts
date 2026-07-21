@@ -181,18 +181,11 @@ test.describe('[MODULE-074-CRUD] Equipment Transfer — Create & Update', () => 
       await cancelForm(page);
     });
 
-    // TC-C008: Equipment search input is visible and accepts text
-    test('TC-C008 equipment search input is visible and accepts text', async ({ page }) => {
+    // TC-C008: Equipment select dropdown is present
+    // (verified live 2026-07-10: the form uses a "--Select Equipment--" dropdown, not a search input)
+    test('TC-C008 equipment select dropdown is present on form', async ({ page }) => {
       await openCreateForm(page);
-      const searchEl = page.locator('input[placeholder="Search equipment name..."]').first();
-      const isVisible = await searchEl.isVisible({ timeout: 5000 }).catch(() => false);
-      if (isVisible) {
-        await searchEl.fill('Auto');
-        await page.waitForTimeout(500);
-        // Autocomplete may change value — just check field is interactive
-        const value = await searchEl.inputValue().catch(() => '');
-        expect(value.length).toBeGreaterThanOrEqual(0);
-      }
+      await expect(page.locator('button:has-text("--Select Equipment--")').first()).toBeVisible({ timeout: 8000 });
       await cancelForm(page);
     });
 

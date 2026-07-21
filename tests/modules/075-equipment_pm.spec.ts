@@ -85,4 +85,24 @@ test.describe("[MODULE-075] Equipment PM", () => {
    *   page.getByRole("button", { name: "Quality Document Management System" })
    */
 
+  // ── 2. PM Checklist (added 2026-07-10, selectors verified live) ────────────
+  test.describe('2. PM Checklist', () => {
+
+    test('TC-020 row "PM Checklist" opens the checklist panel with Save/Close', async ({ page }) => {
+      const pmBtn = page.locator('button:has-text("PM Checklist")').first();
+      const hasRows = await pmBtn.isVisible({ timeout: 10000 }).catch(() => false);
+      if (!hasRows) { test.skip(); return; }
+      await pmBtn.click();
+      await page.waitForTimeout(2000);
+      await expect(page.locator('button:has-text("Save")').first()).toBeVisible({ timeout: 8000 });
+      const closeBtn = page.locator('button:has-text("Close")').first();
+      await expect(closeBtn).toBeVisible();
+      await closeBtn.click();
+    });
+
+    test('TC-021 "Pending for PM" filter is present', async ({ page }) => {
+      await expect(page.locator('button:has-text("Pending for PM")')).toBeVisible({ timeout: 15000 });
+    });
+  });
+
 }); // describe Equipment PM

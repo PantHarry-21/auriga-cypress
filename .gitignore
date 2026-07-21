@@ -1,8 +1,4 @@
 node_modules/
-cypress/reports/
-cypress/screenshots/
-cypress/videos/
-cypress/downloads/
 
 # Playwright generated output
 playwright-report/
@@ -10,11 +6,14 @@ test-results/
 
 # Auth sessions — never commit these
 .auth/
+.scratch/
 
 # Claude Code internals
 .claude/worktrees/
 
 # Credentials — never commit these
 email.config.json
-cypress.env.json
 .env*
+
+# OS junk
+.DS_Store

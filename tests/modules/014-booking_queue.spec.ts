@@ -80,4 +80,14 @@ test.describe("[MODULE-014] Booking Queue", () => {
    *   page.getByRole("button", { name: "Quotation & Pricing" })
    */
 
+  // ── 2. Assignment Workflow (added 2026-07-10, selectors verified live) ─────
+  test.describe('2. Assignment Workflow', () => {
+
+    test('TC-020 Approved / Assigned tabs and Assign action are present', async ({ page }) => {
+      await expect(page.locator('button').filter({ hasText: /^Approved/ }).first()).toBeVisible({ timeout: 15000 });
+      await expect(page.locator('button').filter({ hasText: /^Assigned/ }).first()).toBeVisible();
+      await expect(page.locator('button:has-text("Assign")').first()).toBeVisible();
+    });
+  });
+
 }); // describe Booking Queue

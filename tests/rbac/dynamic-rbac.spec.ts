@@ -24,7 +24,7 @@ import { test, expect } from '../global-setup';
 import { stubStimulsoft, loginAs, clearRoleSession, getRoleCredentials } from '../helpers/commands';
 import type { Browser } from '@playwright/test';
 
-const BASE        = 'https://uat.ylims.com';
+const BASE        = 'https://uat.bharatlims.ai';
 const LAB         = 'Arbro - Delhi';
 const ROLES_URL   = '/dashboard/roles';
 

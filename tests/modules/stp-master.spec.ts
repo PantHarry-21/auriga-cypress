@@ -81,12 +81,15 @@ test.describe('[MODULE-004] STP Master', () => {
       await expect(formTitle).toContainText('STP', { timeout: 8000 });
     });
 
-    test('TC-009 stpName field accepts text', async ({ page }) => {
+    test('TC-009 stpName field is present and auto-composed (readonly)', async ({ page }) => {
       await page.click('button:has-text("New STP")');
       await page.waitForTimeout(1200);
+      // Verified live 2026-07-10: stpName is readonly — the app composes it as
+      // "Parameter-Product-Instrument/Technique-Reference Method" from the selections above
       const nameField = page.locator('input[name="stpName"]');
-      await nameField.fill(`AutoSTP_${TS}`);
-      expect(await nameField.inputValue()).toBe(`AutoSTP_${TS}`);
+      await expect(nameField).toBeVisible({ timeout: 8000 });
+      await expect(nameField).toHaveAttribute('readonly', '');
+      await expect(nameField).toHaveAttribute('placeholder', 'Parameter-Product-Instrument/Technique-Reference Method');
     });
 
     test('TC-010 form has Cancel, Save as Draft, Submit for Review buttons', async ({ page }) => {
@@ -111,9 +114,12 @@ test.describe('[MODULE-004] STP Master', () => {
   test.describe('4. NABL Actions', () => {
 
     test('TC-012 NABL action buttons are present in table rows', async ({ page }) => {
-      const nablBtns = page.locator('button:has-text("Add NABL"), button:has-text("View NABL")');
-      const count = await nablBtns.count();
-      expect(count).toBeGreaterThan(0);
+      // Verified live 2026-07-10: row buttons are labelled just "NABL".
+      // Wait for rows first — count() doesn't wait, and this table loads slowly on UAT.
+      await expect(page.locator('table tbody tr').first()).toBeVisible({ timeout: 30000 });
+      const nablBtns = page.locator('button:has-text("NABL")');
+      await expect(nablBtns.first()).toBeVisible({ timeout: 15000 });
+      expect(await nablBtns.count()).toBeGreaterThan(0);
     });
   });
 });

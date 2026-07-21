@@ -68,4 +68,54 @@ test.describe("[MODULE-082] Department", () => {
    *   page.getByRole("button", { name: "Quotation & Pricing" })
    */
 
+  // ── 2. Create Request (added 2026-07-10, selectors verified live) ─────────
+  test.describe('2. Create Request', () => {
+
+    test('TC-020 "New Department" opens the request form with all fields', async ({ page }) => {
+      await page.click('button:has-text("New Department")');
+      await page.waitForTimeout(1200);
+      await expect(page.locator('input[name="deptName"]')).toBeVisible({ timeout: 8000 });
+      await expect(page.locator('input[name="subDepartmentName"]')).toBeVisible();
+      await expect(page.locator('input[name="location"]')).toBeVisible();
+      await expect(page.locator('textarea[name="reason"]')).toBeVisible();
+      await expect(page.locator('button:has-text("Submit Request")')).toBeVisible();
+    });
+
+    test('TC-021 form fields accept input', async ({ page }) => {
+      await page.click('button:has-text("New Department")');
+      await page.waitForTimeout(1200);
+      await page.locator('input[name="deptName"]').fill('Auto Test Dept');
+      await page.locator('textarea[name="reason"]').fill('Automation coverage test');
+      expect(await page.locator('input[name="deptName"]').inputValue()).toBe('Auto Test Dept');
+    });
+
+    test('TC-022 Cancel closes the form without submitting', async ({ page }) => {
+      await page.click('button:has-text("New Department")');
+      await page.waitForTimeout(1200);
+      await page.locator('input[name="deptName"]').waitFor({ timeout: 8000 });
+      await page.locator('button:has-text("Cancel")').first().click();
+      await expect(page.locator('input[name="deptName"]')).toBeHidden({ timeout: 8000 });
+    });
+  });
+
+  // ── 3. Approval Workflow ───────────────────────────────────────────────────
+  test.describe('3. Approval Workflow', () => {
+
+    test('TC-023 Pending/Approved/Rejected status tabs are present', async ({ page }) => {
+      await expect(page.locator('button').filter({ hasText: /^Pending/ }).first()).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('button').filter({ hasText: /^Approved/ }).first()).toBeVisible();
+      await expect(page.locator('button').filter({ hasText: /^Rejected/ }).first()).toBeVisible();
+    });
+
+    test('TC-024 pending requests expose Approve and Reject actions', async ({ page }) => {
+      await page.locator('button').filter({ hasText: /^Pending/ }).first().click();
+      await page.waitForTimeout(2000);
+      // Only assert when pending rows exist — approvals are data-dependent on shared UAT
+      const hasRows = await page.locator('table tbody tr, [class*="card"]').first().isVisible({ timeout: 5000 }).catch(() => false);
+      if (!hasRows) { test.skip(); return; }
+      await expect(page.locator('button:has-text("Approve")').first()).toBeVisible({ timeout: 8000 });
+      await expect(page.locator('button:has-text("Reject")').first()).toBeVisible();
+    });
+  });
+
 }); // describe Department

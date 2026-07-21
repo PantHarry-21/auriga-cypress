@@ -227,9 +227,10 @@ test.describe('[GEN-PO-CRUD] Generate PO — Create & Update', () => {
       }
     });
 
-    test('TC-C18 TermsAndConditions textarea visible and accepts text', async ({ page }) => {
+    test('TC-C18 TermCondition textarea visible and accepts text', async ({ page }) => {
       await openForm(page);
-      const tncField = page.locator('textarea[name="TermsAndConditions"]').first();
+      // Verified live 2026-07-10: the field is textarea[name="TermCondition"] (not "TermsAndConditions")
+      const tncField = page.locator('textarea[name="TermCondition"]').first();
       if (await tncField.isVisible({ timeout: 8000 }).catch(() => false)) {
         await tncField.fill('Standard terms and conditions apply. Delivery within 30 days.');
         const val = await tncField.inputValue();

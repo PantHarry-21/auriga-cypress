@@ -22,7 +22,9 @@ async function createSession(
   if (fs.existsSync(sessionFile)) {
     try {
       const saved = JSON.parse(fs.readFileSync(sessionFile, 'utf-8'));
-      if (saved.cookies?.length > 0) {
+      // Require localStorage too — cookie-only sessions (pre-fidelity-fix) leave the
+      // SPA without userData/modulePermissions and must be recreated.
+      if (saved.cookies?.length > 0 && saved.localStorage && Object.keys(saved.localStorage).length > 0) {
         console.log(`  ⏭  Reusing existing session: ${path.basename(sessionFile)}`);
         return;
       }
@@ -84,9 +86,21 @@ async function createSession(
     await page.waitForURL('**/dashboard**', { timeout: 120000 });
     console.log(`  ✅ ${username} → ${page.url()}`);
 
-    // Save session
+    // Wait for the SPA to persist identity/permissions client-side
+    await page.waitForFunction(() => !!localStorage.getItem('userData'), { timeout: 15000 }).catch(() => {});
+
+    // Save session (cookies + localStorage — both are needed for a faithful session;
+    // cookies alone leave the SPA as "User (Unknown)" with no permission map)
     const cookies = await ctx.cookies();
-    fs.writeFileSync(sessionFile, JSON.stringify({ cookies }));
+    const localStorageData = await page.evaluate(() => {
+      const out: Record<string, string> = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i)!;
+        out[k] = localStorage.getItem(k)!;
+      }
+      return out;
+    }).catch(() => ({}));
+    fs.writeFileSync(sessionFile, JSON.stringify({ cookies, localStorage: localStorageData }));
   } catch (err: any) {
     console.warn(`  ⚠️  Session creation failed for ${username}: ${err.message}`);
   } finally {
@@ -103,31 +117,17 @@ export default async function globalSetup() {
   }
 
   const env = dotenv.parse(fs.readFileSync(ENV_FILE));
-  const baseURL = env.BASE_URL || 'https://uat.ylims.com';
+  const baseURL = env.BASE_URL || 'https://uat.bharatlims.ai';
   const lab     = env.LAB_NAME || 'Arbro - Delhi';
   const authDir = path.resolve(__dirname, '../.auth');
   if (!fs.existsSync(authDir)) fs.mkdirSync(authDir, { recursive: true });
 
   const labKey = lab.replace(/\s+/g, '_');
+  // Host-key the session filename so prod/uat sessions never collide (matches loginAs).
+  const hostKey = baseURL.replace(/^https?:\/\//, '').replace(/[^\w.-]/g, '_') || 'default';
 
   const roles = [
     { key: 'admin',                user: env.ADMIN_USERNAME,               pass: env.ADMIN_PASSWORD },
-    { key: 'master_personel',      user: env.MASTER_PERSONEL_USERNAME,     pass: env.MASTER_PERSONEL_PASSWORD },
-    { key: 'master_controler',     user: env.MASTER_CONTROLER_USERNAME,    pass: env.MASTER_CONTROLER_PASSWORD },
-    { key: 'reception',            user: env.RECEPTION_USERNAME,           pass: env.RECEPTION_PASSWORD },
-    { key: 'booking_personel',     user: env.BOOKING_PERSONEL_USERNAME,    pass: env.BOOKING_PERSONEL_PASSWORD },
-    { key: 'analyst',              user: env.ANALYST_USERNAME,             pass: env.ANALYST_PASSWORD },
-    { key: 'department_reviewer',  user: env.DEPARTMENT_REVIEWER_USERNAME, pass: env.DEPARTMENT_REVIEWER_PASSWORD },
-    { key: 'department_head',      user: env.DEPARTMENT_HEAD_USERNAME,     pass: env.DEPARTMENT_HEAD_PASSWORD },
-    { key: 'compilation',          user: env.COMPILATION_USERNAME,         pass: env.COMPILATION_PASSWORD },
-    { key: 'reviewer',             user: env.REVIEWER_USERNAME,            pass: env.REVIEWER_PASSWORD },
-    { key: 'customer_coordinator', user: env.CUSTOMER_COORDINATOR_USERNAME,pass: env.CUSTOMER_COORDINATOR_PASSWORD },
-    { key: 'quality_personel',     user: env.QUALITY_PERSONEL_USERNAME,    pass: env.QUALITY_PERSONEL_PASSWORD },
-    { key: 'quality_manger',       user: env.QUALITY_MANGER_USERNAME,      pass: env.QUALITY_MANGER_PASSWORD },
-    { key: 'accountant_admin',     user: env.ACCOUNTANT_ADMIN_USERNAME,    pass: env.ACCOUNTANT_ADMIN_PASSWORD },
-    { key: 'accountant_crm',       user: env.ACCOUNTANT_CRM_USERNAME,      pass: env.ACCOUNTANT_CRM_PASSWORD },
-    { key: 'sales_personel_am',    user: env.SALES_PERSONEL_AM_USERNAME,   pass: env.SALES_PERSONEL_AM_PASSWORD },
-    { key: 'person_incharge',      user: env.PERSON_INCHARGE_USERNAME,     pass: env.PERSON_INCHARGE_PASSWORD },
   ];
 
   // Login roles sequentially to avoid hammering the server
@@ -136,7 +136,7 @@ export default async function globalSetup() {
       console.log(`  ⏭  Skipping ${role.key} (no credentials)`);
       continue;
     }
-    const sessionFile = path.join(authDir, `${role.key}__${labKey}.json`);
+    const sessionFile = path.join(authDir, `${role.key}__${labKey}__${hostKey}.json`);
     await createSession(baseURL, role.user, role.pass, lab, sessionFile);
   }
 

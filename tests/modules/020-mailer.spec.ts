@@ -71,4 +71,44 @@ test.describe("[MODULE-020] Mailer", () => {
    *   page.getByRole("button", { name: "Quality Document Management System" })
    */
 
+  // ── 2. Compose (added 2026-07-10, selectors verified live) ─────────────────
+  test.describe('2. Compose', () => {
+
+    test('TC-020 Compose navigates to the compose view with all fields', async ({ page }) => {
+      await page.click('button:has-text("Compose")');
+      await page.waitForURL('**/mail/compose', { timeout: 15000 });
+      await expect(page.locator('input[placeholder="Search by name or email..."]')).toBeVisible({ timeout: 8000 });
+      await expect(page.locator('input[name="subject"]')).toBeVisible();
+      await expect(page.locator('textarea[name="body"]')).toBeVisible();
+      await expect(page.locator('button:has-text("Send")')).toBeVisible();
+      await expect(page.locator('button:has-text("Save Draft")')).toBeVisible();
+    });
+
+    test('TC-021 subject and body accept input', async ({ page }) => {
+      await page.click('button:has-text("Compose")');
+      await page.waitForURL('**/mail/compose', { timeout: 15000 });
+      await page.locator('input[name="subject"]').fill('Automation test subject');
+      await page.locator('textarea[name="body"]').fill('Automation test body');
+      expect(await page.locator('input[name="subject"]').inputValue()).toBe('Automation test subject');
+    });
+
+    test('TC-022 Cancel leaves compose without sending', async ({ page }) => {
+      await page.click('button:has-text("Compose")');
+      await page.waitForURL('**/mail/compose', { timeout: 15000 });
+      await page.locator('button:has-text("Cancel")').first().click();
+      await page.waitForTimeout(1500);
+      expect(page.url()).not.toContain('/compose');
+    });
+  });
+
+  // ── 3. Folders ──────────────────────────────────────────────────────────────
+  test.describe('3. Folders', () => {
+
+    test('TC-023 Inbox/Important/Drafts/Sent folders are present', async ({ page }) => {
+      for (const folder of ['Inbox', 'Important', 'Drafts', 'Sent']) {
+        await expect(page.locator(`button:has-text("${folder}")`).first()).toBeVisible({ timeout: 10000 });
+      }
+    });
+  });
+
 }); // describe Mailer

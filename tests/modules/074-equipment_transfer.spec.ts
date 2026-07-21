@@ -63,9 +63,9 @@ test.describe("[MODULE-074] Equipment Transfer", () => {
       await search.clear();
     });
 
-    test('TC-007 export buttons are present', async ({ page }) => {
+    test('TC-007 export button is present', async ({ page }) => {
+      // Verified live 2026-07-10: this list offers Excel export only (no PDF button)
       await expect(page.locator('button').filter({ hasText: /^Excel$/i }).first()).toBeVisible({ timeout: 8000 });
-      await expect(page.locator('button').filter({ hasText: /^PDF$/i }).first()).toBeVisible({ timeout: 8000 });
     });
 
   }); // Search
@@ -83,36 +83,37 @@ test.describe("[MODULE-074] Equipment Transfer", () => {
       await expect(page.locator("[name=\"quantity\"]").first()).toBeVisible({ timeout: 10000 });
     });
 
-    test('TC-010 "Search equipment name..." field is visible and interactive', async ({ page }) => {
+    // Verified live 2026-07-10: the New Transfer form uses dropdown selects
+    // (--Select Equipment--, --Select Employee--, etc.), a quantity input and a
+    // remarks textarea. The old "Search …" filter inputs no longer exist.
+    test('TC-010 equipment select dropdown is present on form', async ({ page }) => {
       await page.getByRole('button', { name: "New Transfer" }).click();
       await page.waitForTimeout(1500);
-      await expect(page.locator("input[placeholder=\"Search equipment name...\"]").first()).toBeVisible({ timeout: 8000 });
-      await page.locator("input[placeholder=\"Search equipment name...\"]").first().fill("automation test value");
-      await page.locator("input[placeholder=\"Search equipment name...\"]").first().clear();
+      await expect(page.locator('button:has-text("--Select Equipment--")').first()).toBeVisible({ timeout: 8000 });
     });
 
-    test('TC-011 "Search quantity..." field is visible and interactive', async ({ page }) => {
+    test('TC-011 quantity field is visible and accepts input', async ({ page }) => {
       await page.getByRole('button', { name: "New Transfer" }).click();
       await page.waitForTimeout(1500);
-      await expect(page.locator("input[placeholder=\"Search quantity...\"]").first()).toBeVisible({ timeout: 8000 });
-      await page.locator("input[placeholder=\"Search quantity...\"]").first().fill("automation test value");
-      await page.locator("input[placeholder=\"Search quantity...\"]").first().clear();
+      const qty = page.locator('input[name="quantity"]').first();
+      await expect(qty).toBeVisible({ timeout: 8000 });
+      await qty.fill('2');
+      await qty.clear();
     });
 
-    test('TC-012 "Search assigned employee..." field is visible and interactive', async ({ page }) => {
+    test('TC-012 employee select dropdown is present on form', async ({ page }) => {
       await page.getByRole('button', { name: "New Transfer" }).click();
       await page.waitForTimeout(1500);
-      await expect(page.locator("input[placeholder=\"Search assigned employee...\"]").first()).toBeVisible({ timeout: 8000 });
-      await page.locator("input[placeholder=\"Search assigned employee...\"]").first().fill("automation test value");
-      await page.locator("input[placeholder=\"Search assigned employee...\"]").first().clear();
+      await expect(page.locator('button:has-text("--Select Employee--")').first()).toBeVisible({ timeout: 8000 });
     });
 
-    test('TC-013 "Search remarks..." field is visible and interactive', async ({ page }) => {
+    test('TC-013 remarks textarea is visible and accepts input', async ({ page }) => {
       await page.getByRole('button', { name: "New Transfer" }).click();
       await page.waitForTimeout(1500);
-      await expect(page.locator("input[placeholder=\"Search remarks...\"]").first()).toBeVisible({ timeout: 8000 });
-      await page.locator("input[placeholder=\"Search remarks...\"]").first().fill("automation test value");
-      await page.locator("input[placeholder=\"Search remarks...\"]").first().clear();
+      const remarks = page.locator('textarea[name="remarks"]').first();
+      await expect(remarks).toBeVisible({ timeout: 8000 });
+      await remarks.fill('automation test value');
+      await remarks.clear();
     });
 
     test('TC-014 "quantity" field is visible and interactive', async ({ page }) => {

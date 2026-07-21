@@ -106,7 +106,7 @@ export class GenericMasterPage extends BasePage {
   }
 
   async navigate() {
-    await this.goto('/dashboard/generic-master');
+    await this.goto('/dashboard/products/generic-master');
     await this.waitForPageLoad();
   }
 
@@ -146,7 +146,7 @@ export class ProductMasterPage extends BasePage {
   }
 
   async navigate() {
-    await this.goto('/dashboard/products/master-v2');
+    await this.goto('/dashboard/products/master');
     await this.waitForPageLoad();
   }
 
@@ -189,7 +189,7 @@ export class ParameterMasterPage extends BasePage {
   }
 
   async navigate() {
-    await this.goto('/dashboard/master-library/parameters');
+    await this.goto('/dashboard/testing/analyt-master-v2');
     await this.waitForPageLoad();
   }
 
@@ -228,7 +228,7 @@ export class StpMasterPage extends BasePage {
   }
 
   async navigate() {
-    await this.goto('/dashboard/master-library/stp-master');
+    await this.goto('/dashboard/testing/stp-master');
     await this.waitForPageLoad();
   }
 
@@ -272,7 +272,7 @@ export class StpGroupPage extends BasePage {
   }
 
   async navigate() {
-    await this.goto('/dashboard/master-library/stp-group');
+    await this.goto('/dashboard/testing/stp-groups');
     await this.waitForPageLoad();
   }
 
@@ -313,7 +313,7 @@ export class EmployeeProfilePage extends BasePage {
   }
 
   async navigate() {
-    await this.goto('/dashboard/employee/profile');
+    await this.goto('/dashboard/profile/employee');
     await this.waitForPageLoad();
   }
 
@@ -352,7 +352,7 @@ export class MethodDevelopmentPage extends BasePage {
   }
 
   async navigate() {
-    await this.goto('/dashboard/methods/development');
+    await this.goto('/dashboard/method/development');
     await this.waitForPageLoad();
   }
 
@@ -396,7 +396,7 @@ export class MethodUploadPage extends BasePage {
   }
 
   async navigate() {
-    await this.goto('/dashboard/methods/upload');
+    await this.goto('/dashboard/method/method-upload');
     await this.waitForPageLoad();
   }
 
@@ -430,7 +430,7 @@ export class MethodValidationUploadPage extends BasePage {
   }
 
   async navigate() {
-    await this.goto('/dashboard/methods/validation-upload');
+    await this.goto('/dashboard/method/validation-upload');
     await this.waitForPageLoad();
   }
 
@@ -464,7 +464,7 @@ export class IndentManagementPage extends BasePage {
   }
 
   async navigate() {
-    await this.goto('/dashboard/inventory/indent-manage');
+    await this.goto('/dashboard/purchase/indent');
     await this.waitForPageLoad();
   }
 
@@ -507,7 +507,7 @@ export class AdminIndentPage extends BasePage {
   }
 
   async navigate() {
-    await this.goto('/dashboard/inventory/admin-indent');
+    await this.goto('/dashboard/purchase/admin-indent');
     await this.waitForPageLoad();
   }
 
@@ -545,7 +545,7 @@ export class ClientQuotationPage extends BasePage {
   }
 
   async navigate() {
-    await this.goto('/dashboard/crm/quotation');
+    await this.goto('/dashboard/quotation/client');
     await this.waitForPageLoad();
   }
 
@@ -584,6 +584,42 @@ export class ClientQuotationPage extends BasePage {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// SEGMENTATION SERVICES PAGE OBJECT
+// ═══════════════════════════════════════════════════════════════════════════
+
+export class SegmentationServicesPage extends BasePage {
+  constructor(page: Page) {
+    super(page, 'segmentationServices');
+  }
+
+  async navigate() {
+    await this.goto('/dashboard/administration/segmentation-services');
+    await this.waitForPageLoad();
+  }
+
+  tierRowLocator(tier: string) {
+    return this.page.locator(this.selectors.tierRow(tier));
+  }
+
+  toggleLocator(tier: string, columnIndex: number) {
+    return this.tierRowLocator(tier).locator(this.selectors.toggleButtons).nth(columnIndex);
+  }
+
+  async isToggleChecked(tier: string, columnIndex: number): Promise<boolean> {
+    return (await this.toggleLocator(tier, columnIndex).getAttribute('aria-checked')) === 'true';
+  }
+
+  async clickToggle(tier: string, columnIndex: number) {
+    await this.toggleLocator(tier, columnIndex).click({ force: true });
+    await this.page.waitForTimeout(300);
+  }
+
+  async clickUpdateAll() {
+    await this.clickButton(this.selectors.updateAllButton);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // CLIENT PRODUCT PRICING PAGE OBJECT
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -593,7 +629,7 @@ export class ClientProductPricingPage extends BasePage {
   }
 
   async navigate() {
-    await this.goto('/dashboard/crm/client-product-pricing');
+    await this.goto('/dashboard/client-product-pricing');
     await this.waitForPageLoad();
   }
 

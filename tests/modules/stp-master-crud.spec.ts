@@ -180,14 +180,17 @@ test.describe('[MODULE-STP-CRUD] STP Master — Create & Update', () => {
     });
 
     // TC-C008: Non-numeric/text in sampleQuantity → validation handles it
+    // (verified live 2026-07-10: stpName is readonly/auto-composed, so we don't fill it;
+    //  sampleQuantity is a number input — letters typed into it are ignored by the browser)
     test('TC-C008 text in sampleQuantity shows error or rejects input', async ({ page }) => {
       await openCreateForm(page);
-      await page.locator('input[name="stpName"]').fill(`TypeErrSTP_${TS()}`);
-      await page.locator('input[name="sampleQuantity"]').fill('abc');
+      const qty = page.locator('input[name="sampleQuantity"]');
+      await expect(qty).toBeVisible({ timeout: 8000 });
+      await qty.pressSequentially('abc');
       await page.locator('button:has-text("Save as Draft")').first().click();
       await page.waitForTimeout(1000);
       // Either input is rejected (value empty/0) or form shows error
-      const qtyValue = await page.locator('input[name="sampleQuantity"]').inputValue().catch(() => '');
+      const qtyValue = await qty.inputValue().catch(() => '');
       const hasError = await expectError(page);
       expect(hasError || qtyValue === '' || qtyValue === '0').toBe(true);
       // cleanup
@@ -197,11 +200,11 @@ test.describe('[MODULE-STP-CRUD] STP Master — Create & Update', () => {
       await page.waitForTimeout(800);
     });
 
-    // TC-C009: Required stpName cleared after filling → error
-    test('TC-C009 clearing stpName after fill shows validation error on submit', async ({ page }) => {
+    // TC-C009: Submitting with required fields empty → error
+    // (verified live 2026-07-10: stpName is readonly/auto-composed and cannot be filled or
+    //  cleared directly, so required-field validation is exercised by submitting the empty form)
+    test('TC-C009 submitting empty form shows validation error', async ({ page }) => {
       await openCreateForm(page);
-      await page.locator('input[name="stpName"]').fill('TempSTP');
-      await page.locator('input[name="stpName"]').clear();
       await page.locator('button:has-text("Submit for Review")').first().click();
       await page.waitForTimeout(1000);
       const hasError = await expectError(page);
@@ -222,12 +225,15 @@ test.describe('[MODULE-STP-CRUD] STP Master — Create & Update', () => {
       await page.waitForTimeout(800);
     });
 
-    // TC-C011: effectiveDate field accepts date
-    test('TC-C011 effectiveDate field accepts date input', async ({ page }) => {
+    // TC-C011: validationProtocol field accepts text
+    // (verified live 2026-07-10: the STP form has no effectiveDate field;
+    //  real named fields include validationProtocol, remarks, stpName, productName)
+    test('TC-C011 validationProtocol field accepts text input', async ({ page }) => {
       await openCreateForm(page);
-      const dateField = page.locator('input[name="effectiveDate"]');
-      await dateField.fill('2025-06-01');
-      const val = await dateField.inputValue();
+      const protocolField = page.locator('input[name="validationProtocol"]');
+      await expect(protocolField).toBeVisible({ timeout: 8000 });
+      await protocolField.fill('AUTO-VAL-PROTO-01');
+      const val = await protocolField.inputValue();
       expect(val.length).toBeGreaterThan(0);
       // cleanup
       await page.locator('button:has-text("Cancel")').first().click();

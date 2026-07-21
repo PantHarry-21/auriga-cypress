@@ -10,7 +10,11 @@
       "Bash(git commit -m 'Clean up project: Remove Cypress framework, documentation files, and unused artifacts *)",
       "Bash(git commit -m 'Add comprehensive framework fixes summary and next steps *)",
       "Bash(git commit -m 'Add RBAC extraction guide and execution instructions *)",
-      "Bash(git commit -m 'Complete RBAC validation: 44 modules, 19 roles, 836 combinations - all tests passing *)"
+      "Bash(git commit -m 'Complete RBAC validation: 44 modules, 19 roles, 836 combinations - all tests passing *)",
+      "Bash(node \"/private/tmp/claude-501/-Users-harry-Desktop-auriga-cypress/6c90544b-ba23-4781-a877-ee827d18b36b/scratchpad/recon.js\")",
+      "Bash(BADGER_QA_BACKEND_ROOT=__TRACKED_VAR__/repo/backend ./venv/bin/python validate_scenarios.py smoke-test.json)",
+      "Bash(/opt/homebrew/bin/python3.11 -m venv venv)",
+      "Bash(./venv/bin/pip install *)"
     ]
   }
 }

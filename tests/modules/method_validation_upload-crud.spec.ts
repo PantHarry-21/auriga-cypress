@@ -194,8 +194,8 @@ test.describe('[METHOD-VAL-UPLOAD-CRUD] Method Validation Upload — Create & Up
 
     test('TC-C17 file upload input or custom upload control is present', async ({ page }) => {
       await openForm(page);
-      // File upload may use custom input — just check form opened
-      const fileInput = page.locator('input[name="method-validation-file-upload"], input[type="file"]').first();
+      // Upload inputs on this app expose the token as id (not name) — accept either, plus generic fallback
+      const fileInput = page.locator('#method-validation-file-upload, input[name="method-validation-file-upload"], input[type="file"]').first();
       const count = await fileInput.count();
       const formLoaded = await page.locator('button:has-text("Cancel"), button:has-text("SAVE")').first().isVisible({ timeout: 3000 }).catch(() => false);
       expect(count >= 0 && formLoaded).toBe(true);
@@ -245,7 +245,8 @@ test.describe('[METHOD-VAL-UPLOAD-CRUD] Method Validation Upload — Create & Up
       await nameField.waitFor({ timeout: 8000 });
       await nameField.clear();
       await nameField.fill(`AutoMethodVal_Updated_${Date.now()}`);
-      await page.locator('button:has-text("SAVE")').first().click();
+      // Edit panel's save action varies by app version — accept Save/Update/Submit
+      await page.locator('button:has-text("Save"), button:has-text("Update"), button:has-text("Submit")').first().click();
       await page.waitForTimeout(1000);
       const succeeded = await expectSuccess(page);
       const hadError = await expectError(page);

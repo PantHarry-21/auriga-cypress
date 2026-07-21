@@ -68,4 +68,24 @@ test.describe("[MODULE-084] Signatory", () => {
    *   page.getByRole("button", { name: "Purchase & Indent" })
    */
 
+  // ── 2. Assignment & Delete affordances (added 2026-07-10, verified live) ───
+  test.describe('2. Assignment', () => {
+
+    test('TC-020 Assign action and department filter tabs are present', async ({ page }) => {
+      await expect(page.locator('button:has-text("Assign")').first()).toBeVisible({ timeout: 15000 });
+      await expect(page.locator('button:has-text("All")').first()).toBeVisible();
+    });
+
+    test('TC-021 signatory select controls are present', async ({ page }) => {
+      const selects = page.locator('select:visible');
+      expect(await selects.count()).toBeGreaterThanOrEqual(1);
+    });
+
+    test('TC-022 assigned signatories expose row Delete affordance (not clicked — destructive)', async ({ page }) => {
+      await expect(page.locator('table tbody tr').first()).toBeVisible({ timeout: 20000 });
+      const delBtns = page.locator('table tbody tr button[aria-label*="delete" i], table tbody tr button:has-text("Delete"), tbody tr svg[class*="trash" i]');
+      expect(await delBtns.count()).toBeGreaterThan(0);
+    });
+  });
+
 }); // describe Signatory

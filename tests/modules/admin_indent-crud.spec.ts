@@ -170,14 +170,15 @@ test.describe('[ADMIN-INDENT-CRUD] Admin Indent — Create & Update', () => {
       }
     });
 
-    test('TC-C10 instrument search input accepts text', async ({ page }) => {
+    test('TC-C10 company search combobox accepts text', async ({ page }) => {
       await openForm(page);
-      const instrField = page.locator('input[placeholder="Search and select instrument..."]').first();
-      if (await instrField.isVisible({ timeout: 8000 }).catch(() => false)) {
-        await instrField.fill('TestInstrument');
-        await page.waitForTimeout(1000);
-        expect(await instrField.inputValue()).toBe('TestInstrument');
-      }
+      // Verified live 2026-07-10: the form's combobox is "Search and select company..."
+      // (there is no instrument search field on New Indent)
+      const companyField = page.locator('input[placeholder="Search and select company..."]').first();
+      await expect(companyField).toBeVisible({ timeout: 8000 });
+      await companyField.fill('TestCompany');
+      await page.waitForTimeout(1000);
+      expect(await companyField.inputValue()).toBe('TestCompany');
     });
 
     test('TC-C11 Cancel button closes the form', async ({ page }) => {

@@ -10,6 +10,8 @@ export {
   freshLoginAs,
   getRolePermissions,
   loadFixture,
+  captureLocalStorage,
+  restoreLocalStorage,
 } from './commands';
 
 export {
@@ -33,4 +35,5 @@ export {
   AdminIndentPage,
   ClientQuotationPage,
   ClientProductPricingPage,
+  SegmentationServicesPage,
 } from './PageObjects';

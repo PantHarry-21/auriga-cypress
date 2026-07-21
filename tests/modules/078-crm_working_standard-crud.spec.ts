@@ -221,8 +221,9 @@ test.describe('[MODULE-078-CRUD] CRM Working Standard — Create & Update', () =
       // Submit button may be named differently — check any action button is present
       const actionBtn = page.locator('button:has-text("Submit"), button:has-text("Save"), button:has-text("Create"), button:has-text("Add")').first();
       const isVisible = await actionBtn.isVisible({ timeout: 5000 }).catch(() => false);
-      const cancelVisible = await page.locator('button:has-text("Cancel")').first().isVisible({ timeout: 3000 }).catch(() => false);
-      expect(isVisible || cancelVisible).toBe(true);
+      // Verified live 2026-07-10: this form's secondary action is "Reset" (no Cancel button)
+      const resetVisible = await page.locator('button:has-text("Reset")').first().isVisible({ timeout: 3000 }).catch(() => false);
+      expect(isVisible || resetVisible).toBe(true);
       await cancelForm(page);
     });
 

@@ -72,7 +72,8 @@ test.describe('[MODULE-009] Method Upload', () => {
     test('TC-008 file upload input is present', async ({ page }) => {
       await page.click('button:has-text("New Method Upload")');
       await page.waitForTimeout(1200);
-      await expect(page.locator('input[name="method-file-upload"]')).toBeAttached({ timeout: 8000 });
+      // Verified live 2026-07-10: "method-file-upload" is the input's id, not its name
+      await expect(page.locator('#method-file-upload')).toBeAttached({ timeout: 8000 });
     });
 
     test('TC-009 Cancel button closes the form', async ({ page }) => {

@@ -58,9 +58,9 @@ test.describe('[MODULE-003] Parameter Master', () => {
       expect(await search.inputValue()).toBe('glucose');
     });
 
-    test('TC-006 export buttons present', async ({ page }) => {
+    test('TC-006 export button present', async ({ page }) => {
+      // Verified live 2026-07-10: this list offers Excel export only (no PDF button)
       await expect(page.locator('button:has-text("Excel")')).toBeVisible();
-      await expect(page.locator('button:has-text("PDF")')).toBeVisible();
     });
   });
 

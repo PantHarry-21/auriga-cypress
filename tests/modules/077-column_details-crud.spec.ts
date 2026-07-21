@@ -75,8 +75,9 @@ async function openCreateForm(page: any) {
 }
 
 async function saveForm(page: any) {
-  // Inside the form the same text appears — use last() to pick the form submit button
-  const btn = page.locator('button:has-text("Add New Column")').last();
+  // Verified live 2026-07-10: the form's actions are "Reset" and "Submit"
+  // (it no longer repeats the "Add New Column" label inside the form)
+  const btn = page.locator('button:has-text("Submit")').last();
   const isDisabled = await btn.isDisabled({ timeout: 1000 }).catch(() => false);
   if (isDisabled) {
     await btn.click({ force: true }).catch(() => {}); // attempt force click to trigger any validation
@@ -190,27 +191,27 @@ test.describe('[MODULE-077-CRUD] Column Details — Create & Update', () => {
       await cancelForm(page);
     });
 
-    // TC-C009: purchaseDate field accepts valid date
-    test('TC-C009 purchaseDate field accepts valid date input', async ({ page }) => {
+    // TC-C009: invoiceDate field accepts valid date
+    // (verified live 2026-07-10: the form's date fields are invoiceDate, issueDate, indentDate —
+    //  there are no purchaseDate/expiryDate fields)
+    test('TC-C009 invoiceDate field accepts valid date input', async ({ page }) => {
       await openCreateForm(page);
-      const dateField = page.locator('input[name="purchaseDate"]').first();
-      const isEditable = await dateField.isVisible({ timeout: 3000 }).catch(() => false) &&
-                         !(await dateField.isDisabled().catch(() => true));
-      if (isEditable) {
+      const dateField = page.locator('input[name="invoiceDate"]').first();
+      await expect(dateField).toBeVisible({ timeout: 8000 });
+      if (!(await dateField.isDisabled().catch(() => true))) {
         await dateField.fill('2025-01-01');
         const val = await dateField.inputValue();
-        // Date input may format differently — just check something was accepted
-        expect(val.length).toBeGreaterThanOrEqual(0);
+        expect(val.length).toBeGreaterThan(0);
       }
       await cancelForm(page);
     });
 
-    // TC-C010: expiryDate before purchaseDate — form should error or accept
-    test('TC-C010 expiryDate before purchaseDate triggers error or is accepted', async ({ page }) => {
+    // TC-C010: issueDate before invoiceDate — form should error or accept
+    test('TC-C010 issueDate before invoiceDate triggers error or is accepted', async ({ page }) => {
       await openCreateForm(page);
       await page.locator('input[name="columnId"]').fill(`COL_${TS()}`);
-      await page.locator('input[name="purchaseDate"]').fill('2025-06-01');
-      await page.locator('input[name="expiryDate"]').fill('2025-01-01');
+      await page.locator('input[name="invoiceDate"]').fill('2025-06-01');
+      await page.locator('input[name="issueDate"]').fill('2025-01-01');
       await saveForm(page);
       const hasError   = await expectError(page);
       const hasSuccess = await expectSuccess(page);

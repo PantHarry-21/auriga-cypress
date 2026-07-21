@@ -85,4 +85,23 @@ test.describe("[MODULE-086] Create Invoice", () => {
    *   page.getByRole("button", { name: "Quality Document Management System" })
    */
 
+  // ── 2. Invoice Creation (added 2026-07-10, selectors verified live) ────────
+  test.describe('2. Invoice Creation', () => {
+
+    test('TC-020 "New Invoice" action is present', async ({ page }) => {
+      await expect(page.locator('button:has-text("New Invoice")').first()).toBeVisible({ timeout: 15000 });
+    });
+
+    test('TC-021 client search accepts text (min 3 chars gate)', async ({ page }) => {
+      const clientSearch = page.locator('input[placeholder*="Search client by name"]').first();
+      await expect(clientSearch).toBeVisible({ timeout: 15000 });
+      await clientSearch.fill('Arb');
+      expect(await clientSearch.inputValue()).toBe('Arb');
+    });
+
+    test('TC-022 sample search input is present', async ({ page }) => {
+      await expect(page.locator('input[placeholder="Search by Sample Tracking No or Sample Req No"]')).toBeVisible({ timeout: 15000 });
+    });
+  });
+
 }); // describe Create Invoice

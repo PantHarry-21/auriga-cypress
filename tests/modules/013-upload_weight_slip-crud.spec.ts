@@ -179,7 +179,7 @@ test.describe('[MODULE-013-CRUD] Upload Weight Slip — Create & Update', () => 
     // TC-C009: List search input in list view accepts text
     test('TC-C009 list search input accepts text for filtering', async ({ page }) => {
       // This test works on the list page (before opening form)
-      const searchField = page.locator('input[placeholder="Search by sample no, STP name, analyte n..."]').first();
+      const searchField = page.locator('input[placeholder="Search by sample no, STP name, analyte name, file name"]').first();
       const isVisible = await searchField.isVisible({ timeout: 5000 }).catch(() => false);
       if (isVisible) {
         await searchField.fill('SMPL');

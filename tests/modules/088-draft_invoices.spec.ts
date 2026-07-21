@@ -85,4 +85,17 @@ test.describe("[MODULE-088] Draft Invoices", () => {
    *   page.getByRole("button", { name: "Quality Document Management System" })
    */
 
+  // ── 2. Draft Actions (added 2026-07-10, selectors verified live) ───────────
+  test.describe('2. Draft Actions', () => {
+
+    test('TC-020 "Create Invoice" action is present', async ({ page }) => {
+      await expect(page.locator('button:has-text("Create Invoice")').first()).toBeVisible({ timeout: 15000 });
+    });
+
+    test('TC-021 Email and Delete bulk actions are present (Delete not clicked — destructive)', async ({ page }) => {
+      await expect(page.locator('button:has-text("Email")').first()).toBeVisible({ timeout: 15000 });
+      await expect(page.locator('button:has-text("Delete")').first()).toBeVisible();
+    });
+  });
+
 }); // describe Draft Invoices

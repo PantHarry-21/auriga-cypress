@@ -192,11 +192,9 @@ test.describe('[METHOD-UPLOAD-CRUD] Method Upload — Create & Update', () => {
 
     test('TC-C16 file upload input is present in form', async ({ page }) => {
       await openForm(page);
-      // File upload may use custom input or have different name — just check any file input exists
-      const fileInput = page.locator('input[name="method-file-upload"], input[type="file"]').first();
-      const count = await fileInput.count();
-      // Non-blocking: file inputs are often custom — just verify form opened
-      expect(count).toBeGreaterThanOrEqual(0);
+      // Verified live 2026-07-10: the upload input is #method-file-upload (id, not name)
+      const fileInput = page.locator('#method-file-upload, input[type="file"]').first();
+      await expect(fileInput).toBeAttached({ timeout: 8000 });
     });
 
     test('TC-C17 isActive checkbox is present', async ({ page }) => {

@@ -85,4 +85,12 @@ test.describe("[MODULE-046] Reports To Be Compiled", () => {
    *   page.getByRole("button", { name: "Quality Document Management System" })
    */
 
+  // ── 2. Compilation Workflow (added 2026-07-10, selectors verified live) ────
+  test.describe('2. Compilation Workflow', () => {
+
+    test('TC-020 "Approve Reports" action is present', async ({ page }) => {
+      await expect(page.locator('button:has-text("Approve Reports")').first()).toBeVisible({ timeout: 15000 });
+    });
+  });
+
 }); // describe Reports To Be Compiled

@@ -80,4 +80,18 @@ test.describe("[MODULE-045] Print COC Report", () => {
    *   page.getByRole("button", { name: "Quality Document Management System" })
    */
 
+  // ── 2. Print Workflow (added 2026-07-10, selectors verified live) ──────────
+  test.describe('2. Print Workflow', () => {
+
+    test('TC-020 "Mark as Printed" action is present', async ({ page }) => {
+      await expect(page.locator('button:has-text("Mark as Printed")').first()).toBeVisible({ timeout: 15000 });
+    });
+
+    test('TC-021 rows expose edit affordance', async ({ page }) => {
+      await expect(page.locator('table tbody tr').first()).toBeVisible({ timeout: 20000 });
+      const editBtns = page.locator('table tbody tr button[aria-label*="edit" i], table tbody tr button:has-text("Edit"), tbody tr svg[class*="edit" i]');
+      expect(await editBtns.count()).toBeGreaterThan(0);
+    });
+  });
+
 }); // describe Print COC Report

@@ -80,4 +80,27 @@ test.describe("[MODULE-043] COC Distribution", () => {
    *   page.getByRole("button", { name: "Quality Document Management System" })
    */
 
+  // ── 2. Distribution Workflow (added 2026-07-10, selectors verified live) ───
+  test.describe('2. Distribution Workflow', () => {
+
+    test('TC-020 New / Alloted / Sample on Hold filter tabs are present', async ({ page }) => {
+      await expect(page.locator('button:has-text("New")').first()).toBeVisible({ timeout: 15000 });
+      await expect(page.locator('button:has-text("Alloted")').first()).toBeVisible();
+      await expect(page.locator('button:has-text("Sample on Hold")').first()).toBeVisible();
+    });
+
+    test('TC-021 rows expose edit affordance', async ({ page }) => {
+      await expect(page.locator('table tbody tr').first()).toBeVisible({ timeout: 20000 });
+      const editBtns = page.locator('table tbody tr button[aria-label*="edit" i], table tbody tr a:has-text("Edit"), table tbody tr button:has-text("Edit"), tbody tr svg[class*="edit" i]');
+      expect(await editBtns.count()).toBeGreaterThan(0);
+    });
+
+    test('TC-022 switching to Alloted tab reloads without errors', async ({ page }) => {
+      await page.locator('button:has-text("Alloted")').first().click();
+      await page.waitForTimeout(2500);
+      const body = await page.locator('body').textContent() ?? '';
+      expect(body).not.toContain('Internal Server Error');
+    });
+  });
+
 }); // describe COC Distribution

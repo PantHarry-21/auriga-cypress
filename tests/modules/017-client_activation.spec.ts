@@ -85,4 +85,30 @@ test.describe("[MODULE-017] Client Activation", () => {
    *   page.getByRole("button", { name: "Document Management System" })
    */
 
+  // ── 2. Activation Form (added 2026-07-10, selectors verified live) ─────────
+  test.describe('2. Activation Form', () => {
+
+    test('TC-020 row "Client Activation" opens the activation form', async ({ page }) => {
+      const actBtn = page.locator('table tbody tr button:has-text("Client Activation"), tbody button:has-text("Client Activation")').first();
+      const hasRows = await actBtn.isVisible({ timeout: 10000 }).catch(() => false);
+      if (!hasRows) { test.skip(); return; }
+      await actBtn.click();
+      await page.waitForTimeout(3000);
+      await expect(page.locator('input[name="companyEmail"]')).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('input[placeholder="Enter company name"]')).toBeVisible();
+      await expect(page.locator('button:has-text("Submit for Approval")')).toBeVisible();
+      await expect(page.locator('button:has-text("Reset")')).toBeVisible();
+    });
+
+    test('TC-021 activation form has credential fields for the client login', async ({ page }) => {
+      const actBtn = page.locator('table tbody tr button:has-text("Client Activation"), tbody button:has-text("Client Activation")').first();
+      const hasRows = await actBtn.isVisible({ timeout: 10000 }).catch(() => false);
+      if (!hasRows) { test.skip(); return; }
+      await actBtn.click();
+      await page.waitForTimeout(3000);
+      await expect(page.locator('input[placeholder="Enter username"]')).toBeVisible({ timeout: 10000 });
+      expect(await page.locator('input[type="password"]').count()).toBeGreaterThanOrEqual(2);
+    });
+  });
+
 }); // describe Client Activation

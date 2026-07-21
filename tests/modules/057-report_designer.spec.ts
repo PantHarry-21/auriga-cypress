@@ -71,4 +71,26 @@ test.describe("[MODULE-057] Report Designer", () => {
    *   page.getByRole("button", { name: "Quality Document Management System" })
    */
 
+  // ── 2. Template Management (added 2026-07-10, selectors verified live) ─────
+  test.describe('2. Template Management', () => {
+
+    test('TC-020 "New Template" and "New Folder" actions are present', async ({ page }) => {
+      await expect(page.locator('button:has-text("New Template")').first()).toBeVisible({ timeout: 15000 });
+      await expect(page.locator('button:has-text("New Folder")').first()).toBeVisible();
+    });
+
+    test('TC-021 template category tabs are present (COA / COC / Micro / OOS)', async ({ page }) => {
+      for (const cat of ['COA', 'COC', 'Micro', 'OOS']) {
+        await expect(page.locator(`button:has-text("${cat}")`).first()).toBeVisible({ timeout: 10000 });
+      }
+    });
+
+    test('TC-022 template search accepts text', async ({ page }) => {
+      const search = page.locator('input[placeholder="Search all templates..."]').first();
+      await expect(search).toBeVisible({ timeout: 15000 });
+      await search.fill('COA');
+      expect(await search.inputValue()).toBe('COA');
+    });
+  });
+
 }); // describe Report Designer

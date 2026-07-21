@@ -68,4 +68,38 @@ test.describe("[MODULE-085] Signatory Setup", () => {
    *   page.getByRole("button", { name: "Document Management System" })
    */
 
+  // ── 2. Mapping CRUD affordances (added 2026-07-10, verified live) ──────────
+  test.describe('2. Mapping CRUD', () => {
+
+    test('TC-020 mapping selects are on the page; "Add Mapping" is disabled until values are chosen', async ({ page }) => {
+      // Verified live 2026-07-10: the mapping selects render directly on the page,
+      // and Add Mapping stays disabled until they are populated
+      const selects = page.locator('select:visible');
+      await expect(selects.first()).toBeVisible({ timeout: 15000 });
+      const addBtn = page.locator('button:has-text("Add Mapping")').first();
+      await expect(addBtn).toBeVisible();
+      await expect(addBtn).toBeDisabled();
+    });
+
+    test('TC-021 existing mappings expose row Edit buttons', async ({ page }) => {
+      await expect(page.locator('table tbody tr').first()).toBeVisible({ timeout: 20000 });
+      const editBtns = page.locator('table tbody tr button:has-text("Edit"), table tbody tr button[aria-label*="edit" i]');
+      await expect(editBtns.first()).toBeVisible({ timeout: 10000 });
+    });
+
+    test('TC-022 existing mappings expose row Delete affordance (not clicked — destructive)', async ({ page }) => {
+      await expect(page.locator('table tbody tr').first()).toBeVisible({ timeout: 20000 });
+      const delBtns = page.locator('table tbody tr button[aria-label*="delete" i], table tbody tr button:has-text("Delete"), tbody tr svg[class*="trash" i]');
+      expect(await delBtns.count()).toBeGreaterThan(0);
+    });
+
+    test('TC-023 row Edit opens the mapping editor', async ({ page }) => {
+      await expect(page.locator('table tbody tr').first()).toBeVisible({ timeout: 20000 });
+      await page.locator('table tbody tr button:has-text("Edit")').first().click();
+      await page.waitForTimeout(1500);
+      const selects = page.locator('select:visible');
+      expect(await selects.count()).toBeGreaterThanOrEqual(1);
+    });
+  });
+
 }); // describe Signatory Setup

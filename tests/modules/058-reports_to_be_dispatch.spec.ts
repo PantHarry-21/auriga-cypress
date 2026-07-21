@@ -85,4 +85,17 @@ test.describe("[MODULE-058] Reports To Be Dispatch", () => {
    *   page.getByRole("button", { name: "Customer Relation Management" })
    */
 
+  // ── 2. Dispatch Actions (added 2026-07-10, selectors verified live) ────────
+  test.describe('2. Dispatch Actions', () => {
+
+    test('TC-020 rows expose View Report / View Data / Send Mail actions', async ({ page }) => {
+      const viewBtn = page.locator('button:has-text("View Report")').first();
+      const hasRows = await viewBtn.isVisible({ timeout: 15000 }).catch(() => false);
+      if (!hasRows) { test.skip(); return; }
+      await expect(viewBtn).toBeVisible();
+      await expect(page.locator('button:has-text("View Data")').first()).toBeVisible();
+      await expect(page.locator('button:has-text("Send Mail")').first()).toBeVisible();
+    });
+  });
+
 }); // describe Reports To Be Dispatch

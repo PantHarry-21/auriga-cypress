@@ -85,4 +85,12 @@ test.describe("[MODULE-073] Equipment Registration", () => {
    *   page.getByRole("button", { name: "Quality Document Management System" })
    */
 
+  // ── 2. Assignment Workflow (added 2026-07-10, selectors verified live) ─────
+  test.describe('2. Assignment Workflow', () => {
+
+    test('TC-020 "Equipment Assign" action is present', async ({ page }) => {
+      await expect(page.locator('button:has-text("Equipment Assign")').first()).toBeVisible({ timeout: 15000 });
+    });
+  });
+
 }); // describe Equipment Registration

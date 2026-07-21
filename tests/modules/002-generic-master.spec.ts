@@ -52,15 +52,16 @@ test.describe('[MODULE-002] Generic Master', () => {
   test.describe('2. Search & Filter', () => {
 
     test('TC-005 search input works', async ({ page }) => {
-      const search = page.locator('input[placeholder="Search"]').first();
+      // Verified live 2026-07-10: list search placeholder is "Search by Generic Name"
+      const search = page.locator('input[placeholder="Search by Generic Name"]').first();
       await expect(search).toBeVisible();
       await search.fill('auto');
       expect(await search.inputValue()).toBe('auto');
     });
 
-    test('TC-006 export buttons present', async ({ page }) => {
+    test('TC-006 export button present', async ({ page }) => {
+      // Verified live 2026-07-10: this list offers Excel export only (no PDF button)
       await expect(page.locator('button:has-text("Excel")')).toBeVisible();
-      await expect(page.locator('button:has-text("PDF")')).toBeVisible();
     });
   });
 

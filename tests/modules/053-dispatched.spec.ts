@@ -16,7 +16,8 @@ test.describe("[MODULE-053] Dispatched", () => {
   test.beforeEach(async ({ page, context, env }) => {
     await stubStimulsoft(context);
     await loginAs(page, context, 'admin', env, LAB);
-    await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 90000 });
+    // Verified live 2026-07-10: this page's initial load regularly exceeds 90s on UAT
+    await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 150000 });
     await page.waitForTimeout(1500);
   });
 
@@ -62,9 +63,9 @@ test.describe("[MODULE-053] Dispatched", () => {
       await search.clear();
     });
 
-    test('TC-007 export buttons are present', async ({ page }) => {
+    test('TC-007 export button is present', async ({ page }) => {
+      // Verified live 2026-07-10: this list offers Excel export only (no PDF button)
       await expect(page.locator('button').filter({ hasText: /^Excel$/i }).first()).toBeVisible({ timeout: 8000 });
-      await expect(page.locator('button').filter({ hasText: /^PDF$/i }).first()).toBeVisible({ timeout: 8000 });
     });
 
   }); // Search

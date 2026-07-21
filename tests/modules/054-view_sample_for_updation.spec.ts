@@ -56,7 +56,8 @@ test.describe("[MODULE-054] View Sample for Updation", () => {
   test.describe('2. Search & Filter', () => {
 
     test('TC-006 search input is visible and accepts text', async ({ page }) => {
-      const search = page.locator("input[placeholder=\"Search by Sample Request No, Product Name, Client Name or Batch No...\"]").first();
+      // Verified live 2026-07-10: placeholder is "Search by Sample Req No"
+      const search = page.locator('input[placeholder="Search by Sample Req No"]').first();
       await expect(search).toBeVisible({ timeout: 8000 });
       await search.fill('automation test');
       await search.clear();

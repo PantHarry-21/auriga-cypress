@@ -85,4 +85,18 @@ test.describe("[MODULE-087] Invoice List", () => {
    *   page.getByRole("button", { name: "Quality Document Management System" })
    */
 
+  // ── 2. E-Invoice & Bulk Actions (added 2026-07-10, selectors verified live) ─
+  test.describe('2. E-Invoice & Bulk Actions', () => {
+
+    test('TC-020 "Generate E-Invoice" action is present', async ({ page }) => {
+      await expect(page.locator('button:has-text("Generate E-Invoice")').first()).toBeVisible({ timeout: 15000 });
+    });
+
+    test('TC-021 Email bulk action and row checkboxes are present', async ({ page }) => {
+      await expect(page.locator('button:has-text("Email")').first()).toBeVisible({ timeout: 15000 });
+      await expect(page.locator('table tbody tr').first()).toBeVisible({ timeout: 20000 });
+      expect(await page.locator('input[type="checkbox"]').count()).toBeGreaterThan(0);
+    });
+  });
+
 }); // describe Invoice List

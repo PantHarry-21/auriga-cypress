@@ -80,4 +80,19 @@ test.describe("[MODULE-044] COC Department", () => {
    *   page.getByRole("button", { name: "Quality Document Management System" })
    */
 
+  // ── 2. Department Workflow (added 2026-07-10, selectors verified live) ─────
+  test.describe('2. Department Workflow', () => {
+
+    test('TC-020 New / Alloted / Sample on Hold filter tabs are present', async ({ page }) => {
+      await expect(page.locator('button:has-text("New")').first()).toBeVisible({ timeout: 15000 });
+      await expect(page.locator('button:has-text("Alloted")').first()).toBeVisible();
+      await expect(page.locator('button:has-text("Sample on Hold")').first()).toBeVisible();
+    });
+
+    test('TC-021 "Transfer Sample" action and filter radios are present', async ({ page }) => {
+      await expect(page.locator('button:has-text("Transfer Sample")').first()).toBeVisible({ timeout: 15000 });
+      expect(await page.locator('input[type="radio"][name="newFilter"]').count()).toBeGreaterThan(0);
+    });
+  });
+
 }); // describe COC Department

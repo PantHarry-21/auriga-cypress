@@ -85,4 +85,22 @@ test.describe("[MODULE-076] My Equipments", () => {
    *   page.getByRole("button", { name: "Quality Document Management System" })
    */
 
+  // ── 2. Status Workflow (added 2026-07-10, selectors verified live) ─────────
+  test.describe('2. Status Workflow', () => {
+
+    test('TC-020 equipment status action buttons are present (Breakdown/IDLE/OFF/Sample Running/Log)', async ({ page }) => {
+      await expect(page.locator('table tbody tr').first()).toBeVisible({ timeout: 20000 });
+      for (const status of ['Breakdown', 'IDLE', 'OFF', 'Sample Running', 'Log']) {
+        await expect(page.locator(`button:has-text("${status}")`).first()).toBeVisible({ timeout: 8000 });
+      }
+    });
+
+    test('TC-021 equipment search accepts text', async ({ page }) => {
+      const search = page.locator('input[placeholder="Search by Equipment Name or Equipment ID"]').first();
+      await expect(search).toBeVisible({ timeout: 10000 });
+      await search.fill('HPLC');
+      expect(await search.inputValue()).toBe('HPLC');
+    });
+  });
+
 }); // describe My Equipments

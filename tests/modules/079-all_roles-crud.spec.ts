@@ -206,7 +206,7 @@ test.describe('[ALL-ROLES-CRUD] All Roles — Create & Update', () => {
     test('TC-C10 create form page contains checkboxes or toggles for permissions', async ({ page }) => {
       await page.getByRole('button', { name: 'Create Role' }).click();
       await page.waitForTimeout(1500);
-      const checkboxCount = await page.locator('input[type="checkbox"], input[type="radio"], [role="switch"]').count();
+      const checkboxCount = await page.locator('input[type="checkbox"], input[type="radio"], [role="switch"], button[role="checkbox"]').count();
       expect(checkboxCount).toBeGreaterThanOrEqual(0);
       // Form should have some content
       const bodyText = await page.locator('body').innerText();
@@ -255,7 +255,7 @@ test.describe('[ALL-ROLES-CRUD] All Roles — Create & Update', () => {
       const opened = await openFirstRoleEdit(page);
       if (!opened) { test.skip(); return; }
       // Edit form should show module permissions or form fields
-      const hasCheckbox = await page.locator('input[type="checkbox"], input[type="radio"], [role="switch"]').first().isVisible({ timeout: 10000 }).catch(() => false);
+      const hasCheckbox = await page.locator('input[type="checkbox"], input[type="radio"], [role="switch"], button[role="checkbox"]').first().isVisible({ timeout: 10000 }).catch(() => false);
       const hasInput = await page.locator('input, textarea').first().isVisible({ timeout: 5000 }).catch(() => false);
       expect(hasCheckbox || hasInput).toBe(true);
     });

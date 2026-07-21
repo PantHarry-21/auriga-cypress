@@ -119,7 +119,7 @@ test.describe('[MODULE-002-CRUD] Generic Master — Create & Update', () => {
       const name = `AutoTest_Generic_${TS()}`;
       await openCreateForm(page);
       await page.locator('input[name="genericName"]').fill(name);
-      await page.locator('input[name="version"]').fill('1.0');
+      // version is readonly/auto-managed — do not fill it (verified live 2026-07-10)
       await page.locator('button:has-text("Submit for Review")').first().click();
       await page.waitForTimeout(1000);
       const hasSuccess = await expectSuccess(page);
@@ -133,11 +133,13 @@ test.describe('[MODULE-002-CRUD] Generic Master — Create & Update', () => {
       await page.waitForTimeout(800);
     });
 
-    // TC-C004: Version field defaults to "1.0"
+    // TC-C004: Version field defaults to "1.0" (readonly — value or placeholder carries the default)
     test('TC-C004 version field defaults to 1.0', async ({ page }) => {
       await openCreateForm(page);
-      const versionValue = await page.locator('input[name="version"]').inputValue();
-      expect(versionValue).toBe('1.0');
+      const versionField = page.locator('input[name="version"]');
+      const versionValue = await versionField.inputValue();
+      const placeholder = await versionField.getAttribute('placeholder');
+      expect(versionValue === '1.0' || placeholder === '1.0').toBe(true);
       // cleanup
       await page.locator('button:has-text("Cancel")').first().click();
       await page.waitForTimeout(800);
@@ -186,17 +188,24 @@ test.describe('[MODULE-002-CRUD] Generic Master — Create & Update', () => {
     test('TC-C008 cancel after filling form closes without saving', async ({ page }) => {
       await openCreateForm(page);
       await page.locator('input[name="genericName"]').fill(`CancelTest_${TS()}`);
-      // version may be auto-filled/disabled — skip if not editable
+      // version is readonly (auto-managed) — isEditable() is false for readonly inputs,
+      // unlike isDisabled(), so this correctly skips the fill (verified live 2026-07-10)
       const versionField = page.locator('input[name="version"]').first();
-      if (await versionField.isVisible({ timeout: 2000 }).catch(() => false) &&
-          !(await versionField.isDisabled().catch(() => true))) {
+      if (await versionField.isEditable({ timeout: 2000 }).catch(() => false)) {
         await versionField.fill('2.0');
       }
       await page.locator('button:has-text("Cancel")').first().click();
       await page.waitForTimeout(1000);
+      // A dirty form may ask for confirmation before discarding — accept it if shown
+      const confirmBtn = page.locator(
+        'button:has-text("Yes"), button:has-text("Confirm"), button:has-text("Discard"), button:has-text("OK")'
+      ).first();
+      if (await confirmBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await confirmBtn.click();
+      }
       await expect(page.locator('table')).toBeVisible({ timeout: 10000 });
-      const formVisible = await page.locator('input[name="genericName"]').isVisible({ timeout: 2000 }).catch(() => false);
-      expect(formVisible).toBe(false);
+      // Panel close is animated — allow up to 10s for the form to disappear
+      await expect(page.locator('input[name="genericName"]')).toBeHidden({ timeout: 10000 });
     });
 
     // TC-C009: Required field cleared after filling → error on submit
@@ -213,33 +222,26 @@ test.describe('[MODULE-002-CRUD] Generic Master — Create & Update', () => {
       await page.waitForTimeout(800);
     });
 
-    // TC-C010: versionDate field accepts date input (may be auto-filled/disabled)
-    test('TC-C010 versionDate field accepts date input', async ({ page }) => {
+    // TC-C010: version field is present and auto-managed (readonly)
+    // (verified live 2026-07-10: input[name="version"] is readonly with placeholder "1.0";
+    //  there is no versionDate field on this form)
+    test('TC-C010 version field is present and readonly', async ({ page }) => {
       await openCreateForm(page);
-      const dateField = page.locator('input[name="versionDate"]').first();
-      const isEditable = await dateField.isVisible({ timeout: 3000 }).catch(() => false) &&
-                         !(await dateField.isDisabled().catch(() => true));
-      if (isEditable) {
-        await dateField.fill('2025-01-01');
-        const val = await dateField.inputValue();
-        expect(val.length).toBeGreaterThan(0);
-      }
+      const versionField = page.locator('input[name="version"]').first();
+      await expect(versionField).toBeVisible({ timeout: 8000 });
+      await expect(versionField).toHaveAttribute('readonly', '');
       // cleanup
       await page.locator('button:has-text("Cancel")').first().click();
       await page.waitForTimeout(800);
     });
 
-    // TC-C011: remarks field accepts text (may be textarea or absent)
+    // TC-C011: remarks field accepts text
+    // (verified live 2026-07-10: remarks is a textarea[name="remarks"], not an input)
     test('TC-C011 remarks field accepts free text', async ({ page }) => {
       await openCreateForm(page);
-      // Try input first, then textarea
-      let field = page.locator('input[name="remarks"]').first();
-      if (!(await field.isVisible({ timeout: 2000 }).catch(() => false))) {
-        field = page.locator('textarea[name="remarks"]').first();
-      }
-      const isEditable = await field.isVisible({ timeout: 3000 }).catch(() => false) &&
-                         !(await field.isDisabled().catch(() => true));
-      if (isEditable) {
+      const field = page.locator('textarea[name="remarks"]').first();
+      await expect(field).toBeVisible({ timeout: 8000 });
+      if (!(await field.isDisabled().catch(() => true))) {
         await field.fill('Automated test remark');
         const val = await field.inputValue();
         expect(val.length).toBeGreaterThan(0);

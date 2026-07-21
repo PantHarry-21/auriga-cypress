@@ -51,9 +51,9 @@ test.describe('[MODULE-006] Client Profile', () => {
       expect(await search.inputValue()).toBe('arbro');
     });
 
-    test('TC-005 export buttons visible', async ({ page }) => {
+    test('TC-005 export button visible', async ({ page }) => {
+      // Verified live 2026-07-10: this list offers Excel export only (no PDF button)
       await expect(page.locator('button:has-text("Excel")')).toBeVisible();
-      await expect(page.locator('button:has-text("PDF")')).toBeVisible();
     });
   });
 

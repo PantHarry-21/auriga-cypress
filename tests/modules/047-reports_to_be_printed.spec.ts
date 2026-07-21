@@ -85,4 +85,12 @@ test.describe("[MODULE-047] Reports To Be Printed", () => {
    *   page.getByRole("button", { name: "Quality Document Management System" })
    */
 
+  // ── 2. Print Workflow (added 2026-07-10, selectors verified live) ──────────
+  test.describe('2. Print Workflow', () => {
+
+    test('TC-020 "Mark as Printed" action is present', async ({ page }) => {
+      await expect(page.locator('button:has-text("Mark as Printed")').first()).toBeVisible({ timeout: 15000 });
+    });
+  });
+
 }); // describe Reports To Be Printed

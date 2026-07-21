@@ -85,4 +85,24 @@ test.describe("[MODULE-004] Allot Sample", () => {
    *   page.getByRole("button", { name: "Master Library" })
    */
 
+  // ── 2. Allotment Workflow (added 2026-07-10, selectors verified live) ──────
+  test.describe('2. Allotment Workflow', () => {
+
+    test('TC-020 To Receive / Received tabs are present', async ({ page }) => {
+      await expect(page.locator('button').filter({ hasText: /^To Receive/ }).first()).toBeVisible({ timeout: 15000 });
+      await expect(page.locator('button').filter({ hasText: /^Received/ }).first()).toBeVisible();
+    });
+
+    test('TC-021 "Allot Sample to Dept" action is present', async ({ page }) => {
+      await expect(page.locator('button:has-text("Allot Sample to Dept")').first()).toBeVisible({ timeout: 15000 });
+    });
+
+    test('TC-022 switching to Received tab reloads the list without errors', async ({ page }) => {
+      await page.locator('button').filter({ hasText: /^Received/ }).first().click();
+      await page.waitForTimeout(2500);
+      const body = await page.locator('body').textContent() ?? '';
+      expect(body).not.toContain('Internal Server Error');
+    });
+  });
+
 }); // describe Allot Sample

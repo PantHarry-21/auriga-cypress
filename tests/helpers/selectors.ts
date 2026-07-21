@@ -55,26 +55,52 @@ export const YLIMS_SELECTORS = {
   },
 
   // ── Generic Master Module ──────────────────────────────────────────────
+  // Verified live on prod.bharatlims.ai 2026-07-19. `version` is readonly.
   genericMaster: {
     pageHeading: ':has-text("Generic Master")',
     newButton: 'button:has-text("New Generic Master")',
+    listSearchInput: 'input[placeholder="Search by Generic Name"]',
     searchInput: 'input[placeholder*="Search"]',
     searchButton: 'button:has-text("Search")',
+    excelButton: 'button:has-text("Excel")',
+    columnsButton: 'button:has-text("Columns")',
+    tabActive: 'button:has-text("Active")',
+    tabMyDrafts: 'button:has-text("My Drafts")',
+    tabApprovalPending: 'button:has-text("Approval Pending")',
     table: 'table.min-w-full',
     tableRow: 'tbody tr',
     firstRow: 'tbody tr:first-child',
     editLink: 'a:has-text("Edit")',
     deleteButton: 'button:has-text("Delete")',
     submitButton: 'button:has-text("Submit for Review")',
-    nameInput: 'input[placeholder*="name"]',
-    descriptionInput: 'textarea[placeholder*="description"], input[placeholder*="Description"]',
+    saveDraftButton: 'button:has-text("Save as Draft")',
+    cancelButton: 'button:has-text("Cancel")',
+    // Form (real named fields)
+    genericNameInput: 'input[name="genericName"]',
+    versionInput: 'input[name="version"]',                       // readonly, placeholder 1.0
+    validationProtocolInput: 'input[name="validationProtocol"]',
+    referenceToProtocolInput: 'input[name="referenceToProtocol"]',
+    inhouseReferenceInput: 'input[name="inhouseReferenceToProtocol"]',
+    remarksTextarea: 'textarea[name="remarks"]',
+    allowChangesCheckbox: 'input[name="allowChangesInBooking"]',
+    reportTemplateCombobox: 'input[placeholder="Search or select Report Template"]',
+    matrixCombobox: 'input[placeholder="Search or select Matrix"]',
+    labelCombobox: 'input[placeholder="Search or select Label"]',
+    addLabelButton: 'button:has-text("Add Label")',
+    nameInput: 'input[name="genericName"]',
+    descriptionInput: 'textarea[name="remarks"]',
     successMessage: '[role="status"]:has-text("successfully")',
+    api: { list: '/api/generic-master', stps: '/api/stps', stpGroups: '/api/stp-groups',
+           matrices: '/api/nabl/matrices', labels: '/api/generic-master/labels', templates: '/api/report-templates' },
   },
 
   // ── Product Master Module ──────────────────────────────────────────────
+  // Verified live on prod.bharatlims.ai 2026-07-19. Brand product bound to an
+  // approved generic + a client via headless-ui comboboxes.
   productMaster: {
     pageHeading: ':has-text("Product Master"), :has-text("Product")',
     newButton: 'button:has-text("New Product")',
+    listSearchInput: 'input[placeholder="Search by Brand or Generic Name"]',
     searchInput: 'input[placeholder*="Search"]',
     searchButton: 'button:has-text("Search")',
     columnsButton: 'button:has-text("Columns")',
@@ -83,59 +109,129 @@ export const YLIMS_SELECTORS = {
     firstRow: 'tbody tr:first-child',
     editIcon: 'button[aria-label*="Edit"], svg[class*="edit"]',
     deleteIcon: 'button[aria-label*="Delete"], svg[class*="delete"]',
-    nameInput: 'input[placeholder*="name"], input[placeholder*="Brand"]',
+    // Form comboboxes (linkage: generic + client)
+    genericCombobox: 'input[placeholder="Search and select generic product..."]',
+    clientCombobox: 'input[placeholder="Search and select client..."]',
+    brandNameInput: 'input[placeholder="Enter or search brand/product name..."]',
+    addButton: 'button:has-text("Add")',
+    viewButton: 'button:has-text("View")',
+    cancelButton: 'button:has-text("Cancel")',
+    nameInput: 'input[placeholder="Enter or search brand/product name..."]',
     categorySelect: 'select, [role="combobox"]',
-    saveButton: 'button:has-text("Save"), button:has-text("Submit")',
+    saveButton: 'button:has-text("Save"), button:has-text("Submit"), button:has-text("Add")',
     updateButton: 'button:has-text("Update")',
+    api: { list: '/api/product-master', generics: '/api/generic-master', clients: '/api/client-profile/list' },
   },
 
   // ── Parameter Master Module ────────────────────────────────────────────
+  // Verified live on prod.bharatlims.ai 2026-07-19. Two-step wizard:
+  // step 1 dedup search → "Create <name>" → step 2 details.
   parameterMaster: {
     pageHeading: ':has-text("Parameter")',
     newButton: 'button:has-text("New Parameter")',
+    // List
+    listSearchInput: 'input[placeholder*="Search by parameter name"]',
     searchInput: 'input[placeholder*="Search"]',
     searchButton: 'button:has-text("Search")',
+    excelButton: 'button:has-text("Excel")',
+    columnsButton: 'button:has-text("Columns")',
+    tabAll: 'button:has-text("All")',
+    tabApprovalPending: 'button:has-text("Approval Pending")',
     table: 'table.min-w-full',
     tableRow: 'tbody tr',
     firstRow: 'tbody tr:first-child',
+    // Wizard step 1 — dedup search
+    wizardSearchInput: 'input[placeholder*="Type parameter name, alias, or CAS number"]',
+    wizardSearchButton: 'button:has-text("Search")',
+    createNamedButton: (name: string) => `button:has-text('Create "${name}"')`,
+    nextStepButton: 'button:has-text("Next Step")',
+    backButton: 'button:has-text("Back")',
+    cancelButton: 'button:has-text("Cancel")',
+    // Wizard step 2 — details
+    canonicalNameInput: 'input[placeholder="Official Name"]',
+    symbolInput: 'input[placeholder="e.g. Pb"]',
+    aliasInput: 'input[placeholder="Type alias..."]',
+    nameWarning: ':has-text("Don\'t include units, methods, or conditions")',
+    compoundYes: 'text="Yes, Chemical"',
+    compoundNo: 'text="No, Other Parameter"',
+    templateCategory: (name: string) => `text="${name}"`,
     parameterNameInput: 'input[placeholder*="Parameter"], input[placeholder*="parameter"]',
     unitInput: 'input[placeholder*="Unit"], input[placeholder*="unit"]',
     saveButton: 'button:has-text("Save"), button:has-text("Submit")',
     updateButton: 'button:has-text("Update")',
     submitButton: 'button:has-text("Submit for Review")',
+    // API endpoints (for network assertions / waits)
+    api: { list: '/api/parameters' },
   },
 
   // ── STP Master Module ──────────────────────────────────────────────────
+  // Verified live on prod.bharatlims.ai 2026-07-19. STP NAME is readonly and
+  // auto-composed "Parameter-Product-Instrument/Technique-Reference Method".
   stpMaster: {
     pageHeading: ':has-text("STP Master"), :has-text("STP")',
     newButton: 'button:has-text("New STP")',
+    listSearchInput: 'input[placeholder="Search by STP name or product name..."]',
     searchInput: 'input[placeholder*="Search"]',
-    searchButton: 'button:has-text("Search")',
+    columnsButton: 'button:has-text("Columns")',
+    tabActive: 'button:has-text("Active")',
+    tabMyDrafts: 'button:has-text("My Drafts")',
+    tabApprovalPending: 'button:has-text("Approval Pending")',
+    tabAccredited: 'button:has-text("Accredited STPs")',
+    nablButton: 'button:has-text("NABL")',
     table: 'table.min-w-full',
     tableRow: 'tbody tr',
     firstRow: 'tbody tr:first-child',
-    stpNameInput: 'input[placeholder*="STP"], input[placeholder*="stp"]',
+    // Form (real named fields)
+    stpNameInput: 'input[name="stpName"]',              // readonly, auto-composed
+    sampleQuantityInput: 'input[name="sampleQuantity"]',
+    turnAroundTimeInput: 'input[name="turnAroundTime"]',
+    productNameInput: 'input[name="productName"]',
+    validationProtocolInput: 'input[name="validationProtocol"]',
+    remarksInput: 'input[name="remarks"]',
+    parameterCombobox: 'input[placeholder="Search parameter..."]',
+    departmentCombobox: 'input[placeholder="Search or select department..."]',
+    methodCombobox: 'input[placeholder="Search or select method..."]',
+    sourceCombobox: 'input[placeholder="Search or select source..."]',
+    instrumentCombobox: 'input[placeholder="Search or select instrument..."]',
+    stpTypeCombobox: 'input[placeholder="Select STP type..."]',
+    procedureStepTextarea: 'textarea[placeholder="Describe the procedure step..."]',
+    addStepButton: 'button:has-text("Add Step")',
     descriptionInput: 'textarea, input[placeholder*="description"]',
+    saveDraftButton: 'button:has-text("Save as Draft")',
     saveButton: 'button:has-text("Save"), button:has-text("Submit")',
     submitButton: 'button:has-text("Submit for Review")',
+    cancelButton: 'button:has-text("Cancel")',
     updateButton: 'button:has-text("Update")',
     approveButton: 'button:has-text("Approve")',
+    api: { list: '/api/stps', parameters: '/api/parameters', departments: '/api/departments',
+           units: '/api/units', methods: '/api/methods/upload', locations: '/api/stps/locations' },
   },
 
   // ── STP Group Module ───────────────────────────────────────────────────
+  // Verified live on prod.bharatlims.ai 2026-07-19.
   stpGroup: {
     pageHeading: ':has-text("STP Group")',
     newButton: 'button:has-text("New STP Group")',
+    listSearchInput: 'input[placeholder="Search stp group name..."]',
     searchInput: 'input[placeholder*="Search"]',
     searchButton: 'button:has-text("Search")',
+    excelButton: 'button:has-text("Excel")',
+    columnsButton: 'button:has-text("Columns")',
+    clearFiltersButton: 'button:has-text("Clear All Filters")',
     table: 'table.min-w-full',
     tableRow: 'tbody tr',
     firstRow: 'tbody tr:first-child',
-    groupNameInput: 'input[placeholder*="Group"], input[placeholder*="group"]',
+    // Form
+    groupNameInput: 'input[name="stpGroupName"]',
+    groupHeaderInput: 'input[name="stpGroupHeader"]',
+    groupDescriptionInput: 'input[name="stpGroupDescription"]',
+    stpSearchCombobox: 'input[placeholder="Search STPs..."]',
+    createButton: 'button:has-text("Create")',
     stpCheckboxes: 'input[type="checkbox"]',
     saveButton: 'button:has-text("Save"), button:has-text("Submit")',
     submitButton: 'button:has-text("Submit for Review")',
     updateButton: 'button:has-text("Update")',
+    api: { list: '/api/stp-groups' },
   },
 
   // ── Employee Profile Module ────────────────────────────────────────────
@@ -249,11 +345,15 @@ export const YLIMS_SELECTORS = {
   },
 
   // ── Client Product Pricing Module ──────────────────────────────────────
+  // Verified live on prod.bharatlims.ai 2026-07-19.
   clientProductPricing: {
     pageHeading: ':has-text("Product Pricing"), :has-text("Pricing")',
     newButton: 'button:has-text("New"), button:has-text("Add Pricing")',
+    clientSearchInput: 'input[placeholder="Search client by name…"]',
+    productSearchInput: 'input[placeholder="Search product..."]',
     searchInput: 'input[placeholder*="Search"]',
     searchButton: 'button:has-text("Search")',
+    notPricedTab: 'button:has-text("Not Priced")',
     table: 'table.min-w-full',
     tableRow: 'tbody tr',
     firstRow: 'tbody tr:first-child',
@@ -263,6 +363,17 @@ export const YLIMS_SELECTORS = {
     saveButton: 'button:has-text("Save"), button:has-text("Submit")',
     updateButton: 'button:has-text("Update")',
     deleteButton: 'button:has-text("Delete")',
+  },
+
+  // ── Segmentation Services Module (verified live 2026-07-10) ────────────
+  segmentationServices: {
+    pageHeading: 'h1:has-text("Segmentation Services"), h2:has-text("Segmentation Services")',
+    table: 'table',
+    tierRow: (tier: string) => `table tbody tr:has-text("${tier}")`,
+    toggleButtons: 'button[role="checkbox"]',
+    updateAllButton: 'button:has-text("Update All")',
+    tiers: ['Bronze', 'Silver', 'Gold', 'Diamond'],
+    columns: ['COA Digital', 'COA Print', 'Invoice Digital', 'Invoice Print', 'Raw Data'],
   },
 
   // ── Sidebar Navigation ─────────────────────────────────────────────────

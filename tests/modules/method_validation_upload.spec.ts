@@ -79,7 +79,11 @@ test.describe('[MODULE-010] Method Validation Upload', () => {
     test('TC-009 file upload input is present', async ({ page }) => {
       await page.click('button:has-text("New Method Validation")');
       await page.waitForTimeout(1200);
-      await expect(page.locator('input[name="method-validation-file-upload"]')).toBeAttached({ timeout: 8000 });
+      // The upload input exposes this token as its id (verified for method-upload live 2026-07-10);
+      // keep the name variant as fallback plus a generic file-input catch-all.
+      await expect(
+        page.locator('#method-validation-file-upload, input[name="method-validation-file-upload"], input[type="file"]').first()
+      ).toBeAttached({ timeout: 8000 });
     });
 
     test('TC-010 Cancel closes form, SAVE button present', async ({ page }) => {

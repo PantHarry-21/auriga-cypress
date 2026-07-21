@@ -82,4 +82,30 @@ test.describe("[MODULE-038] OOS Answer", () => {
    *   page.getByRole("button", { name: "Quality Document Management System" })
    */
 
+  // ── 2. Answer Questionnaire (added 2026-07-10, selectors verified live) ────
+  test.describe('2. Answer Questionnaire', () => {
+
+    test('TC-020 row "OOS Answer" opens the questionnaire', async ({ page }) => {
+      const answerBtn = page.locator('table tbody tr button:has-text("OOS Answer"), tbody button:has-text("OOS Answer")').first();
+      const hasRows = await answerBtn.isVisible({ timeout: 10000 }).catch(() => false);
+      if (!hasRows) { test.skip(); return; }
+      await answerBtn.click();
+      await page.waitForTimeout(3000);
+      // Questionnaire renders radio groups named question-<id> plus remarks textareas
+      expect(await page.locator('input[type="radio"][name^="question-"]').count()).toBeGreaterThan(0);
+      await expect(page.locator('textarea[placeholder="Enter remarks..."]').first()).toBeVisible({ timeout: 8000 });
+      await expect(page.locator('button:has-text("Update")').first()).toBeVisible();
+    });
+
+    test('TC-021 questionnaire has corrective actions and final review sections', async ({ page }) => {
+      const answerBtn = page.locator('table tbody tr button:has-text("OOS Answer"), tbody button:has-text("OOS Answer")').first();
+      const hasRows = await answerBtn.isVisible({ timeout: 10000 }).catch(() => false);
+      if (!hasRows) { test.skip(); return; }
+      await answerBtn.click();
+      await page.waitForTimeout(3000);
+      await expect(page.locator('textarea[placeholder="Enter corrective actions..."]')).toBeAttached({ timeout: 8000 });
+      await expect(page.locator('textarea[placeholder="Enter final review..."]')).toBeAttached();
+    });
+  });
+
 }); // describe OOS Answer

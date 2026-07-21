@@ -53,15 +53,16 @@ test.describe('[MODULE-016] Sample Booking', () => {
   test.describe('2. Search', () => {
 
     test('TC-005 search input works', async ({ page }) => {
-      const search = page.locator('input[placeholder*="Sample Request No"]');
+      // Verified live 2026-07-10: placeholder is "Search by Sample Tracking No, TRF No, Client"
+      const search = page.locator('input[placeholder="Search by Sample Tracking No, TRF No, Client"]');
       await expect(search).toBeVisible();
       await search.fill('SR-001');
       expect(await search.inputValue()).toBe('SR-001');
     });
 
-    test('TC-006 export buttons visible', async ({ page }) => {
+    test('TC-006 export button visible', async ({ page }) => {
+      // Verified live 2026-07-10: this list offers Excel export only (no PDF button)
       await expect(page.locator('button:has-text("Excel")')).toBeVisible();
-      await expect(page.locator('button:has-text("PDF")')).toBeVisible();
     });
   });
 });

@@ -36,6 +36,31 @@ export async function stubStimulsoft(context: BrowserContext) {
   );
 }
 
+// ─── Session storage capture/restore ─────────────────────────────────────────
+// The app keeps identity + permissions client-side (localStorage: userData,
+// modulePermissions, moduleTree, …). Cookies alone authenticate API calls but
+// leave the SPA as "User (Unknown)" with no permission map, so permission-gated
+// routes render wrong (e.g. a blank shell instead of "Access Denied").
+// Sessions therefore persist BOTH cookies and localStorage.
+export async function captureLocalStorage(page: Page): Promise<Record<string, string>> {
+  return page.evaluate(() => {
+    const out: Record<string, string> = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i)!;
+      out[k] = localStorage.getItem(k)!;
+    }
+    return out;
+  });
+}
+
+export async function restoreLocalStorage(context: BrowserContext, data: Record<string, string>) {
+  await context.addInitScript((entries: Record<string, string>) => {
+    for (const [k, v] of Object.entries(entries)) localStorage.setItem(k, v);
+    // Stale activity timestamp would trigger the idle screen-lock overlay
+    localStorage.setItem('screenLockedLastActivity', Date.now().toString());
+  }, data);
+}
+
 // ─── Core login flow ───────────────────────────────────────────────────────────
 // EXACT FLOW (confirmed against live app):
 //   1. Navigate to /login
@@ -62,18 +87,24 @@ export async function loginAs(
     throw new Error(`Credentials for "${roleKey}" are incomplete. Check .env file.`);
 
   const lab = labName || env.LAB_NAME || 'Arbro - Delhi';
-  const sessionFile = path.join(__dirname, '../../.auth', `${roleKey}__${lab.replace(/\s+/g, '_')}.json`);
+  // Key the session by host too — otherwise a prod run and a uat run for the same
+  // role+lab share one file and cross-contaminate cookies (a real bug: prod cookies
+  // injected into a uat run make every page fail to load).
+  const host = (env.BASE_URL || '').replace(/^https?:\/\//, '').replace(/[^\w.-]/g, '_') || 'default';
+  const sessionFile = path.join(__dirname, '../../.auth', `${roleKey}__${lab.replace(/\s+/g, '_')}__${host}.json`);
 
-  // ── Try reusing a saved session (inject cookies directly — no extra navigation) ──
+  // ── Try reusing a saved session (inject cookies + localStorage — no extra navigation) ──
   if (fs.existsSync(sessionFile)) {
     try {
       const saved = JSON.parse(fs.readFileSync(sessionFile, 'utf-8'));
-      if (saved.cookies?.length) {
+      // Sessions saved before localStorage support are incomplete — recreate them.
+      if (saved.cookies?.length && saved.localStorage && Object.keys(saved.localStorage).length) {
         // Check cookie expiry before injecting (avoids silent failures)
         const nowSec = Date.now() / 1000;
         const stillValid = saved.cookies.some((c: any) => !c.expires || c.expires > nowSec + 60);
         if (stillValid) {
           await context.addCookies(saved.cookies);
+          await restoreLocalStorage(context, saved.localStorage);
           // No /dashboard navigation here — the test's own page.goto handles it.
           // If the session is actually expired, the test page will redirect to /login
           // and the test will fail fast with a clear error rather than a slow timeout.
@@ -153,11 +184,17 @@ export async function loginAs(
   await page.waitForURL('**/dashboard**', { timeout: 60000 });
   console.log(`✅ Logged in as ${roleKey} → ${page.url()}`);
 
-  // Save session cookies for reuse
+  // Give the SPA a moment to populate localStorage (userData, modulePermissions, …)
+  await page.waitForFunction(() => !!localStorage.getItem('userData'), { timeout: 15000 }).catch(() => {});
+
+  // Save session cookies + localStorage for reuse
   const authDir = path.join(__dirname, '../../.auth');
   if (!fs.existsSync(authDir)) fs.mkdirSync(authDir, { recursive: true });
   const cookies = await context.cookies();
-  fs.writeFileSync(sessionFile, JSON.stringify({ cookies }));
+  const localStorageData = await captureLocalStorage(page).catch(() => ({}));
+  fs.writeFileSync(sessionFile, JSON.stringify({ cookies, localStorage: localStorageData }));
+  // Make the freshly-logged-in context behave the same on subsequent pages too
+  await restoreLocalStorage(context, localStorageData);
 }
 
 // ─── Clear all saved sessions ─────────────────────────────────────────────────
